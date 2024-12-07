@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "745146958704",
+    "project_id": "opd-management-6c33f",
+    "storage_bucket": "opd-management-6c33f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745146958704:android:7c28eb770c65d368d085b5",
+        "android_client_info": {
+          "package_name": "com.example.opd_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745146958704-lcf6di1cr2fjujvltvdhnt3hi8agpccq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.opd_management",
+            "certificate_hash": "21c8f9ec6c125f9ce18813c2060a3b923845dc9c"
+          }
+        },
+        {
+          "client_id": "745146958704-2do4jc5rms0a0cnn9rljib17o8ejj9m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5G1zZZ4Mw037KzOh5_VGP2GRpFJoqv3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745146958704-2do4jc5rms0a0cnn9rljib17o8ejj9m5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "745146958704-t1cmhv7gqt5hvsadad0v1l44ngm4phbp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.opdManagement"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745146958704:android:62d866107315e078d085b5",
+        "android_client_info": {
+          "package_name": "in.primacura.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745146958704-kob9q2gi1jf157b5cj4l7g3v9ak9kmv9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.primacura.app",
+            "certificate_hash": "21c8f9ec6c125f9ce18813c2060a3b923845dc9c"
+          }
+        },
+        {
+          "client_id": "745146958704-2do4jc5rms0a0cnn9rljib17o8ejj9m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5G1zZZ4Mw037KzOh5_VGP2GRpFJoqv3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745146958704-2do4jc5rms0a0cnn9rljib17o8ejj9m5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "745146958704-t1cmhv7gqt5hvsadad0v1l44ngm4phbp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.opdManagement"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

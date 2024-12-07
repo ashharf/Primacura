@@ -1,0 +1,355 @@
+[
+    {
+        "brandName": "Amlopres",
+        "contains": [
+            "Amlodipine"
+        ],
+        "genericName": "Amlodipine",
+        "dosage": [
+            "5mg",
+            "10mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Pantocid",
+        "contains": [
+            "Pantoprazole"
+        ],
+        "genericName": "Pantoprazole",
+        "dosage": [
+            "40mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Augmentin",
+        "contains": [
+            "Amoxicillin",
+            "Clavulanic Acid"
+        ],
+        "genericName": "Amoxicillin, Clavulanic Acid",
+        "dosage": [
+            "625mg",
+            "1g"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Thyronorm",
+        "contains": [
+            "Levothyroxine"
+        ],
+        "genericName": "Levothyroxine",
+        "dosage": [
+            "25mcg",
+            "50mcg",
+            "100mcg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Montair",
+        "contains": [
+            "Montelukast"
+        ],
+        "genericName": "Montelukast",
+        "dosage": [
+            "10mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Ciplox",
+        "contains": [
+            "Ciprofloxacin"
+        ],
+        "genericName": "Ciprofloxacin",
+        "dosage": [
+            "250mg",
+            "500mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Lasix",
+        "contains": [
+            "Furosemide"
+        ],
+        "genericName": "Furosemide",
+        "dosage": [
+            "40mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Metrogyl",
+        "contains": [
+            "Metronidazole"
+        ],
+        "genericName": "Metronidazole",
+        "dosage": [
+            "400mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Storvas",
+        "contains": [
+            "Atorvastatin"
+        ],
+        "genericName": "Atorvastatin",
+        "dosage": [
+            "10mg",
+            "20mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Ecosprin",
+        "contains": [
+            "Aspirin"
+        ],
+        "genericName": "Aspirin",
+        "dosage": [
+            "75mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Betadine",
+        "contains": [
+            "Povidone Iodine"
+        ],
+        "genericName": "Povidone Iodine",
+        "dosage": [
+            "5% solution"
+        ],
+        "type": "Solution"
+    },
+    {
+        "brandName": "Clavam",
+        "contains": [
+            "Amoxicillin",
+            "Clavulanic Acid"
+        ],
+        "genericName": "Amoxicillin, Clavulanic Acid",
+        "dosage": [
+            "625mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Aciloc",
+        "contains": [
+            "Ranitidine"
+        ],
+        "genericName": "Ranitidine",
+        "dosage": [
+            "150mg",
+            "300mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Cetrizine",
+        "contains": [
+            "Cetirizine"
+        ],
+        "genericName": "Cetirizine",
+        "dosage": [
+            "10mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Ascoril",
+        "contains": [
+            "Ambroxol",
+            "Guaifenesin",
+            "Levosalbutamol"
+        ],
+        "genericName": "Ambroxol, Guaifenesin, Levosalbutamol",
+        "dosage": [
+            "100ml"
+        ],
+        "type": "Syrup"
+    },
+    {
+        "brandName": "Neurobion Forte",
+        "contains": [
+            "Vitamin B1",
+            "Vitamin B6",
+            "Vitamin B12"
+        ],
+        "genericName": "Vitamin B Complex",
+        "dosage": [
+            "standard tablet"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Dolo",
+        "contains": [
+            "Paracetamol"
+        ],
+        "genericName": "Paracetamol",
+        "dosage": [
+            "500mg",
+            "650mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Sinarest",
+        "contains": [
+            "Paracetamol",
+            "Chlorpheniramine",
+            "Phenylephrine"
+        ],
+        "genericName": "Paracetamol, Chlorpheniramine, Phenylephrine",
+        "dosage": [
+            "500mg/2mg/10mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Pantakind",
+        "contains": [
+            "Pantoprazole"
+        ],
+        "genericName": "Pantoprazole",
+        "dosage": [
+            "40mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Zintac",
+        "contains": [
+            "Ranitidine"
+        ],
+        "genericName": "Ranitidine",
+        "dosage": [
+            "150mg",
+            "300mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Digene",
+        "contains": [
+            "Magnesium Hydroxide",
+            "Aluminum Hydroxide"
+        ],
+        "genericName": "Magnesium Hydroxide, Aluminum Hydroxide",
+        "dosage": [
+            "400mg/400mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Envas",
+        "contains": [
+            "Enalapril"
+        ],
+        "genericName": "Enalapril",
+        "dosage": [
+            "5mg",
+            "10mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Hifenac",
+        "contains": [
+            "Aceclofenac"
+        ],
+        "genericName": "Aceclofenac",
+        "dosage": [
+            "100mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Drotin",
+        "contains": [
+            "Drotaverine"
+        ],
+        "genericName": "Drotaverine",
+        "dosage": [
+            "40mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Vomikind",
+        "contains": [
+            "Ondansetron"
+        ],
+        "genericName": "Ondansetron",
+        "dosage": [
+            "4mg",
+            "8mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Zydus Atorvastatin",
+        "contains": [
+            "Atorvastatin"
+        ],
+        "genericName": "Atorvastatin",
+        "dosage": [
+            "10mg",
+            "20mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Azee",
+        "contains": [
+            "Azithromycin"
+        ],
+        "genericName": "Azithromycin",
+        "dosage": [
+            "250mg",
+            "500mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Rabekind",
+        "contains": [
+            "Rabeprazole"
+        ],
+        "genericName": "Rabeprazole",
+        "dosage": [
+            "20mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Telma",
+        "contains": [
+            "Telmisartan"
+        ],
+        "genericName": "Telmisartan",
+        "dosage": [
+            "40mg",
+            "80mg"
+        ],
+        "type": "Tablet"
+    },
+    {
+        "brandName": "Duphalac",
+        "contains": [
+            "Lactulose"
+        ],
+        "genericName": "Lactulose",
+        "dosage": [
+            "10gm/15ml"
+        ],
+        "type": "Syrup"
+    }
+]
