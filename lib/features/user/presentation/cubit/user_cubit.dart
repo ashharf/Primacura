@@ -94,6 +94,7 @@ class UserCubit extends Cubit<UserState> {
   }
 
   Future<void> getSpecializations() async {
+    specializations.clear();
     specializations.addAll(await authRepository.getSpecializations());
   }
 
