@@ -14,6 +14,7 @@ abstract class UserRepository {
   Future<void> signOut();
   Future<User> updateUser(User user);
   Future<User?> checkAuthState();
+  Future<void> addSpecialization(Specialization specialization);
   Future<List<Specialization>> getSpecializations();
   Future<User> getUser();
   Future<void> addChiefComplaint(String userId, ChiefComplaint symptomp);
@@ -73,6 +74,15 @@ class UserRepositoryImpl implements UserRepository {
   Future<void> signOut() {
     try {
       return userRemoteDataSource.signOut();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addSpecialization(Specialization specialization) async {
+    try {
+      return userRemoteDataSource.addSpecialization(specialization);
     } catch (e) {
       rethrow;
     }

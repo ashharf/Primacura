@@ -88,9 +88,13 @@ class UserCubit extends Cubit<UserState> {
     selectedSpecializations.addAll(userSpecializations.toList());
   }
 
+  Future<void> addSpecialization(Specialization specialization) async {
+    await authRepository.addSpecialization(specialization);
+    specializations.add(specialization);
+  }
+
   Future<void> getSpecializations() async {
     specializations.addAll(await authRepository.getSpecializations());
-    log(specializations.length.toString());
   }
 
   void selectSpecialization(Specialization specialization, {bool isProfileEditing = false}) {

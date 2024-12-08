@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opd_management/features/user/data/models/user.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v1.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/screens/home_screen.dart';
+import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../../theme/provider/theme_provider.dart';
 import '../../data/models/specialization.dart';
 import '../cubit/user_cubit.dart';
@@ -105,78 +108,127 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-                Autocomplete<Specialization>(
-                  fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                    // specializationController = textEditingController;
-                    return TextFormField(
-                      controller: textEditingController,
-                      focusNode: focusNode,
-                      decoration: const InputDecoration(
-                          labelText: 'Specialization',
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.userDoctor,
-                            size: 20,
-                          )
-                          // border: OutlineInputBorder(),
-                          ),
-                      validator: (value) {
-                        final userCubit = context.read<UserCubit>();
-                        if (userCubit.selectedSpecializations.isEmpty) {
-                          return 'Please enter a specialization';
-                        }
-                        return null;
-                      },
-                    );
-                  },
-                  optionsViewBuilder: (context, onSelected, options) {
-                    return Align(
-                      alignment: Alignment.topLeft,
-                      child: Material(
-                        color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
-                            ? AppTheme.lightBackgroundColor
-                            : AppTheme.darkBackgroundColor,
-                        elevation: 4,
-                        child: SizedBox(
-                          height: 200,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: options.length,
-                            itemBuilder: (context, index) {
-                              final option = options.elementAt(index);
-                              return ListTile(
-                                title: Text(option.name),
-                                onTap: () {
-                                  onSelected(option);
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  optionsBuilder: (textEditingValue) {
-                    if (textEditingValue.text.isEmpty) {
-                      return const Iterable<Specialization>.empty();
-                    }
+                CustomSearchableDropdown<Specialization>(
+                  prefixIcon: Icon(
+                    FontAwesomeIcons.userDoctor,
+                    size: 20,
+                  ),
+                  hintText: "Search Specialization",
+                  searchLogic: (searchQuery, items) {
+                    final normalizedQuery = searchQuery.trim().toLowerCase();
 
-                    final specializations = context.read<UserCubit>().specializations;
-                    // specializations.removeWhere(
-                    //   (item) => userCubit.selectedSpecializations.contains(item),
-                    // );
+                    // Separate exact matches and partial matches
+                    final exactMatches = items.where((element) {
+                      final normalizedBrandName = (element.name).trim().toLowerCase();
+                      return normalizedBrandName == normalizedQuery;
+                    }).toList();
 
-                    return specializations.where(
-                      (specialization) => specialization.name.toLowerCase().contains(
-                            textEditingValue.text.toLowerCase(),
-                          ),
-                    );
+                    final partialMatches = items.where((element) {
+                      final normalizedBrandName = (element.name).trim().toLowerCase();
+                      return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
+                    }).toList();
+
+                    // Combine exact matches at the top, followed by partial matches
+                    return [...exactMatches, ...partialMatches];
                   },
-                  displayStringForOption: (Specialization specialization) => "",
-                  onSelected: (value) {
-                    context.read<UserCubit>().selectSpecialization(value);
-                    // specializationController.clear();
+                  displayText: (item) => item.name,
+                  textEditingController: specializationController,
+                  textCapitalization: TextCapitalization.words,
+                  items: context.read<UserCubit>().specializations,
+                  onItemSelected: (item) {
+                    // setState(() {
+                    context.read<UserCubit>().selectSpecialization(item);
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      specializationController.clear();
+                    });
+                    // });
+                  },
+                  onAddSelected: (searchText) {
+                    final Specialization specialization = Specialization(
+                      id: Uuid().v4(),
+                      name: searchText,
+                    );
+
+                    context.read<UserCubit>().addSpecialization(specialization);
+                    context.read<UserCubit>().selectSpecialization(specialization);
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      specializationController.clear();
+                    });
+                    // setState(() {});
                   },
                 ),
+                // Autocomplete<Specialization>(
+                //   fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                //     // specializationController = textEditingController;
+                //     return TextFormField(
+                //       controller: textEditingController,
+                //       focusNode: focusNode,
+                //       decoration: const InputDecoration(
+                //           labelText: 'Specialization',
+                //           prefixIcon: Icon(
+                //             FontAwesomeIcons.userDoctor,
+                //             size: 20,
+                //           )
+                //           // border: OutlineInputBorder(),
+                //           ),
+                //       validator: (value) {
+                //         final userCubit = context.read<UserCubit>();
+                //         if (userCubit.selectedSpecializations.isEmpty) {
+                //           return 'Please enter a specialization';
+                //         }
+                //         return null;
+                //       },
+                //     );
+                //   },
+                //   optionsViewBuilder: (context, onSelected, options) {
+                //     return Align(
+                //       alignment: Alignment.topLeft,
+                //       child: Material(
+                //         color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
+                //             ? AppTheme.lightBackgroundColor
+                //             : AppTheme.darkBackgroundColor,
+                //         elevation: 4,
+                //         child: SizedBox(
+                //           height: 200,
+                //           child: ListView.builder(
+                //             shrinkWrap: true,
+                //             itemCount: options.length,
+                //             itemBuilder: (context, index) {
+                //               final option = options.elementAt(index);
+                //               return ListTile(
+                //                 title: Text(option.name),
+                //                 onTap: () {
+                //                   onSelected(option);
+                //                 },
+                //               );
+                //             },
+                //           ),
+                //         ),
+                //       ),
+                //     );
+                //   },
+                //   optionsBuilder: (textEditingValue) {
+                //     if (textEditingValue.text.isEmpty) {
+                //       return const Iterable<Specialization>.empty();
+                //     }
+
+                //     final specializations = context.read<UserCubit>().specializations;
+                //     // specializations.removeWhere(
+                //     //   (item) => userCubit.selectedSpecializations.contains(item),
+                //     // );
+
+                //     return specializations.where(
+                //       (specialization) => specialization.name.toLowerCase().contains(
+                //             textEditingValue.text.toLowerCase(),
+                //           ),
+                //     );
+                //   },
+                //   displayStringForOption: (Specialization specialization) => "",
+                //   onSelected: (value) {
+                //     context.read<UserCubit>().selectSpecialization(value);
+                //     // specializationController.clear();
+                //   },
+                // ),
                 SizedBox(height: 10),
                 Wrap(
                   spacing: 10,

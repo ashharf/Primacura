@@ -132,6 +132,21 @@ class UserRemoteDataSource {
     }
   }
 
+  Future<void> addSpecialization(Specialization specialization) async {
+    try {
+      return firebaseFirestore
+          .collection(AppConstants.specializationCollection)
+          .doc(
+            specialization.id,
+          )
+          .set(
+            specialization.toJson(),
+          );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<Specialization>> getSpecializations() async {
     try {
       final specialzations =
