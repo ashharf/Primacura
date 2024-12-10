@@ -154,38 +154,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
                 builder: (context, state) {
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.filteredPrescriptions.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                    itemBuilder: (context, index) {
-                      return PrescriptionCard(prescription: state.filteredPrescriptions[index]);
-                    },
+                  return Column(
+                    children: List.generate(
+                      state.filteredPrescriptions.length,
+                      (index) {
+                        final prescription = state.filteredPrescriptions[index];
+                        return PrescriptionCard(prescription: prescription);
+                      },
+                    ),
                   );
-
-                  // GridView.count(
-                  //   shrinkWrap: true,
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   crossAxisCount: MediaQuery.sizeOf(context).width > 600 ? 2 : 1,
-                  //   children: List.generate(
-                  //     state.filteredPrescriptions.length,
-                  //     (index) {
-                  //       final prescription = state.filteredPrescriptions[index];
-                  //       return PrescriptionCard(prescription: prescription);
-                  //     },
-                  //   ),
-                  // );
-                  // :
-                  // Column(
-                  //     children: List.generate(
-                  //       state.filteredPrescriptions.length,
-                  //       (index) {
-                  //         final prescription = state.filteredPrescriptions[index];
-                  //         return PrescriptionCard(prescription: prescription);
-                  //       },
-                  //     ),
-                  //   );
                 },
               ),
             )
