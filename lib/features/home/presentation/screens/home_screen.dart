@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: AppConstants.defaultPading.copyWith(bottom: 20),
+          padding: AppConstants.defaultPading.copyWith(bottom: 20, top: 10),
           child: ElevatedButton(
             onPressed: () {
               context.goNamed(SelectPatientScreen.routeName);

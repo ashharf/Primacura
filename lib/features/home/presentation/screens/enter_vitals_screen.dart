@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/core/functions/app_functions.dart';
 import 'package:opd_management/features/home/presentation/widget/custom_progress_indicator.dart';
 
 import 'package:uuid/uuid.dart';
