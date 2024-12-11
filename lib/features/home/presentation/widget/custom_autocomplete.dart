@@ -137,7 +137,7 @@ class _CustomSearchableDropdownState<T> extends State<CustomSearchableDropdown<T
           width: renderBox.size.width,
           child: Material(
             elevation: 4,
-            color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
+            color: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
                 ? AppTheme.lightBackgroundColor
                 : AppTheme.darkBackgroundColor,
             child: Column(
@@ -166,7 +166,11 @@ class _CustomSearchableDropdownState<T> extends State<CustomSearchableDropdown<T
                         ),
                       ),
                       trailing: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          widget.onAddSelected?.call(widget.textEditingController.text);
+                          if (widget.shouldHideDropdownOnSelect) _hideDropdown();
+                          if (widget.shouldUnFocusOnSelect) _focusNode.unfocus();
+                        },
                         icon: Icon(Icons.add),
                         color: AppTheme.primaryColor,
                       ),

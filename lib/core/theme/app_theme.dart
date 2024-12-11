@@ -28,6 +28,11 @@ class AppTheme {
       centerTitle: true,
       backgroundColor: lightBackgroundColor,
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(lightBackgroundColor),
+      ),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         minimumSize: elevatedButtonSize,
@@ -63,6 +68,11 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       centerTitle: true,
       backgroundColor: Colors.grey.shade900,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(darkBackgroundColor),
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

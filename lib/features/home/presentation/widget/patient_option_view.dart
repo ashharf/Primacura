@@ -25,7 +25,7 @@ class PatientOptionsView extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Material(
-        color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
+        color: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
             ? AppTheme.lightBackgroundColor
             : AppTheme.darkBackgroundColor,
         elevation: 4.0,

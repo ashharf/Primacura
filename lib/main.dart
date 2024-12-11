@@ -143,7 +143,7 @@ class MyApp extends StatelessWidget {
           ],
           child: Builder(builder: (context) {
             return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
-              bool isLightTheme = themeProvider.getCurrentThemeBrightness == Brightness.light;
+              bool isLightTheme = themeProvider.currentThemeBrightness == Brightness.light;
               return MaterialApp.router(
                 restorationScopeId: "primacura",
                 scrollBehavior: BouncyScrollBehavior(),

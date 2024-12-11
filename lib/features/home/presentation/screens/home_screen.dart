@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/core/functions/app_functions.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -84,7 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               context.goNamed(QrScannerScreen.routeName);
             },
-            icon: Icon(Icons.qr_code_scanner_rounded),
+            icon: Icon(
+              Icons.qr_code_scanner_rounded,
+              size: 30,
+            ),
           ),
           IconButton(
             onPressed: () {
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Text(
                               (state).user.name?.substring(0, 1).toUpperCase() ?? "",
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.dark
+                                    color: context.read<ThemeProvider>().currentThemeBrightness == Brightness.dark
                                         ? Colors.black
                                         : null,
                                   ),
@@ -126,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 250.h,
               child: SfDateRangePicker(
                 headerStyle: DateRangePickerHeaderStyle(
-                  backgroundColor: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
+                  backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
                       ? Colors.white
                       : Colors.grey.shade900,
                 ),
@@ -135,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 initialSelectedDate: DateTime.now(),
                 selectionColor: AppTheme.primaryColor,
                 todayHighlightColor: AppTheme.tertiaryColor,
-                backgroundColor: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
+                backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
                     ? AppTheme.lightBackgroundColor
                     : AppTheme.darkBackgroundColor,
                 onSelectionChanged: (DateRangePickerSelectionChangedArgs dateRangePickerSelectionChangedArgs) {

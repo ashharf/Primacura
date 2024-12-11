@@ -1,10 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:opd_management/features/home/data/models/clinical_findings.dart';
-import 'package:opd_management/features/home/data/models/investigation.dart';
-import 'package:opd_management/features/home/data/models/medicine.dart';
-import 'package:opd_management/features/user/data/models/specialization.dart';
 
+import '../../../home/data/models/clinical_findings.dart';
+import '../../../home/data/models/investigation.dart';
+import '../../../home/data/models/medicine.dart';
 import '../../../home/data/models/symptomps.dart';
+import 'specialization.dart';
 
 class User {
   final String id;
