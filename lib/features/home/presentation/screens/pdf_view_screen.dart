@@ -120,6 +120,354 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
 
     try {
       pdf.addPage(
+        // pw.MultiPage(
+        //   margin: pw.EdgeInsets.all(30),
+        //   header: (context) => _buildHeader(clinicLogoImage, rodOfAsclepiusImage),
+        //   build: (context) => [
+        //     pw.SizedBox(height: 10),
+        //     pw.DecoratedBox(
+        //       decoration: pw.BoxDecoration(
+        //         border: pw.Border.all(width: 1, color: PdfColors.black),
+        //       ),
+        //       child: pw.Padding(
+        //         padding: pw.EdgeInsets.all(8),
+        //         child: pw.Row(
+        //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //           children: [
+        //             pw.Expanded(
+        //               flex: 2,
+        //               child: pw.Column(
+        //                 crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //                 children: [
+        //                   pw.Text(
+        //                     "Name: ${widget.prescription.patient.name ?? ""}",
+        //                   ),
+        //                   pw.SizedBox(height: 5),
+        //                   pw.Text(
+        //                     "Age: ${widget.prescription.patient.age ?? ""}",
+        //                   ),
+        //                   pw.SizedBox(height: 5),
+        //                   pw.Row(
+        //                     children: [
+        //                       pw.Text(
+        //                         "Gender: ",
+        //                       ),
+        //                       pw.Text(
+        //                         widget.prescription.patient.gender?.substring(0, 1).toUpperCase() ?? "",
+        //                       ),
+        //                       pw.Text(
+        //                         widget.prescription.patient.gender?.substring(1).toLowerCase() ?? "",
+        //                       ),
+        //                     ],
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //             if (widget.prescription.dateTime != null)
+        //               pw.Expanded(
+        //                 flex: 1,
+        //                 child: pw.Padding(
+        //                   padding: pw.EdgeInsets.symmetric(horizontal: 8),
+        //                   child: pw.Column(
+        //                     crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //                     children: [
+        //                       pw.Text("Date: ${DateFormat("dd MMMM yyyy").format(widget.prescription.dateTime!)}"),
+        //                       pw.Text("Time: ${DateFormat.jmz().format(widget.prescription.dateTime!)}")
+        //                     ],
+        //                   ),
+        //                 ),
+        //               ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //     pw.SizedBox(height: 10),
+        //     if (widget.prescription.chiefComplaints.isNotEmpty) ...[
+        //       pw.Padding(
+        //         padding: pw.EdgeInsets.only(bottom: 10),
+        //         child: pw.Column(
+        //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //           children: [
+        //             pw.Text(
+        //               "Chief Complaints",
+        //               style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //             ),
+        //             pw.SizedBox(height: 5),
+        //             pw.Wrap(
+        //               spacing: 8,
+        //               runSpacing: 8,
+        //               children: List.generate(
+        //                 widget.prescription.chiefComplaints.length,
+        //                 (index) {
+        //                   final chiefComplaint = widget.prescription.chiefComplaints[index];
+        //                   return pw.Text(
+        //                     "${index + 1}. ${chiefComplaint.name}",
+        //                   );
+        //                 },
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       )
+        //     ],
+        //     if (widget.prescription.clinicalFindings.isNotEmpty) ...[
+        //       pw.Padding(
+        //         padding: pw.EdgeInsets.only(bottom: 10),
+        //         child: pw.Column(
+        //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //           children: [
+        //             pw.Text(
+        //               "Clinical Findings",
+        //               style: pw.TextStyle(
+        //                 fontWeight: pw.FontWeight.bold,
+        //                 fontSize: 14,
+        //               ),
+        //             ),
+        //             pw.SizedBox(height: 5),
+        //             pw.Wrap(
+        //               spacing: 8,
+        //               runSpacing: 8,
+        //               children: List.generate(
+        //                 widget.prescription.clinicalFindings.length,
+        //                 (index) {
+        //                   final clinicalFinding = widget.prescription.clinicalFindings[index];
+        //                   return
+        //                       //  pw.Column(
+        //                       //   crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //                       //   children: [
+        //                       pw.Text(
+        //                     "${index + 1}. ${clinicalFinding.name}",
+        //                   );
+        //                   //   ],
+        //                   // );
+        //                 },
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //     if ((widget.prescription.temperature != null && widget.prescription.temperature!.isNotEmpty) ||
+        //         (widget.prescription.bloodPressure != null && widget.prescription.bloodPressure!.isNotEmpty) ||
+        //         (widget.prescription.heartRate != null && widget.prescription.heartRate!.isNotEmpty) ||
+        //         (widget.prescription.spO2 != null && widget.prescription.spO2!.isNotEmpty))
+        //       pw.Padding(
+        //         padding: pw.EdgeInsets.only(bottom: 10),
+        //         child: pw.Column(
+        //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //           children: [
+        //             pw.Text(
+        //               "Vitals",
+        //               style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //             ),
+        //             pw.SizedBox(height: 5),
+        //             pw.Wrap(
+        //               runSpacing: 8,
+        //               spacing: 8,
+        //               children: [
+        //                 if (widget.prescription.bloodPressure != null &&
+        //                     widget.prescription.bloodPressure!.isNotEmpty) ...[
+        //                   // pw.SizedBox(height: 5),
+        //                   pw.Text(
+        //                     "BP: ${widget.prescription.bloodPressure ?? "-"} mmHg",
+        //                     // style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //                   ),
+        //                 ],
+        //                 if (widget.prescription.heartRate != null && widget.prescription.heartRate!.isNotEmpty) ...[
+        //                   // pw.SizedBox(height: 5),
+        //                   pw.Text(
+        //                     "Heart Rate: ${widget.prescription.heartRate ?? "-"} bpm",
+        //                     // style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //                   ),
+        //                 ],
+        //                 if (widget.prescription.temperature != null && widget.prescription.temperature!.isNotEmpty) ...[
+        //                   // pw.SizedBox(height: 5),
+        //                   pw.Text(
+        //                     "Temp: ${widget.prescription.temperature ?? "-"}°F",
+        //                     // style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //                   ),
+        //                 ],
+        //                 if (widget.prescription.spO2 != null && widget.prescription.spO2!.isNotEmpty) ...[
+        //                   // pw.SizedBox(height: 5),
+        //                   pw.Text(
+        //                     "SpO2: ${widget.prescription.spO2 ?? "-"}%",
+        //                     // style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //                   ),
+        //                 ],
+        //               ],
+        //             )
+        //           ],
+        //         ),
+        //       ),
+        //     if (widget.prescription.investigations.isNotEmpty) ...[
+        //       pw.Text(
+        //         "Investigations",
+        //         style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //       ),
+        //       pw.SizedBox(height: 5),
+        //       pw.Wrap(
+        //         spacing: 8,
+        //         runSpacing: 8,
+        //         children: List.generate(
+        //           widget.prescription.investigations.length,
+        //           (index) {
+        //             final investigation = widget.prescription.investigations[index];
+        //             return pw.Column(
+        //               crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //               children: [
+        //                 pw.Text(
+        //                   "${index + 1}. ${investigation.name}",
+        //                 ),
+        //               ],
+        //             );
+        //           },
+        //         ),
+        //       ),
+        //       // pw.SizedBox(height: 20),
+        //     ],
+        //     pw.SizedBox(height: 10),
+        //     pw.Text(
+        //       "Rx",
+        //       style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
+        //     ),
+        //     pw.SizedBox(height: 10),
+        //     ...List.generate(
+        //       widget.prescription.prescribedMedicines.length,
+        //       (index) {
+        //         final prefMedicine = widget.prescription.prescribedMedicines[index];
+        //         return pw.Column(
+        //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+        //           children: [
+        //             pw.Text(
+        //               "${index + 1}. ${AppFunctions.getDosageString(
+        //                 medicineName: prefMedicine.medicine.brandName,
+        //                 dosageString: prefMedicine.dosage?.text,
+        //                 dosageUnit: prefMedicine.dosage?.dosageUnit,
+        //               )}",
+        //               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        //             ),
+        //             pw.SizedBox(height: 1),
+        //             pw.Text(
+        //               AppFunctions.getFrequencyAndDurationString(
+        //                 frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+        //                 duration: prefMedicine.duration?.text,
+        //                 durationUnit: prefMedicine.duration?.durationUnit,
+        //                 isAfterFood: prefMedicine.isAfterFood,
+        //                 isBeforeFood: prefMedicine.isBeforeFood,
+        //                 isEmptyStomach: prefMedicine.isEmptyStomach,
+        //               ),
+        //             ),
+        //             pw.SizedBox(height: 1),
+        //             if (prefMedicine.frequency != null &&
+        //                 prefMedicine.frequency?.frequencyUnit.icon != null &&
+        //                 prefMedicine.dosage != null &&
+        //                 prefMedicine.dosage?.text != null &&
+        //                 prefMedicine.dosage!.text!.isNotEmpty)
+        //               pw.Text(
+        //                 PrescriptionUtils.getFrequencyIcon(
+        //                     prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
+        //               ),
+        //             // if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
+        //             //   pw.Text(prefMedicine.notes!),
+        //             pw.SizedBox(height: 7),
+        //           ],
+        //         );
+        //       },
+        //     ),
+        //     if (widget.prescription.notes != null && widget.prescription.notes!.isNotEmpty) ...[
+        //       // pw.Spacer(),
+        //       pw.SizedBox(
+        //         height: 10,
+        //         // widget.prescription.prescribedMedicines.length >= 4 ? 10 : 10
+        //       ),
+        //       // pw.Spacer(),
+        //       pw.Text("--"),
+        //       pw.SizedBox(height: 5),
+        //       pw.Text(
+        //         "Special Notes",
+        //         style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+        //       ),
+        //       pw.SizedBox(height: 3),
+        //       pw.Text(widget.prescription.notes!),
+        //     ],
+        //   ],
+        //   footer: (context) => pw.Column(
+        //     children: [
+        //       pw.Divider(),
+        //       pw.Row(
+        //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        //         crossAxisAlignment: pw.CrossAxisAlignment.end,
+        //         children: [
+        //           if (widget.prescription.qrData != null)
+        //             pw.Container(
+        //               height: 60,
+        //               width: 60,
+        //               decoration: pw.BoxDecoration(
+        //                 image: pw.DecorationImage(
+        //                   image: pw.MemoryImage(widget.prescription.qrData!),
+        //                   fit: pw.BoxFit.cover,
+        //                 ),
+        //               ),
+        //             ),
+        //           pw.Container(
+        //             // color: PdfColors.amber,
+        //             padding: pw.EdgeInsets.only(right: 8),
+        //             child: pw.Column(
+        //               crossAxisAlignment: pw.CrossAxisAlignment.end,
+        //               children: [
+        //                 if (widget.prescription.doctor != null && widget.prescription.doctor!.email == drAcharyaEmail)
+        //                   pw.Center(
+        //                     child: pw.Container(
+        //                       child: doctorAcharyaSignatureImage,
+        //                       height: 30,
+        //                     ),
+        //                   ),
+        //                 pw.SizedBox(height: 2),
+        //                 pw.SizedBox(
+        //                   child: pw.Text(
+        //                     "Dr. ${widget.prescription.doctor?.name ?? ""}",
+        //                     style: pw.TextStyle(
+        //                       fontSize: 12,
+        //                       fontWeight: pw.FontWeight.bold,
+        //                       color: AppTheme.pdfSecondaryColor,
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 pw.SizedBox(height: 3),
+        //                 pw.SizedBox(
+        //                   child: pw.Text(
+        //                     "${widget.prescription.doctor?.degree ?? ""}${widget.prescription.doctor?.licenseNumber != null ? "." : ""} ${widget.prescription.doctor?.licenseNumber ?? ""}",
+        //                     style: pw.TextStyle(
+        //                       fontSize: 10,
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //       pw.Divider(),
+        //       pw.Row(
+        //         mainAxisAlignment: pw.MainAxisAlignment.center,
+        //         children: [
+        //           pw.Text(
+        //             "Prescription made by ",
+        //             style: pw.TextStyle(fontSize: 9),
+        //           ),
+        //           pw.Text(
+        //             "Primacura",
+        //             style: pw.TextStyle(
+        //               fontSize: 9,
+        //               fontWeight: pw.FontWeight.bold,
+        //               color: AppTheme.pdfPrimaryColor,
+        //             ),
+        //           )
+        //         ],
+        //       ),
+        //     ],
+        //   ),
+        // ),
         pw.MultiPage(
           margin: pw.EdgeInsets.all(30),
           header: (context) => _buildHeader(clinicLogoImage, rodOfAsclepiusImage),
@@ -325,61 +673,112 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
               ),
               // pw.SizedBox(height: 20),
             ],
-            pw.SizedBox(height: 10),
+            pw.SizedBox(height: 5),
+            pw.Divider(),
+            pw.SizedBox(height: 5),
             pw.Text(
               "Rx",
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
             ),
             pw.SizedBox(height: 10),
-            ...List.generate(
-              widget.prescription.prescribedMedicines.length,
-              (index) {
-                final prefMedicine = widget.prescription.prescribedMedicines[index];
-                return pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      "${index + 1}. ${AppFunctions.getDosageString(
-                        medicineName: prefMedicine.medicine.brandName,
-                        dosageString: prefMedicine.dosage?.text,
-                        dosageUnit: prefMedicine.dosage?.dosageUnit,
-                      )}",
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                    ),
-                    pw.SizedBox(height: 1),
-                    pw.Text(
-                      AppFunctions.getFrequencyAndDurationString(
-                        frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                        duration: prefMedicine.duration?.text,
-                        durationUnit: prefMedicine.duration?.durationUnit,
-                        isAfterFood: prefMedicine.isAfterFood,
-                        isBeforeFood: prefMedicine.isBeforeFood,
-                        isEmptyStomach: prefMedicine.isEmptyStomach,
-                      ),
-                    ),
-                    pw.SizedBox(height: 1),
-                    if (prefMedicine.frequency != null &&
-                        prefMedicine.frequency?.frequencyUnit.icon != null &&
-                        prefMedicine.dosage != null &&
-                        prefMedicine.dosage?.text != null &&
-                        prefMedicine.dosage!.text!.isNotEmpty)
-                      pw.Text(
-                        PrescriptionUtils.getFrequencyIcon(
-                            prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
-                      ),
-                    // if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
-                    //   pw.Text(prefMedicine.notes!),
-                    pw.SizedBox(height: 7),
-                  ],
-                );
+            pw.Table(
+              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+              border: pw.TableBorder.all(),
+              columnWidths: {
+                0: pw.FlexColumnWidth(0.3),
+                1: pw.FlexColumnWidth(1),
+                2: pw.FlexColumnWidth(1.5),
+                3: pw.FlexColumnWidth(0.7),
+                4: pw.FlexColumnWidth(1),
               },
+              children: [
+                // Header Row
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(color: PdfColors.grey300),
+                  children: [
+                    pw.Padding(
+                      padding: pw.EdgeInsets.all(4),
+                      child: pw.Text('No.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.all(4),
+                      child: pw.Text('Medicine Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.all(4),
+                      child: pw.Text('Dosage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.all(4),
+                      child: pw.Text('Duration', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.all(4),
+                      child: pw.Text('Notes', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                  ],
+                ),
+
+                ...List.generate(widget.prescription.prescribedMedicines.length, (index) {
+                  final prefMedicine = widget.prescription.prescribedMedicines[index];
+                  return pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text("${index + 1}"),
+                      ),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          AppFunctions.getDosageString(
+                            medicineName: prefMedicine.medicine.brandName,
+                            dosageString: prefMedicine.dosage?.text,
+                            dosageUnit: prefMedicine.dosage?.dosageUnit,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            if (prefMedicine.frequency != null)
+                              pw.Text(
+                                AppFunctions.getFrequencyString(frequencyUnit: prefMedicine.frequency!.frequencyUnit),
+                              ),
+                            if (prefMedicine.frequency != null &&
+                                prefMedicine.frequency?.frequencyUnit.icon != null &&
+                                prefMedicine.dosage != null &&
+                                prefMedicine.dosage?.text != null &&
+                                prefMedicine.dosage!.text!.isNotEmpty)
+                              pw.Text(
+                                PrescriptionUtils.getFrequencyIcon(
+                                    prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
+                              ),
+                          ],
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          AppFunctions.getDurationString(
+                              duration: prefMedicine.duration?.text, durationUnit: prefMedicine.duration?.durationUnit),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty ? prefMedicine.notes! : '-',
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
             ),
             if (widget.prescription.notes != null && widget.prescription.notes!.isNotEmpty) ...[
               // pw.Spacer(),
-              pw.SizedBox(
-                height: 10,
-                // widget.prescription.prescribedMedicines.length >= 4 ? 10 : 10
-              ),
+              pw.SizedBox(height: 10),
               // pw.Spacer(),
               pw.Text("--"),
               pw.SizedBox(height: 5),
