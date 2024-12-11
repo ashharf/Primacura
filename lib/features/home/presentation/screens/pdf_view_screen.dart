@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:opd_management/features/theme/provider/theme_provider.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -64,9 +65,12 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                 : InteractiveViewer(
                     maxScale: 5,
                     child: PdfPreview(
-                      build: (format) {
-                        return savedPdf!;
-                      },
+                      scrollViewDecoration: BoxDecoration(
+                        color: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
+                            ? AppTheme.lightBackgroundColor
+                            : AppTheme.darkBackgroundColor,
+                      ),
+                      build: (format) => savedPdf!,
                       pageFormats: pageFormats,
                       canChangePageFormat: false,
                       canChangeOrientation: false,
