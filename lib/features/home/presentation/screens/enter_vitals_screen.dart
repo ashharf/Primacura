@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opd_management/core/functions/app_functions.dart';
+import 'package:opd_management/features/home/presentation/widget/custom_progress_indicator.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -93,10 +95,15 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             final prescriptionCubit = context.read<PrescriptionCubit>();
             final Patient selectedPatient = prescriptionState.patient!;
 
-            return ListView(
-              padding: AppConstants.defaultPading,
+            return Column(
               children: [
+                CustomProgressIndicator(
+                  currentStep: 1,
+                  totalSteps: 3,
+                ),
+                SizedBox(height: 10.h),
                 Container(
+                  margin: AppConstants.defaultPading,
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor,
@@ -133,111 +140,122 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 30.h),
-                Text("Add Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(height: 10.h),
-                _buildCheifComplaintDropDown(),
-                BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                  builder: (context, state) {
-                    return Wrap(
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: List.generate(
-                        // prescriptionCubit.selectedSymptoms.length,
-                        state.chiefComplaints.length,
-                        (index) => Chip(
-                          label: Text(state.chiefComplaints[index].name),
-                          onDeleted: () {
-                            context.read<PrescriptionCubit>().onChiefComplaintDeleted(state.chiefComplaints[index]);
-                          },
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                Expanded(
+                  child: ListView(
+                    padding: AppConstants.defaultPading,
+                    children: [
+                      SizedBox(height: 30.h),
+                      Text("Add Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
+                      SizedBox(height: 10.h),
+                      _buildCheifComplaintDropDown(),
+                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
+                        builder: (context, state) {
+                          return Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: List.generate(
+                              // prescriptionCubit.selectedSymptoms.length,
+                              state.chiefComplaints.length,
+                              (index) => Chip(
+                                label: Text(state.chiefComplaints[index].name),
+                                onDeleted: () {
+                                  context
+                                      .read<PrescriptionCubit>()
+                                      .onChiefComplaintDeleted(state.chiefComplaints[index]);
+                                },
+                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 30.h),
+                      Text("Vitals", style: Theme.of(context).textTheme.titleMedium),
+                      _buildVitals(),
+                      SizedBox(height: 30.h),
+                      Text("Clinical Findings", style: Theme.of(context).textTheme.titleMedium),
+                      SizedBox(height: 10.h),
+                      _buildClinicalFindingDrodown(),
+                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
+                        builder: (context, state) {
+                          return Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: List.generate(
+                              state.clinicalFindings.length,
+                              (index) => Chip(
+                                label: Text(state.clinicalFindings[index].name),
+                                onDeleted: () {
+                                  context
+                                      .read<PrescriptionCubit>()
+                                      .onClinicalFindingDeleted(state.clinicalFindings[index]);
+                                },
+                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 30.h),
+                      Text("Investigations", style: Theme.of(context).textTheme.titleMedium),
+                      SizedBox(height: 10.h),
+                      _buildInvestigationsDropdown(),
+                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
+                        builder: (context, state) {
+                          return Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: List.generate(
+                              state.investigations.length,
+                              (index) => Chip(
+                                label: Text(state.investigations[index].name),
+                                onDeleted: () {
+                                  context.read<PrescriptionCubit>().onInvestigationDeleted(state.investigations[index]);
+                                },
+                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 30.h),
+                      TextField(
+                        controller: specialNotesController,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: const InputDecoration(
+                          labelText: 'Add Special Notes',
+                          prefixIcon: Icon(
+                            FontAwesomeIcons.notesMedical,
+                            size: 20,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 30.h),
-                Text("Vitals", style: Theme.of(context).textTheme.titleMedium),
-                _buildVitals(),
-                SizedBox(height: 30.h),
-                Text("Clinical Findings", style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(height: 10.h),
-                _buildClinicalFindingDrodown(),
-                BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                  builder: (context, state) {
-                    return Wrap(
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: List.generate(
-                        state.clinicalFindings.length,
-                        (index) => Chip(
-                          label: Text(state.clinicalFindings[index].name),
-                          onDeleted: () {
-                            context.read<PrescriptionCubit>().onClinicalFindingDeleted(state.clinicalFindings[index]);
-                          },
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
-                        ),
+                      SizedBox(height: 30.h),
+                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
+                        builder: (context, state) {
+                          return ElevatedButton.icon(
+                            onPressed: () {
+                              if (state.patient == null) {
+                                Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
+                                return;
+                              }
+                              prescriptionCubit.addTemperature(temperatureController.text.trim());
+                              prescriptionCubit.addBloodPressure(bloodPressureController.text.trim());
+                              prescriptionCubit.addSpO2(spO2Controller.text.trim());
+                              prescriptionCubit.addHeartRate(heartRateController.text.trim());
+                              prescriptionCubit.addSpecialNote(specialNotesController.text.trim());
+                              // );
+                              context.goNamed(AddMedicinesScreen.routeName);
+                            },
+                            label: Icon(Icons.arrow_forward_outlined),
+                            icon: Text("Add Medicines"),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 30.h),
-                Text("Investigations", style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(height: 10.h),
-                _buildInvestigationsDropdown(),
-                BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                  builder: (context, state) {
-                    return Wrap(
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: List.generate(
-                        state.investigations.length,
-                        (index) => Chip(
-                          label: Text(state.investigations[index].name),
-                          onDeleted: () {
-                            context.read<PrescriptionCubit>().onInvestigationDeleted(state.investigations[index]);
-                          },
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 30.h),
-                TextField(
-                  controller: specialNotesController,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(
-                    labelText: 'Add Special Notes',
-                    prefixIcon: Icon(
-                      FontAwesomeIcons.notesMedical,
-                      size: 20,
-                    ),
+                      SizedBox(height: 10.h),
+                    ],
                   ),
                 ),
-                SizedBox(height: 30.h),
-                BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                  builder: (context, state) {
-                    return ElevatedButton.icon(
-                      onPressed: () {
-                        if (state.patient == null) {
-                          Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
-                          return;
-                        }
-                        prescriptionCubit.addTemperature(temperatureController.text.trim());
-                        prescriptionCubit.addBloodPressure(bloodPressureController.text.trim());
-                        prescriptionCubit.addSpO2(spO2Controller.text.trim());
-                        prescriptionCubit.addHeartRate(heartRateController.text.trim());
-                        prescriptionCubit.addSpecialNote(specialNotesController.text.trim());
-                        // );
-                        context.goNamed(AddMedicinesScreen.routeName);
-                      },
-                      label: Icon(Icons.arrow_forward_outlined),
-                      icon: Text("Add Medicines"),
-                    );
-                  },
-                ),
-                SizedBox(height: 10.h),
               ],
             );
           },

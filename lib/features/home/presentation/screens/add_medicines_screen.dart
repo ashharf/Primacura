@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,8 @@ import '../../data/models/medicine.dart';
 import '../../data/models/units.dart';
 import '../cubit/prescription_cubit.dart';
 import '../widget/custom_autocomplete.dart';
+import '../widget/custom_progress_indicator.dart';
+import '../widget/info_widget.dart';
 import 'prescription_review_screen.dart';
 
 class AddMedicinesScreen extends StatefulWidget {
@@ -114,288 +117,301 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           return BlocBuilder<UserCubit, UserState>(
             builder: (context, userState) {
               final userCubit = context.read<UserCubit>();
-              return ListView(
-                padding: AppConstants.defaultPading,
+              return Column(
                 children: [
-                  const SizedBox(height: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Form(
-                        key: _formKey,
-                        child: CustomSearchableDropdown<Medicine>(
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.pills,
-                            size: 20,
-                          ),
-                          hintText: "Search Medicine",
-                          searchLogic: (searchQuery, items) {
-                            final normalizedQuery = searchQuery.trim().toLowerCase();
+                  CustomProgressIndicator(
+                    currentStep: 2,
+                    totalSteps: 3,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      padding: AppConstants.defaultPading,
+                      children: [
+                        SizedBox(height: 10.h),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Form(
+                              key: _formKey,
+                              child: CustomSearchableDropdown<Medicine>(
+                                prefixIcon: Icon(
+                                  FontAwesomeIcons.pills,
+                                  size: 20,
+                                ),
+                                hintText: "Search Medicine eg Tab. Dolo 650",
+                                searchLogic: (searchQuery, items) {
+                                  final normalizedQuery = searchQuery.trim().toLowerCase();
 
-                            // Separate exact matches and partial matches
-                            final exactMatches = items.where((element) {
-                              final normalizedBrandName = (element.brandName).trim().toLowerCase();
-                              return normalizedBrandName == normalizedQuery;
-                            }).toList();
+                                  // Separate exact matches and partial matches
+                                  final exactMatches = items.where((element) {
+                                    final normalizedBrandName = (element.brandName).trim().toLowerCase();
+                                    return normalizedBrandName == normalizedQuery;
+                                  }).toList();
 
-                            final partialMatches = items.where((element) {
-                              final normalizedBrandName = (element.brandName).trim().toLowerCase();
-                              return normalizedBrandName.contains(normalizedQuery) &&
-                                  normalizedBrandName != normalizedQuery;
-                            }).toList();
+                                  final partialMatches = items.where((element) {
+                                    final normalizedBrandName = (element.brandName).trim().toLowerCase();
+                                    return normalizedBrandName.contains(normalizedQuery) &&
+                                        normalizedBrandName != normalizedQuery;
+                                  }).toList();
 
-                            // Combine exact matches at the top, followed by partial matches
-                            return [...exactMatches, ...partialMatches];
-                          },
-                          displayText: (item) => item.brandName,
-                          textEditingController: _searchController,
-                          textCapitalization: TextCapitalization.words,
-                          items: prescriptionCubit.medicines,
-                          showItemDeleteButton: (item) => item.userId == userState.user?.id,
-                          onItemSelected: (item) {
-                            setState(() {
-                              selectedMedicine = item;
-                            });
-                          },
-                          onAddSelected: (searchText) {
-                            final Medicine medicine = Medicine(
-                              id: Uuid().v4(),
-                              brandName: searchText.trim(),
-                              userId: userState.user?.id,
-                            );
-                            userCubit.addMedicineToRemoteDatabase(medicine);
-                            prescriptionCubit.medicines.add(medicine);
-                            setState(() {
-                              selectedMedicine = medicine;
-                            });
-                            setState(() {});
-                          },
-                          onDelete: (item) {
-                            prescriptionCubit.medicines.remove(item);
-                            context.read<UserCubit>().deleteMedicineFromRemoteDatabase(item.id);
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      _buildDosageWidget(),
-                      SizedBox(height: 10),
-                      _buildFrequencyWidget(),
-                      SizedBox(height: 10),
-                      _buildDurationWidget(),
-                      SizedBox(height: 10),
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: AppTheme.primaryColor,
-                        value: isEmptyStomach,
-                        onChanged: (value) => onIsEmptyStomachChanged(value),
-                        title: Text("Empty Stomach"),
-                      ),
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: AppTheme.primaryColor,
-                        value: isBeforeFood,
-                        onChanged: (value) => onIsBeforeFoodChanged(value),
-                        title: Text("Before Food"),
-                      ),
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: AppTheme.primaryColor,
-                        value: isAfterFood,
-                        onChanged: (value) => onIsAfterFoodChanged(value),
-                        title: Text("After Food"),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _notesController,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: "Notes",
-                          prefixIcon: Icon(FontAwesomeIcons.notesMedical),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: selectedMedicine == null
-                            ? null
-                            : () {
-                                context.read<PrescriptionCubit>().onMedicineAddForPrescription(
-                                      medicine: selectedMedicine!,
-                                      prescribedDosage: PrescriptionDosage(
-                                        text: _dosageController.text,
-                                        dosageUnit: selectedDosageUnit!,
-                                      ),
-                                      prescribedFrequency: selectedFrequency == null
-                                          ? null
-                                          : PrescriptionFrequency(
-                                              text: _frequencyController.text,
-                                              frequencyUnit: selectedFrequency!,
+                                  // Combine exact matches at the top, followed by partial matches
+                                  return [...exactMatches, ...partialMatches];
+                                },
+                                displayText: (item) => item.brandName,
+                                textEditingController: _searchController,
+                                textCapitalization: TextCapitalization.words,
+                                items: prescriptionCubit.medicines,
+                                showItemDeleteButton: (item) => item.userId == userState.user?.id,
+                                onItemSelected: (item) {
+                                  setState(() {
+                                    selectedMedicine = item;
+                                  });
+                                },
+                                onAddSelected: (searchText) {
+                                  final Medicine medicine = Medicine(
+                                    id: Uuid().v4(),
+                                    brandName: searchText.trim(),
+                                    userId: userState.user?.id,
+                                  );
+                                  userCubit.addMedicineToRemoteDatabase(medicine);
+                                  prescriptionCubit.medicines.add(medicine);
+                                  setState(() {
+                                    selectedMedicine = medicine;
+                                  });
+                                  setState(() {});
+                                },
+                                onDelete: (item) {
+                                  prescriptionCubit.medicines.remove(item);
+                                  context.read<UserCubit>().deleteMedicineFromRemoteDatabase(item.id);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            _buildDosageWidget(),
+                            SizedBox(height: 10),
+                            _buildFrequencyWidget(),
+                            SizedBox(height: 10),
+                            _buildDurationWidget(),
+                            SizedBox(height: 10),
+                            SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              activeColor: AppTheme.primaryColor,
+                              value: isEmptyStomach,
+                              onChanged: (value) => onIsEmptyStomachChanged(value),
+                              title: Text("Empty Stomach"),
+                            ),
+                            SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              activeColor: AppTheme.primaryColor,
+                              value: isBeforeFood,
+                              onChanged: (value) => onIsBeforeFoodChanged(value),
+                              title: Text("Before Food"),
+                            ),
+                            SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              activeColor: AppTheme.primaryColor,
+                              value: isAfterFood,
+                              onChanged: (value) => onIsAfterFoodChanged(value),
+                              title: Text("After Food"),
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                              controller: _notesController,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: InputDecoration(
+                                hintText: "Notes",
+                                prefixIcon: Icon(FontAwesomeIcons.notesMedical),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: selectedMedicine == null
+                                  ? null
+                                  : () {
+                                      context.read<PrescriptionCubit>().onMedicineAddForPrescription(
+                                            medicine: selectedMedicine!,
+                                            prescribedDosage: PrescriptionDosage(
+                                              text: _dosageController.text,
+                                              dosageUnit: selectedDosageUnit!,
                                             ),
-                                      prescribedDuration: PrescriptionDuration(
-                                        text: _durationController.text,
-                                        durationUnit: selectedDurationUnit!,
+                                            prescribedFrequency: selectedFrequency == null
+                                                ? null
+                                                : PrescriptionFrequency(
+                                                    text: _frequencyController.text,
+                                                    frequencyUnit: selectedFrequency!,
+                                                  ),
+                                            prescribedDuration: PrescriptionDuration(
+                                              text: _durationController.text,
+                                              durationUnit: selectedDurationUnit!,
+                                            ),
+                                            isAfterFood: isAfterFood,
+                                            isBeforeFood: isBeforeFood,
+                                            isEmptyStomach: isEmptyStomach,
+                                            notes: _notesController.text,
+                                          );
+                                      _searchController.clear();
+                                      _dosageController.clear();
+                                      _frequencyController.clear();
+                                      _durationController.clear();
+                                      _notesController.clear();
+                                      setState(() {
+                                        selectedMedicine = null;
+                                        isBeforeFood = false;
+                                        isEmptyStomach = false;
+                                        isAfterFood = false;
+                                        selectedDosageUnit = prescriptionCubit.dosages.first;
+                                        // selectedFrequency = prescriptionCubit.frequencies.first;
+                                        selectedFrequency = null;
+                                        selectedDurationUnit = prescriptionCubit.durations.first;
+                                      });
+                                      FocusScope.of(context).unfocus();
+                                    },
+                              child: Text("Add to Prescription"),
+                            ),
+                            SizedBox(height: 10),
+                            Divider(),
+                            if (state.prescribedMedicines.isNotEmpty)
+                              ReorderableListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final prefMedicine = state.prescribedMedicines[index];
+                                  return ListTile(
+                                    leading: Icon(Icons.drag_handle),
+                                    // shape: RoundedRectangleBorder(
+                                    //   borderRadius: BorderRadius.circular(8),
+                                    // ),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                    key: ValueKey(prefMedicine.hashCode),
+                                    title: Text(
+                                      AppFunctions.getDosageString(
+                                        medicineName: prefMedicine.medicine.brandName,
+                                        dosageString: prefMedicine.dosage?.text,
+                                        dosageUnit: prefMedicine.dosage?.dosageUnit,
                                       ),
-                                      isAfterFood: isAfterFood,
-                                      isBeforeFood: isBeforeFood,
-                                      isEmptyStomach: isEmptyStomach,
-                                      notes: _notesController.text,
-                                    );
-                                _searchController.clear();
-                                _dosageController.clear();
-                                _frequencyController.clear();
-                                _durationController.clear();
-                                _notesController.clear();
-                                setState(() {
-                                  selectedMedicine = null;
-                                  isBeforeFood = false;
-                                  isEmptyStomach = false;
-                                  isAfterFood = false;
-                                  selectedDosageUnit = prescriptionCubit.dosages.first;
-                                  // selectedFrequency = prescriptionCubit.frequencies.first;
-                                  selectedFrequency = null;
-                                  selectedDurationUnit = prescriptionCubit.durations.first;
-                                });
-                                FocusScope.of(context).unfocus();
-                              },
-                        child: Text("Add to Prescription"),
-                      ),
-                      SizedBox(height: 10),
-                      Divider(),
-                      if (state.prescribedMedicines.isNotEmpty)
-                        ReorderableListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final prefMedicine = state.prescribedMedicines[index];
-                            return ListTile(
-                              leading: Icon(Icons.drag_handle),
-                              // shape: RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.circular(8),
-                              // ),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                              key: ValueKey(prefMedicine.hashCode),
-                              title: Text(
-                                AppFunctions.getDosageString(
-                                  medicineName: prefMedicine.medicine.brandName,
-                                  dosageString: prefMedicine.dosage?.text,
-                                  dosageUnit: prefMedicine.dosage?.dosageUnit,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppFunctions.getFrequencyAndDurationString(
-                                      frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                                      duration: prefMedicine.duration?.text,
-                                      durationUnit: prefMedicine.duration?.durationUnit,
-                                      isAfterFood: prefMedicine.isAfterFood,
-                                      isBeforeFood: prefMedicine.isBeforeFood,
-                                      isEmptyStomach: prefMedicine.isEmptyStomach,
                                     ),
-                                  ),
-                                  if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
-                                    Text(prefMedicine.notes!),
-                                ],
-                              ),
-                              trailing: SizedBox(
-                                width: 90,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text('Edit Medicine: ${prefMedicine.medicine.brandName}'),
-                                            content: Text('Are you sure you want to edit this medicine?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  selectedMedicine = prefMedicine.medicine;
-                                                  _searchController.text = prefMedicine.medicine.brandName;
-                                                  _dosageController.text = prefMedicine.dosage?.text?.trim() ?? "";
-                                                  selectedDosageUnit = prefMedicine.dosage?.dosageUnit;
-                                                  _frequencyController.text =
-                                                      prefMedicine.frequency?.text?.trim() ?? "";
-                                                  selectedFrequency = prefMedicine.frequency?.frequencyUnit;
-                                                  _durationController.text = prefMedicine.duration?.text.trim() ?? "";
-                                                  selectedDurationUnit = prefMedicine.duration?.durationUnit;
-                                                  _notesController.text = prefMedicine.notes?.trim() ?? "";
-                                                  isAfterFood = prefMedicine.isAfterFood;
-                                                  isBeforeFood = prefMedicine.isBeforeFood;
-                                                  isEmptyStomach = prefMedicine.isEmptyStomach;
-                                                  prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
-                                                  setState(() {});
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Text('Yes'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Text('No'),
-                                              ),
-                                            ],
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          AppFunctions.getFrequencyAndDurationString(
+                                            frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                                            duration: prefMedicine.duration?.text,
+                                            durationUnit: prefMedicine.duration?.durationUnit,
+                                            isAfterFood: prefMedicine.isAfterFood,
+                                            isBeforeFood: prefMedicine.isBeforeFood,
+                                            isEmptyStomach: prefMedicine.isEmptyStomach,
                                           ),
-                                        );
-                                      },
-                                      icon: Icon(Icons.edit),
+                                        ),
+                                        if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
+                                          Text(prefMedicine.notes!),
+                                      ],
                                     ),
-                                    IconButton(
-                                      // padding: EdgeInsets.zero,
-                                      style: IconButton.styleFrom(
-                                        // padding: EdgeInsets.zero,
-                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        // backgroundColor: Colors.amber,
+                                    trailing: SizedBox(
+                                      width: 90,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text('Edit Medicine: ${prefMedicine.medicine.brandName}'),
+                                                  content: Text('Are you sure you want to edit this medicine?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        selectedMedicine = prefMedicine.medicine;
+                                                        _searchController.text = prefMedicine.medicine.brandName;
+                                                        _dosageController.text =
+                                                            prefMedicine.dosage?.text?.trim() ?? "";
+                                                        selectedDosageUnit = prefMedicine.dosage?.dosageUnit;
+                                                        _frequencyController.text =
+                                                            prefMedicine.frequency?.text?.trim() ?? "";
+                                                        selectedFrequency = prefMedicine.frequency?.frequencyUnit;
+                                                        _durationController.text =
+                                                            prefMedicine.duration?.text.trim() ?? "";
+                                                        selectedDurationUnit = prefMedicine.duration?.durationUnit;
+                                                        _notesController.text = prefMedicine.notes?.trim() ?? "";
+                                                        isAfterFood = prefMedicine.isAfterFood;
+                                                        isBeforeFood = prefMedicine.isBeforeFood;
+                                                        isEmptyStomach = prefMedicine.isEmptyStomach;
+                                                        prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
+                                                        setState(() {});
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: Text('Yes'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: Text('No'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(Icons.edit),
+                                          ),
+                                          IconButton(
+                                            // padding: EdgeInsets.zero,
+                                            style: IconButton.styleFrom(
+                                              // padding: EdgeInsets.zero,
+                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                              // backgroundColor: Colors.amber,
+                                            ),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text("Delete Medicine"),
+                                                  content: Text(
+                                                      "Are you sure you want to delete ${prefMedicine.medicine.brandName}?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(),
+                                                      child: Text("Cancel"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: Text("Delete"),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(Icons.delete),
+                                          ),
+                                        ],
                                       ),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text("Delete Medicine"),
-                                            content: Text(
-                                                "Are you sure you want to delete ${prefMedicine.medicine.brandName}?"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.of(context).pop(),
-                                                child: Text("Cancel"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Text("Delete"),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      icon: Icon(Icons.delete),
                                     ),
-                                  ],
-                                ),
+                                  );
+                                },
+                                itemCount: state.prescribedMedicines.length,
+                                onReorder: (oldIndex, newIndex) {
+                                  if (oldIndex < newIndex) {
+                                    newIndex -= 1;
+                                  }
+                                  // if (newIndex < 0) {
+                                  //   newIndex++;
+                                  // } else if (newIndex == 0) {
+                                  //   newIndex = 0;
+                                  // } else {
+                                  //   newIndex--;
+                                  // }
+                                  prescriptionCubit.onPrescriptionMedicineReorder(oldIndex, newIndex);
+                                },
                               ),
-                            );
-                          },
-                          itemCount: state.prescribedMedicines.length,
-                          onReorder: (oldIndex, newIndex) {
-                            if (oldIndex < newIndex) {
-                              newIndex -= 1;
-                            }
-                            // if (newIndex < 0) {
-                            //   newIndex++;
-                            // } else if (newIndex == 0) {
-                            //   newIndex = 0;
-                            // } else {
-                            //   newIndex--;
-                            // }
-                            prescriptionCubit.onPrescriptionMedicineReorder(oldIndex, newIndex);
-                          },
+                          ],
                         ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -426,7 +442,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           width: 140,
           child: TextField(
             controller: _dosageController,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.datetime,
             decoration: const InputDecoration(
               labelText: 'Dosage',
               // prefixIcon: Icon(
@@ -452,6 +468,13 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
               selectedDosageUnit = value;
             });
           },
+        ),
+        Spacer(),
+        InfoWidget(
+          infoText:
+              "Select Tablets, Capsules, or ml (for Syrup) etc from the dropdown and enter the quantity to be taken per dose.",
+          iconData: Icons.info_outline,
+          iconColor: AppTheme.primaryColor,
         )
       ],
     );
@@ -496,6 +519,12 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
               selectedFrequency = value;
             });
           },
+        ),
+        Spacer(),
+        InfoWidget(
+          infoText: "Select the frequency of the medicine from the dropdown.",
+          iconData: Icons.info_outline,
+          iconColor: AppTheme.primaryColor,
         )
       ],
     );

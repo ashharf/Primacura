@@ -134,6 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 showNavigationArrow: true,
                 controller: _controller,
+                view: DateRangePickerView.month,
+                monthViewSettings: DateRangePickerMonthViewSettings(
+                  showTrailingAndLeadingDates: true,
+                  firstDayOfWeek: 1,
+                ),
                 initialSelectedDate: DateTime.now(),
                 selectionColor: AppTheme.primaryColor,
                 todayHighlightColor: AppTheme.tertiaryColor,
@@ -147,6 +152,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
+            SizedBox(height: 10.h),
+            Text("Your Appointments", style: Theme.of(context).textTheme.titleMedium),
+            SizedBox(height: 5.h),
             Padding(
               padding: AppConstants.defaultPading,
               child: BlocConsumer<PrescriptionCubit, PrescriptionState>(
