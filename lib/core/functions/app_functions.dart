@@ -72,6 +72,10 @@ class AppFunctions {
     return frequencyUnit.name;
   }
 
+  static String getFoodState({bool isAfterFood = false, bool isBeforeFood = false, bool isEmptyStomach = false}) {
+    return "${isAfterFood ? "(After Food)" : ""}${isBeforeFood ? "(Before Food)" : ""}${isEmptyStomach ? "(Empty Stomach)" : ""}";
+  }
+
   static String getDurationString({required String? duration, required DurationUnit? durationUnit}) {
     if (duration == null || duration.isEmpty) return "";
     if (durationUnit == null) return duration;

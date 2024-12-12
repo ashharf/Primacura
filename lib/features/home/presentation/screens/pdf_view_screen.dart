@@ -755,6 +755,11 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                                 PrescriptionUtils.getFrequencyIcon(
                                     prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
                               ),
+                            pw.Text(AppFunctions.getFoodState(
+                              isAfterFood: prefMedicine.isAfterFood,
+                              isBeforeFood: prefMedicine.isBeforeFood,
+                              isEmptyStomach: prefMedicine.isEmptyStomach,
+                            )),
                           ],
                         ),
                       ),
@@ -768,7 +773,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                       pw.Padding(
                         padding: pw.EdgeInsets.all(4),
                         child: pw.Text(
-                          prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty ? prefMedicine.notes! : '-',
+                          prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty ? prefMedicine.notes! : '',
                         ),
                       ),
                     ],
