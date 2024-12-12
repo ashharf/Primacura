@@ -469,16 +469,18 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
         //   ),
         // ),
         pw.MultiPage(
+          theme: pw.ThemeData(
+            defaultTextStyle: pw.TextStyle(fontSize: 10),
+          ),
           margin: pw.EdgeInsets.all(30),
           header: (context) => _buildHeader(clinicLogoImage, rodOfAsclepiusImage),
           build: (context) => [
-            pw.SizedBox(height: 10),
             pw.DecoratedBox(
               decoration: pw.BoxDecoration(
                 border: pw.Border.all(width: 1, color: PdfColors.black),
               ),
               child: pw.Padding(
-                padding: pw.EdgeInsets.all(8),
+                padding: pw.EdgeInsets.all(6),
                 child: pw.Row(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -488,13 +490,8 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
-                            "Name: ${widget.prescription.patient.name ?? ""}",
+                            "Name: ${widget.prescription.patient.name ?? ""}, ${widget.prescription.patient.age ?? ""}",
                           ),
-                          pw.SizedBox(height: 5),
-                          pw.Text(
-                            "Age: ${widget.prescription.patient.age ?? ""}",
-                          ),
-                          pw.SizedBox(height: 5),
                           pw.Row(
                             children: [
                               pw.Text(
@@ -532,35 +529,38 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
             pw.SizedBox(height: 10),
             if (widget.prescription.chiefComplaints.isNotEmpty) ...[
               pw.Padding(
-                padding: pw.EdgeInsets.only(bottom: 10),
+                padding: pw.EdgeInsets.only(bottom: 5),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       "Chief Complaints",
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                     ),
                     pw.SizedBox(height: 5),
-                    pw.Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: List.generate(
-                        widget.prescription.chiefComplaints.length,
-                        (index) {
-                          final chiefComplaint = widget.prescription.chiefComplaints[index];
-                          return pw.Text(
-                            "${index + 1}. ${chiefComplaint.name}",
-                          );
-                        },
+                    pw.SizedBox(
+                      width: double.maxFinite,
+                      child: pw.Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: List.generate(
+                          widget.prescription.chiefComplaints.length,
+                          (index) {
+                            final chiefComplaint = widget.prescription.chiefComplaints[index];
+                            return pw.Text(
+                              "${index + 1}. ${chiefComplaint.name}",
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               )
             ],
             if (widget.prescription.clinicalFindings.isNotEmpty) ...[
               pw.Padding(
-                padding: pw.EdgeInsets.only(bottom: 10),
+                padding: pw.EdgeInsets.only(bottom: 5),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -568,13 +568,12 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                       "Clinical Findings",
                       style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
-                        fontSize: 14,
                       ),
                     ),
                     pw.SizedBox(height: 5),
                     pw.Wrap(
                       spacing: 8,
-                      runSpacing: 8,
+                      runSpacing: 2,
                       children: List.generate(
                         widget.prescription.clinicalFindings.length,
                         (index) {
@@ -600,17 +599,17 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                 (widget.prescription.heartRate != null && widget.prescription.heartRate!.isNotEmpty) ||
                 (widget.prescription.spO2 != null && widget.prescription.spO2!.isNotEmpty))
               pw.Padding(
-                padding: pw.EdgeInsets.only(bottom: 10),
+                padding: pw.EdgeInsets.only(bottom: 5),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       "Vitals",
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                     ),
                     pw.SizedBox(height: 5),
                     pw.Wrap(
-                      runSpacing: 8,
+                      runSpacing: 2,
                       spacing: 8,
                       children: [
                         if (widget.prescription.bloodPressure != null &&
@@ -648,48 +647,52 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                 ),
               ),
             if (widget.prescription.investigations.isNotEmpty) ...[
-              pw.Text(
-                "Investigations",
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: List.generate(
-                  widget.prescription.investigations.length,
-                  (index) {
-                    final investigation = widget.prescription.investigations[index];
-                    return pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          "${index + 1}. ${investigation.name}",
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+              pw.Padding(
+                padding: pw.EdgeInsets.only(bottom: 0),
+                child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                  pw.Text(
+                    "Investigations",
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.SizedBox(height: 5),
+                  pw.Wrap(
+                    spacing: 8,
+                    runSpacing: 2,
+                    children: List.generate(
+                      widget.prescription.investigations.length,
+                      (index) {
+                        final investigation = widget.prescription.investigations[index];
+                        return pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "${index + 1}. ${investigation.name}",
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ]),
+              )
+
               // pw.SizedBox(height: 20),
             ],
-            pw.SizedBox(height: 5),
             pw.Divider(),
-            pw.SizedBox(height: 5),
             pw.Text(
               "Rx",
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
-            pw.SizedBox(height: 10),
+            pw.SizedBox(height: 5),
             pw.Table(
               defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
               border: pw.TableBorder.all(),
               columnWidths: {
-                0: pw.FlexColumnWidth(0.3),
-                1: pw.FlexColumnWidth(1),
+                0: pw.FlexColumnWidth(0.23),
+                1: pw.FlexColumnWidth(1.3),
                 2: pw.FlexColumnWidth(1.5),
-                3: pw.FlexColumnWidth(0.7),
-                4: pw.FlexColumnWidth(1),
+                3: pw.FlexColumnWidth(0.6),
+                4: pw.FlexColumnWidth(0.8),
               },
               children: [
                 // Header Row
@@ -698,23 +701,59 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                   children: [
                     pw.Padding(
                       padding: pw.EdgeInsets.all(4),
-                      child: pw.Text('No.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
+                        pw.Text(
+                          'No.',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                      ]),
                     ),
                     pw.Padding(
                       padding: pw.EdgeInsets.all(4),
-                      child: pw.Text('Medicine Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        children: [
+                          pw.Text(
+                            'Medicine',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                     pw.Padding(
                       padding: pw.EdgeInsets.all(4),
-                      child: pw.Text('Dosage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        children: [
+                          pw.Text(
+                            'Dosage',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                     pw.Padding(
-                      padding: pw.EdgeInsets.all(4),
-                      child: pw.Text('Duration', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    ),
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'Duration',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                            ),
+                          ],
+                        )),
                     pw.Padding(
                       padding: pw.EdgeInsets.all(4),
-                      child: pw.Text('Notes', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        children: [
+                          pw.Text(
+                            'Notes',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -740,11 +779,12 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                       pw.Padding(
                         padding: pw.EdgeInsets.all(4),
                         child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             if (prefMedicine.frequency != null)
                               pw.Text(
                                 AppFunctions.getFrequencyString(frequencyUnit: prefMedicine.frequency!.frequencyUnit),
+                                style: pw.TextStyle(fontSize: 9),
                               ),
                             if (prefMedicine.frequency != null &&
                                 prefMedicine.frequency?.frequencyUnit.icon != null &&
@@ -752,16 +792,13 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                                 prefMedicine.dosage?.text != null &&
                                 prefMedicine.dosage!.text!.isNotEmpty)
                               pw.Text(
-                                PrescriptionUtils.getFrequencyIcon(
-                                    prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
+                                "${PrescriptionUtils.getFrequencyIcon(prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!)} ${AppFunctions.getFoodState(
+                                  isAfterFood: prefMedicine.isAfterFood,
+                                  isBeforeFood: prefMedicine.isBeforeFood,
+                                  isEmptyStomach: prefMedicine.isEmptyStomach,
+                                )}",
+                                style: pw.TextStyle(fontSize: 9),
                               ),
-                            pw.Text(
-                              AppFunctions.getFoodState(
-                                isAfterFood: prefMedicine.isAfterFood,
-                                isBeforeFood: prefMedicine.isBeforeFood,
-                                isEmptyStomach: prefMedicine.isEmptyStomach,
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -770,12 +807,14 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                         child: pw.Text(
                           AppFunctions.getDurationString(
                               duration: prefMedicine.duration?.text, durationUnit: prefMedicine.duration?.durationUnit),
+                          style: pw.TextStyle(fontSize: 9),
                         ),
                       ),
                       pw.Padding(
                         padding: pw.EdgeInsets.all(4),
                         child: pw.Text(
                           prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty ? prefMedicine.notes! : '',
+                          style: pw.TextStyle(fontSize: 9),
                         ),
                       ),
                     ],
@@ -787,11 +826,10 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
               // pw.Spacer(),
               pw.SizedBox(height: 10),
               // pw.Spacer(),
-              pw.Text("--"),
-              pw.SizedBox(height: 5),
+
               pw.Text(
                 "Special Notes",
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
               ),
               pw.SizedBox(height: 3),
               pw.Text(widget.prescription.notes!),
@@ -1035,7 +1073,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                               "Chief Complaints",
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
                             ),
-                            pw.SizedBox(height: 5),
+                            pw.SizedBox(height: 3),
                             ...List.generate(
                               widget.prescription.chiefComplaints.length,
                               (index) {
@@ -1178,23 +1216,23 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
           child: pw.Text(
             "Dr. ${widget.prescription.doctor?.name ?? ""}",
             style: pw.TextStyle(
-              fontSize: 17,
+              fontSize: 15,
               fontWeight: pw.FontWeight.bold,
               color: AppTheme.pdfSecondaryColor,
             ),
           ),
         ),
-        pw.SizedBox(height: 3),
+        pw.SizedBox(height: 2),
         pw.SizedBox(
           width: 180,
           child: pw.Text(
             widget.prescription.doctor?.degree ?? "",
             style: pw.TextStyle(
-              fontSize: null,
+              fontSize: 12,
             ),
           ),
         ),
-        pw.SizedBox(height: 3),
+        pw.SizedBox(height: 2),
         if (widget.prescription.doctor?.specializations != null)
           ...List.generate(
             widget.prescription.doctor!.specializations.length,
@@ -1209,7 +1247,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
             ),
           ),
         if (widget.prescription.doctor?.licenseNumber != null) ...[
-          pw.SizedBox(height: 3),
+          pw.SizedBox(height: 2),
           pw.SizedBox(
             width: 180,
             child: pw.Text(
@@ -1251,24 +1289,24 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                   width: 180,
                   child: pw.Text(
                     widget.prescription.doctor?.clinicName ?? "",
-                    style: pw.TextStyle(fontSize: 20),
+                    style: pw.TextStyle(fontSize: 15),
                   ),
                 ),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 2),
                 pw.SizedBox(
                   width: 180,
                   child: pw.Text(
                     widget.prescription.doctor?.clinicAddress ?? "",
                   ),
                 ),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 2),
                 pw.SizedBox(
                   width: 180,
                   child: pw.Text(
                     widget.prescription.doctor?.clinicTimings ?? "",
                   ),
                 ),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 2),
                 pw.SizedBox(
                   width: 180,
                   child: pw.Text(
@@ -1299,8 +1337,8 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
           children: [
             if (widget.prescription.qrData != null)
               pw.Container(
-                height: 60,
-                width: 60,
+                height: 50,
+                width: 50,
                 decoration: pw.BoxDecoration(
                   image: pw.DecorationImage(
                     image: pw.MemoryImage(widget.prescription.qrData!),
@@ -1352,12 +1390,12 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
           children: [
             pw.Text(
               "Prescription made by ",
-              style: pw.TextStyle(fontSize: 9),
+              style: pw.TextStyle(fontSize: 8),
             ),
             pw.Text(
               "Primacura",
               style: pw.TextStyle(
-                fontSize: 9,
+                fontSize: 8,
                 fontWeight: pw.FontWeight.bold,
                 color: AppTheme.pdfPrimaryColor,
               ),
