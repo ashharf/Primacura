@@ -755,11 +755,13 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                                 PrescriptionUtils.getFrequencyIcon(
                                     prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
                               ),
-                            pw.Text(AppFunctions.getFoodState(
-                              isAfterFood: prefMedicine.isAfterFood,
-                              isBeforeFood: prefMedicine.isBeforeFood,
-                              isEmptyStomach: prefMedicine.isEmptyStomach,
-                            )),
+                            pw.Text(
+                              AppFunctions.getFoodState(
+                                isAfterFood: prefMedicine.isAfterFood,
+                                isBeforeFood: prefMedicine.isBeforeFood,
+                                isEmptyStomach: prefMedicine.isEmptyStomach,
+                              ),
+                            ),
                           ],
                         ),
                       ),
