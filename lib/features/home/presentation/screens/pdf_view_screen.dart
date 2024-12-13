@@ -799,6 +799,16 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                                 )}",
                                 style: pw.TextStyle(fontSize: 9),
                               ),
+                            if (prefMedicine.frequency == null ||
+                                prefMedicine.frequency?.frequencyUnit.icon == null ||
+                                prefMedicine.dosage == null ||
+                                prefMedicine.dosage?.text == null ||
+                                prefMedicine.dosage!.text!.isNotEmpty)
+                              pw.Text(AppFunctions.getFoodState(
+                                isAfterFood: prefMedicine.isAfterFood,
+                                isBeforeFood: prefMedicine.isBeforeFood,
+                                isEmptyStomach: prefMedicine.isEmptyStomach,
+                              ))
                           ],
                         ),
                       ),
