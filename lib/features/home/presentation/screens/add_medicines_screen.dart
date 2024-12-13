@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -229,43 +231,73 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                               onPressed: selectedMedicine == null
                                   ? null
                                   : () {
-                                      context.read<PrescriptionCubit>().onMedicineAddForPrescription(
-                                            medicine: selectedMedicine!,
-                                            prescribedDosage: PrescriptionDosage(
-                                              text: _dosageController.text,
-                                              dosageUnit: selectedDosageUnit!,
-                                            ),
-                                            prescribedFrequency: selectedFrequency == null
-                                                ? null
-                                                : PrescriptionFrequency(
-                                                    text: _frequencyController.text,
-                                                    frequencyUnit: selectedFrequency!,
-                                                  ),
-                                            prescribedDuration: PrescriptionDuration(
-                                              text: _durationController.text,
-                                              durationUnit: selectedDurationUnit!,
-                                            ),
-                                            isAfterFood: isAfterFood,
-                                            isBeforeFood: isBeforeFood,
-                                            isEmptyStomach: isEmptyStomach,
-                                            notes: _notesController.text,
-                                          );
-                                      _searchController.clear();
-                                      _dosageController.clear();
-                                      _frequencyController.clear();
-                                      _durationController.clear();
-                                      _notesController.clear();
-                                      setState(() {
-                                        selectedMedicine = null;
-                                        isBeforeFood = false;
-                                        isEmptyStomach = false;
-                                        isAfterFood = false;
-                                        selectedDosageUnit = prescriptionCubit.dosages.first;
-                                        // selectedFrequency = prescriptionCubit.frequencies.first;
-                                        selectedFrequency = null;
-                                        selectedDurationUnit = prescriptionCubit.durations.first;
-                                      });
-                                      FocusScope.of(context).unfocus();
+                                      void addToPrescription(
+                                          BuildContext context, PrescriptionCubit prescriptionCubit) {
+                                        context.read<PrescriptionCubit>().onMedicineAddForPrescription(
+                                              medicine: selectedMedicine!,
+                                              prescribedDosage: PrescriptionDosage(
+                                                text: _dosageController.text,
+                                                dosageUnit: selectedDosageUnit!,
+                                              ),
+                                              prescribedFrequency: selectedFrequency == null
+                                                  ? null
+                                                  : PrescriptionFrequency(
+                                                      text: _frequencyController.text,
+                                                      frequencyUnit: selectedFrequency!,
+                                                    ),
+                                              prescribedDuration: PrescriptionDuration(
+                                                text: _durationController.text,
+                                                durationUnit: selectedDurationUnit!,
+                                              ),
+                                              isAfterFood: isAfterFood,
+                                              isBeforeFood: isBeforeFood,
+                                              isEmptyStomach: isEmptyStomach,
+                                              notes: _notesController.text,
+                                            );
+                                        _searchController.clear();
+                                        _dosageController.clear();
+                                        _frequencyController.clear();
+                                        _durationController.clear();
+                                        _notesController.clear();
+                                        setState(() {
+                                          selectedMedicine = null;
+                                          isBeforeFood = false;
+                                          isEmptyStomach = false;
+                                          isAfterFood = false;
+                                          selectedDosageUnit = prescriptionCubit.dosages.first;
+                                          // selectedFrequency = prescriptionCubit.frequencies.first;
+                                          selectedFrequency = null;
+                                          selectedDurationUnit = prescriptionCubit.durations.first;
+                                        });
+                                        FocusScope.of(context).unfocus();
+                                      }
+
+                                      if (_dosageController.text.isNotEmpty && selectedFrequency == null) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                                  title: Text("Frequency not selected"),
+                                                  content: Text(
+                                                      "To show dosage on prescription you must select a frequency"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        addToPrescription(context, prescriptionCubit);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Add Medicine anyway"),
+                                                    ),
+                                                    OutlinedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Ok"),
+                                                    ),
+                                                  ],
+                                                ));
+                                      } else {
+                                        addToPrescription(context, prescriptionCubit);
+                                      }
                                     },
                               child: Text("Add to Prescription"),
                             ),
@@ -277,6 +309,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   final prefMedicine = state.prescribedMedicines[index];
+
                                   return ListTile(
                                     leading: Icon(Icons.drag_handle),
                                     // shape: RoundedRectangleBorder(
@@ -291,23 +324,34 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                         dosageUnit: prefMedicine.dosage?.dosageUnit,
                                       ),
                                     ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          AppFunctions.getFrequencyAndDurationString(
-                                            frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                                            duration: prefMedicine.duration?.text,
-                                            durationUnit: prefMedicine.duration?.durationUnit,
-                                            isAfterFood: prefMedicine.isAfterFood,
-                                            isBeforeFood: prefMedicine.isBeforeFood,
-                                            isEmptyStomach: prefMedicine.isEmptyStomach,
+                                    subtitle: AppFunctions.getFrequencyAndDurationString(
+                                                  frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                                                  duration: prefMedicine.duration?.text,
+                                                  durationUnit: prefMedicine.duration?.durationUnit,
+                                                  isAfterFood: prefMedicine.isAfterFood,
+                                                  isBeforeFood: prefMedicine.isBeforeFood,
+                                                  isEmptyStomach: prefMedicine.isEmptyStomach,
+                                                ) ==
+                                                " " &&
+                                            (prefMedicine.notes == null || prefMedicine.notes!.isEmpty)
+                                        ? null
+                                        : Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                AppFunctions.getFrequencyAndDurationString(
+                                                  frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                                                  duration: prefMedicine.duration?.text,
+                                                  durationUnit: prefMedicine.duration?.durationUnit,
+                                                  isAfterFood: prefMedicine.isAfterFood,
+                                                  isBeforeFood: prefMedicine.isBeforeFood,
+                                                  isEmptyStomach: prefMedicine.isEmptyStomach,
+                                                ),
+                                              ),
+                                              if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
+                                                Text(prefMedicine.notes!),
+                                            ],
                                           ),
-                                        ),
-                                        if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
-                                          Text(prefMedicine.notes!),
-                                      ],
-                                    ),
                                     trailing: SizedBox(
                                       width: 90,
                                       child: Row(
@@ -398,13 +442,6 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                   if (oldIndex < newIndex) {
                                     newIndex -= 1;
                                   }
-                                  // if (newIndex < 0) {
-                                  //   newIndex++;
-                                  // } else if (newIndex == 0) {
-                                  //   newIndex = 0;
-                                  // } else {
-                                  //   newIndex--;
-                                  // }
                                   prescriptionCubit.onPrescriptionMedicineReorder(oldIndex, newIndex);
                                 },
                               ),
@@ -421,14 +458,20 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(20),
-        child: ElevatedButton(
-          onPressed: () {
-            context.read<PrescriptionCubit>().onMakePrescription(
-                  user: context.read<UserCubit>().state.user,
-                );
-            context.goNamed(PrescriptionReviewScreen.routeName);
+        child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
+          builder: (context, state) {
+            return ElevatedButton(
+              onPressed: state.prescribedMedicines.isEmpty
+                  ? null
+                  : () {
+                      context.read<PrescriptionCubit>().onMakePrescription(
+                            user: context.read<UserCubit>().state.user,
+                          );
+                      context.goNamed(PrescriptionReviewScreen.routeName);
+                    },
+              child: Text("Review Prescription"),
+            );
           },
-          child: Text("Review Prescription"),
         ),
       ),
     );
