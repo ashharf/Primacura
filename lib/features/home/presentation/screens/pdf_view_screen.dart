@@ -760,6 +760,11 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
 
                 ...List.generate(widget.prescription.prescribedMedicines.length, (index) {
                   final prefMedicine = widget.prescription.prescribedMedicines[index];
+                  final bool isFrequencyEmpty =
+                      prefMedicine.frequency != null && prefMedicine.frequency?.frequencyUnit.icon != null;
+                  final bool isDosageEmpty = prefMedicine.dosage != null &&
+                      prefMedicine.dosage?.text != null &&
+                      prefMedicine.dosage!.text!.isNotEmpty;
                   return pw.TableRow(
                     children: [
                       pw.Padding(
@@ -786,29 +791,22 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                                 AppFunctions.getFrequencyString(frequencyUnit: prefMedicine.frequency!.frequencyUnit),
                                 style: pw.TextStyle(fontSize: 9),
                               ),
-                            if (prefMedicine.frequency != null &&
-                                prefMedicine.frequency?.frequencyUnit.icon != null &&
-                                prefMedicine.dosage != null &&
-                                prefMedicine.dosage?.text != null &&
-                                prefMedicine.dosage!.text!.isNotEmpty)
-                              pw.Text(
-                                "${PrescriptionUtils.getFrequencyIcon(prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!)} ${AppFunctions.getFoodState(
-                                  isAfterFood: prefMedicine.isAfterFood,
-                                  isBeforeFood: prefMedicine.isBeforeFood,
-                                  isEmptyStomach: prefMedicine.isEmptyStomach,
-                                )}",
-                                style: pw.TextStyle(fontSize: 9),
-                              ),
-                            if (prefMedicine.frequency == null ||
-                                prefMedicine.frequency?.frequencyUnit.icon == null ||
-                                prefMedicine.dosage == null ||
-                                prefMedicine.dosage?.text == null ||
-                                prefMedicine.dosage!.text!.isNotEmpty)
-                              pw.Text(AppFunctions.getFoodState(
-                                isAfterFood: prefMedicine.isAfterFood,
-                                isBeforeFood: prefMedicine.isBeforeFood,
-                                isEmptyStomach: prefMedicine.isEmptyStomach,
-                              ))
+                            isFrequencyEmpty && isDosageEmpty
+                                ? pw.Text(
+                                    "${PrescriptionUtils.getFrequencyIcon(prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!)} ${AppFunctions.getFoodState(
+                                      isAfterFood: prefMedicine.isAfterFood,
+                                      isBeforeFood: prefMedicine.isBeforeFood,
+                                      isEmptyStomach: prefMedicine.isEmptyStomach,
+                                    )}",
+                                    style: pw.TextStyle(fontSize: 9),
+                                  )
+                                : pw.Text(
+                                    AppFunctions.getFoodState(
+                                      isAfterFood: prefMedicine.isAfterFood,
+                                      isBeforeFood: prefMedicine.isBeforeFood,
+                                      isEmptyStomach: prefMedicine.isEmptyStomach,
+                                    ),
+                                  )
                           ],
                         ),
                       ),
