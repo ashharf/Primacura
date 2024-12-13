@@ -9,17 +9,9 @@ import '../models/units.dart';
 abstract class PrescriptionRepository {
   Future<List<Medicine>> getMedicinesFromRemoteDataSource();
 
-  Future<List<DosageUnit>> getDosagesFromLocal();
-  Future<List<DurationUnit>> getDurationsFromLocal();
-  Future<List<FrequencyUnit>> getFrequenciesFromLocal();
-
-  Future<void> addDosageFromRemoteToLocal();
-  Future<void> addFrequencyFromRemoteToLocal();
-  Future<void> addDurationFromRemoteToLocal();
-
-  // Future<void> getDosageFromRemote();
-  // Future<void> getFrequencyFromRemote();
-  // Future<void> getDurationFromRemote();
+  Future<List<DosageUnit>> getDosageFromRemote();
+  Future<List<FrequencyUnit>> getFrequencyFromRemote();
+  Future<List<DurationUnit>> getDurationFromRemote();
 
   Future<DateTime> getDosageSyncTime();
   Future<DateTime> getFrequencySyncTime();
@@ -46,57 +38,27 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<List<DosageUnit>> getDosagesFromLocal() {
+  Future<List<DosageUnit>> getDosageFromRemote() async {
     try {
-      return prescriptionLocalDataSource.getDosages();
+      return prescriptionRemoteDataSource.getDosages();
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<List<FrequencyUnit>> getFrequenciesFromLocal() {
+  Future<List<FrequencyUnit>> getFrequencyFromRemote() async {
     try {
-      return prescriptionLocalDataSource.getFrequencies();
+      return prescriptionRemoteDataSource.getFrequencies();
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<List<DurationUnit>> getDurationsFromLocal() {
+  Future<List<DurationUnit>> getDurationFromRemote() async {
     try {
-      return prescriptionLocalDataSource.getDurations();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> addDosageFromRemoteToLocal() async {
-    try {
-      final dosages = await prescriptionRemoteDataSource.getDosages();
-      return prescriptionLocalDataSource.addDosages(dosages);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> addFrequencyFromRemoteToLocal() async {
-    try {
-      final frequencies = await prescriptionRemoteDataSource.getFrequencies();
-      return prescriptionLocalDataSource.addFrequencies(frequencies);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> addDurationFromRemoteToLocal() async {
-    try {
-      final durations = await prescriptionRemoteDataSource.getDurations();
-      return prescriptionLocalDataSource.addDurations(durations);
+      return prescriptionRemoteDataSource.getDurations();
     } catch (e) {
       rethrow;
     }

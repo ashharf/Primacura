@@ -5,13 +5,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/home/presentation/cubit/prescription_cubit.dart';
+
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/prescription_utils.dart';
+import '../cubit/prescription_cubit.dart';
 import '../widget/custom_progress_indicator.dart';
 import 'pdf_view_screen.dart';
 import 'dart:ui' as ui;
@@ -24,7 +25,6 @@ class PrescriptionReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final prescriptionCubit = context.read<PrescriptionCubit>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Prescription Review"),

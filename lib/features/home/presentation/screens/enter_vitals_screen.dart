@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/home/presentation/widget/custom_progress_indicator.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -19,6 +18,7 @@ import '../../data/models/patient.dart';
 import '../../data/models/symptomps.dart';
 import '../cubit/prescription_cubit.dart';
 import '../widget/custom_autocomplete.dart';
+import '../widget/custom_progress_indicator.dart';
 import 'add_medicines_screen.dart';
 
 class EnterVitalsScreen extends StatefulWidget {
@@ -34,19 +34,15 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
   final TextEditingController chiefComplaintSearchController = TextEditingController();
   final TextEditingController clinicalFindingsSearchController = TextEditingController();
   final TextEditingController investigationSearchController = TextEditingController();
-
   final TextEditingController temperatureController = TextEditingController();
   final TextEditingController bloodPressureController = TextEditingController();
   final TextEditingController spO2Controller = TextEditingController();
   final TextEditingController heartRateController = TextEditingController();
   final TextEditingController specialNotesController = TextEditingController();
-  final dropDownKey = GlobalKey<DropdownSearchState>();
 
   bool isNewSymptomp = false;
   bool isNewClinicalFinding = false;
   bool isNewInvestigation = false;
-
-  final double nudgeOffset = 100.0;
 
   @override
   void initState() {

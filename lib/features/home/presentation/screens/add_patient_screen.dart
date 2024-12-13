@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/functions/app_functions.dart';
-import '../cubit/prescription_cubit.dart';
+
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/functions/app_functions.dart';
+import '../cubit/prescription_cubit.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../data/models/patient.dart';
@@ -24,7 +25,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final phoneNumberRegex = RegExp(r'^[0-9]{10}$');
+  final RegExp phoneNumberRegex = RegExp(r'^[0-9]{10}$');
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Gender selectedGender = Gender.male;
 
@@ -53,7 +54,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     }
                     return null;
                   },
-                  // onChanged: (value) => context.read<PatientCubit>().searchPatients,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
@@ -68,9 +68,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     }
                     return null;
                   },
-                  // onChanged: (value) {
-                  //   context.read<PatientCubit>().deleteSelectedPatient();
-                  // },
                 ),
                 SizedBox(height: 10),
                 TextFormField(
@@ -85,9 +82,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     }
                     return null;
                   },
-                  // onChanged: (value) {
-                  //     context.read<PatientCubit>().deleteSelectedPatient();
-                  // },
                 ),
                 SizedBox(height: 10),
                 DropdownMenu(

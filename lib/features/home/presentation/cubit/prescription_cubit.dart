@@ -175,9 +175,7 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
     );
     try {
       final pres = await prescriptionRepository.getPrescriptions();
-      log(pres.length.toString());
 
-      //     // selectedPatientPrescriptions.clear();
       emit(state.copyWith(prescriptions: pres));
 
       final List<Prescription> fPres = state.prescriptions
@@ -227,41 +225,16 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
 
   Future<void> getMedicinesFromRemoteDataSource() async {
     final meds = await prescriptionRepository.getMedicinesFromRemoteDataSource();
-    // for (var element in meds) {
-    //   if (element.brandName == 'Test') {
-    //     log(element.brandName);
-    //   }
-    // }
     medicines.clear();
     medicines.addAll(meds);
     emit(state.copyWith(isLoading: false));
   }
 
   Future<void> getUnits() async {
-    // TODO make this sync from remote directly
     try {
-      dosages.clear();
-      frequencies.clear();
-      durations.clear();
-      dosages.addAll(await prescriptionRepository.getDosagesFromLocal());
-      frequencies.addAll(await prescriptionRepository.getFrequenciesFromLocal());
-      durations.addAll(await prescriptionRepository.getDurationsFromLocal());
-      // frequencies.sort((a, b) => a.name.compareTo(b.name));
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  Future<void> syncUnitsFromRemote() async {
-    try {
-      await prescriptionRepository.addDosageFromRemoteToLocal();
-      await prescriptionRepository.addFrequencyFromRemoteToLocal();
-      await prescriptionRepository.addDurationFromRemoteToLocal();
-
-      // dosages.addAll(await prescriptionRepository.getDosagesFromLocal());
-      // frequencies.addAll(await prescriptionRepository.getFrequenciesFromLocal());
-      // durations.addAll(await prescriptionRepository.getDurationsFromLocal());
-      getUnits();
+      dosages.addAll(await prescriptionRepository.getDosageFromRemote());
+      frequencies.addAll(await prescriptionRepository.getFrequencyFromRemote());
+      durations.addAll(await prescriptionRepository.getDurationFromRemote());
     } catch (e) {
       log(e.toString());
     }
@@ -281,10 +254,6 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
       emit(state.copyWith(isLoading: false));
     }
   }
-
-  // void selectPatient(Patient patient) {
-  //   emit(state.copyWith(patient: patient));
-  // }
 
   void clearPatientAndPrescriptionDetails() {
     emit(PrescriptionState.emptyPrescription(state));

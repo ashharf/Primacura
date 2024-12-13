@@ -39,8 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       patientCubit.getPatients();
       prescriptionCubit.getMedicinesFromRemoteDataSource();
-      prescriptionCubit.syncUnitsFromRemote();
-      prescriptionCubit.getPrescriptions();
+      prescriptionCubit.getUnits();
       prescriptionCubit.getPrescriptions();
     });
 
