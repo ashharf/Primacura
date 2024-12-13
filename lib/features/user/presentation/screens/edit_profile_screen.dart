@@ -128,12 +128,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Icons.local_hospital,
                           ),
                         ),
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter your clinic name';
-                        //   }
-                        //   return null;
-                        // },
                       ),
                       SizedBox(height: 20),
                       TextFormField(
@@ -227,47 +221,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           // setState(() {});
                         },
                       ),
-
-                      // Autocomplete<Specialization>(
-                      //   fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                      //     // specializationController = textEditingController;
-                      //     return TextFormField(
-                      //       controller: textEditingController,
-                      //       focusNode: focusNode,
-                      //       decoration: const InputDecoration(
-                      //         labelText: 'Specialization',
-                      //         prefixIcon: Icon(
-                      //           FontAwesomeIcons.userDoctor,
-                      //           size: 20,
-                      //         ),
-                      //         // border: OutlineInputBorder(),
-                      //       ),
-                      //     );
-                      //   },
-                      //   optionsBuilder: (textEditingValue) {
-                      //     if (textEditingValue.text.isEmpty) {
-                      //       return const Iterable<Specialization>.empty();
-                      //     }
-
-                      //     final specializations = context.read<UserCubit>().specializations;
-                      //     // specializations.removeWhere(
-                      //     //   (item) => userCubit.selectedSpecializations.contains(item),
-                      //     // );
-
-                      //     return specializations.where(
-                      //       (specialization) => specialization.name.toLowerCase().contains(
-                      //             textEditingValue.text.toLowerCase(),
-                      //           ),
-                      //     );
-                      //   },
-                      //   displayStringForOption: (Specialization specialization) => specialization.name,
-                      //   onSelected: (value) {
-                      //     context.read<UserCubit>().selectSpecialization(value, isProfileEditing: true);
-                      //     FocusScope.of(context).unfocus();
-                      //     // specializationController.clear();
-                      //   },
-                      // ),
-
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Wrap(
