@@ -161,32 +161,43 @@ class PrescriptionReviewScreen extends StatelessWidget {
                                 dosageString: prefMedicine.dosage?.text,
                                 dosageUnit: prefMedicine.dosage?.dosageUnit),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppFunctions.getFrequencyAndDurationString(
-                                  frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                                  duration: prefMedicine.duration?.text,
-                                  durationUnit: prefMedicine.duration?.durationUnit,
-                                  isAfterFood: prefMedicine.isAfterFood,
-                                  isBeforeFood: prefMedicine.isBeforeFood,
-                                  isEmptyStomach: prefMedicine.isEmptyStomach,
+                          subtitle: AppFunctions.getFrequencyAndDurationString(
+                                        frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                                        duration: prefMedicine.duration?.text,
+                                        durationUnit: prefMedicine.duration?.durationUnit,
+                                        isAfterFood: prefMedicine.isAfterFood,
+                                        isBeforeFood: prefMedicine.isBeforeFood,
+                                        isEmptyStomach: prefMedicine.isEmptyStomach,
+                                      ) ==
+                                      " " &&
+                                  (prefMedicine.notes == null || prefMedicine.notes!.isEmpty)
+                              ? null
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      AppFunctions.getFrequencyAndDurationString(
+                                        frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                                        duration: prefMedicine.duration?.text,
+                                        durationUnit: prefMedicine.duration?.durationUnit,
+                                        isAfterFood: prefMedicine.isAfterFood,
+                                        isBeforeFood: prefMedicine.isBeforeFood,
+                                        isEmptyStomach: prefMedicine.isEmptyStomach,
+                                      ),
+                                    ),
+                                    if (prefMedicine.frequency != null &&
+                                        prefMedicine.frequency?.frequencyUnit.icon != null &&
+                                        prefMedicine.dosage != null &&
+                                        prefMedicine.dosage?.text != null &&
+                                        prefMedicine.dosage!.text!.isNotEmpty)
+                                      Text(
+                                        PrescriptionUtils.getFrequencyIcon(
+                                            prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
+                                      ),
+                                    if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
+                                      Text(prefMedicine.notes!),
+                                  ],
                                 ),
-                              ),
-                              if (prefMedicine.frequency != null &&
-                                  prefMedicine.frequency?.frequencyUnit.icon != null &&
-                                  prefMedicine.dosage != null &&
-                                  prefMedicine.dosage?.text != null &&
-                                  prefMedicine.dosage!.text!.isNotEmpty)
-                                Text(
-                                  PrescriptionUtils.getFrequencyIcon(
-                                      prefMedicine.frequency!.frequencyUnit.icon!, prefMedicine.dosage!),
-                                ),
-                              if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
-                                Text(prefMedicine.notes!),
-                            ],
-                          ),
                         );
                       }),
                     ],
