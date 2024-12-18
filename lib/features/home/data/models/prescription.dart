@@ -61,6 +61,24 @@ class Prescription {
     };
   }
 
+  Map<String, dynamic> toJsonForRemoteDatabase() {
+    return <String, dynamic>{
+      'id': id,
+      'patient': patient.toJsonForRemoteDatabase(),
+      'doctor': doctor?.toJsonForRemoteDatabase(),
+      'chiefComplaints': chiefComplaints.map((x) => x.toJson()).toList(),
+      'temperature': temperature,
+      'bloodPressure': bloodPressure,
+      'spO2': spO2,
+      'heartRate': heartRate,
+      'clinicalFindings': clinicalFindings.map((x) => x.toJson()).toList(),
+      'investigations': investigations.map((x) => x.toJson()).toList(),
+      'prescribedMedicines': prescribedMedicines.map((x) => x.toJson()).toList(),
+      'dateTime': dateTime?.toIso8601String(),
+      'comment': notes,
+    };
+  }
+
   factory Prescription.fromJson(Map<String, dynamic> map) {
     return Prescription(
       id: map['id'] as String,

@@ -12,6 +12,7 @@ class AppConstants {
   static const String dosagesCollection = 'dosage';
   static const String frequencyCollection = 'frequency';
   static const String durationCollection = 'duration';
+  static const String prescriptionsCollection = 'prescriptions';
   static const googleDrivePatientsFileName = 'patients_backup.json';
   static const googleDrivePrescriptionsFileName = 'prescriptions_backup.json';
 }

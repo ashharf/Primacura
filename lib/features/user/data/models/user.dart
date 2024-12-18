@@ -66,6 +66,21 @@ class User {
     };
   }
 
+  Map<String, dynamic> toJsonForRemoteDatabase() {
+    return <String, dynamic>{
+      'id': id,
+      'email': email,
+      'username': name,
+      'speciality': specializations.map((e) => e.toJson()).toList(),
+      'degree': degree,
+      'clinicName': clinicName,
+      'clinicAddress': clinicAddress,
+      'clinicTimings': clinicTimings,
+      'phoneNumber': phoneNumber,
+      'licenseNumber': licenseNumber,
+    };
+  }
+
   factory User.fromJson(Map<String, dynamic> map) {
     return User(
       id: map['id'] as String,

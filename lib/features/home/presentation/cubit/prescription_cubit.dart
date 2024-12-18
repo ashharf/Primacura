@@ -255,6 +255,17 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
     }
   }
 
+  Future<void> addPrescriptionToRemoteDatabase() async {
+    try {
+      if (state.prescription == null) {
+        return;
+      }
+      await prescriptionRepository.addPrescriptionToRemoteDatabase(state.prescription!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   void clearPatientAndPrescriptionDetails() {
     emit(PrescriptionState.emptyPrescription(state));
   }

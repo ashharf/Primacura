@@ -19,6 +19,8 @@ abstract class PrescriptionRepository {
 
   Future<void> addPrescription(Prescription prescription);
   Future<List<Prescription>> getPrescriptions();
+
+  Future<void> addPrescriptionToRemoteDatabase(Prescription prescription);
 }
 
 class PrescriptionRepositoryImpl implements PrescriptionRepository {
@@ -121,6 +123,15 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   Future<List<Prescription>> getPrescriptions() async {
     try {
       return prescriptionLocalDataSource.getPrescriptions();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addPrescriptionToRemoteDatabase(Prescription prescription) async {
+    try {
+      return prescriptionRemoteDataSource.addPrescriptionToFirestore(prescription);
     } catch (e) {
       rethrow;
     }

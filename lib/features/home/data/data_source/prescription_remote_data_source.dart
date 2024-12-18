@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../models/medicine.dart';
+import '../models/prescription.dart';
 import '../models/units.dart';
 
 class PrescriptionRemoteDataSource {
@@ -58,6 +59,16 @@ class PrescriptionRemoteDataSource {
             )
             .toList();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> addPrescriptionToFirestore(Prescription prescription) async {
+    try {
+      await firebaseFirestore.collection(AppConstants.prescriptionsCollection).doc(prescription.id).set(
+            prescription.toJsonForRemoteDatabase(),
+          );
     } catch (e) {
       rethrow;
     }
