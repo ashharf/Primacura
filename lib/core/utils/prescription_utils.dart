@@ -1,5 +1,5 @@
-import 'package:opd_management/features/home/data/models/patient.dart';
-import 'package:opd_management/features/home/data/models/units.dart';
+import '../../features/home/data/models/patient.dart';
+import '../../features/home/data/models/units.dart';
 
 class PrescriptionUtils {
   PrescriptionUtils._();

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:opd_management/features/home/presentation/cubit/prescription_cubit.dart';
-import 'package:opd_management/features/home/presentation/screens/select_patient_screen.dart';
+
+import '../cubit/prescription_cubit.dart';
+import 'select_patient_screen.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -32,10 +33,21 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         children: [
           MobileScanner(
             controller: controller,
+            overlayBuilder: (context, constraints) => Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+            ),
             onDetect: (barcodes) async {
               if (barcodes.barcodes.isEmpty) {
                 context.pop();
-                showErrorDialog(context);
+                _showErrorDialog(context);
                 return;
               }
 
@@ -46,8 +58,6 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               } else {
                 try {
                   final prescriptionCubit = context.read<PrescriptionCubit>();
-                  // final patientCubit = context.read<PatientCubit>();
-                  // final allPatients = patientCubit.state.patients;
                   await prescriptionCubit.getPrescriptions();
                   final prescriptions = prescriptionCubit.state.prescriptions;
                   final prescription = prescriptions.firstWhere((element) => element.id == data);
@@ -60,30 +70,18 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                 } catch (e) {
                   if (context.mounted) {
                     context.pop();
-                    showPatientNotFoundDialog(context);
+                    _showPatientNotFoundDialog(context);
                   }
                 }
               }
             },
           ),
-          Container(
-            height: 200,
-            width: 200,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.white,
-                width: 2,
-              ),
-            ),
-          )
         ],
       ),
     );
   }
 
-  showErrorDialog(BuildContext context) {
+  _showErrorDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -103,7 +101,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     );
   }
 
-  showPatientNotFoundDialog(BuildContext context) {
+  _showPatientNotFoundDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {

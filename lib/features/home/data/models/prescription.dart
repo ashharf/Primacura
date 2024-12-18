@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:opd_management/features/home/data/models/clinical_findings.dart';
-import 'package:opd_management/features/home/data/models/investigation.dart';
-import 'package:opd_management/features/home/data/models/patient.dart';
+import 'clinical_findings.dart';
+import 'investigation.dart';
+import 'patient.dart';
 
 import 'symptomps.dart';
 

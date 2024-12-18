@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:opd_management/core/services/upload_file_service.dart';
-import 'package:opd_management/features/home/data/models/clinical_findings.dart';
-import 'package:opd_management/features/home/data/models/investigation.dart';
+
+import '../../../../core/services/upload_file_service.dart';
+import '../../../home/data/models/clinical_findings.dart';
+import '../../../home/data/models/investigation.dart';
 import '../../../home/data/models/medicine.dart';
 import '../../../home/data/models/symptomps.dart';
 import '../../data/models/specialization.dart';
@@ -160,15 +161,6 @@ class UserCubit extends Cubit<UserState> {
     await authRepository.deleteInvestigation((state as UserAuthenticated).user.id, investigation);
     (state as UserAuthenticated).user.investigations.remove(investigation);
   }
-
-  // Future<void> checkAndAddMedicines() async {
-  //   await authRepository.checkAndAddMedicines();
-  // }
-
-  // Future<void> getMedicinesFromRemoteDatabase() async {
-  //   final medicines = await authRepository.getMedicinesFromRemoteDatabase();
-  //   emit(UserAuthenticated(user: (state as UserAuthenticated).user));
-  // }
 
   Future<void> addMedicineToRemoteDatabase(Medicine medicine) async {
     await authRepository.addMedicineToRemoteDatabase(medicine);

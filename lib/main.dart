@@ -8,12 +8,12 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:opd_management/core/services/google_drive_service.dart';
-import 'package:opd_management/core/services/upload_file_service.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/scroll_pyhsics.dart';
 import 'core/routes/app_routes.dart';
+import 'core/services/google_drive_service.dart';
+import 'core/services/upload_file_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/data/data_source/patient_local_data_source.dart';
 import 'features/home/data/data_source/patient_remote_data_source.dart';

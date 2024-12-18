@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:opd_management/features/home/data/models/units.dart';
-import 'package:opd_management/features/home/presentation/cubit/prescription_cubit.dart';
+import '../../features/home/data/models/units.dart';
+import '../../features/home/presentation/cubit/prescription_cubit.dart';
 
 import '../../features/home/presentation/cubit/patient_cubit.dart';
 

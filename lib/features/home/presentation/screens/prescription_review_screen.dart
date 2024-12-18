@@ -1,11 +1,11 @@
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -15,7 +15,6 @@ import '../../../../core/utils/prescription_utils.dart';
 import '../cubit/prescription_cubit.dart';
 import '../widget/custom_progress_indicator.dart';
 import 'pdf_view_screen.dart';
-import 'dart:ui' as ui;
 
 class PrescriptionReviewScreen extends StatelessWidget {
   const PrescriptionReviewScreen({super.key});
@@ -227,7 +226,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                       final prescription = state.prescription;
                       prescription!.dateTime = DateTime.now();
 
-                      final capturedImage = await makeQRImage();
+                      final capturedImage = await _makeQRImage();
                       prescription.qrData = capturedImage;
 
                       if (context.mounted) {
@@ -246,7 +245,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
     );
   }
 
-  Future<Uint8List> makeQRImage() async {
+  Future<Uint8List> _makeQRImage() async {
     try {
       // Get the boundary of the widget
       RenderRepaintBoundary boundary = _qrRepaintBoundryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;

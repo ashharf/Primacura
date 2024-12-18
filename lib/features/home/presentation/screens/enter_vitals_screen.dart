@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/blood_pressure_input_parameters.dart';
@@ -30,18 +29,14 @@ class EnterVitalsScreen extends StatefulWidget {
 }
 
 class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
-  final TextEditingController chiefComplaintSearchController = TextEditingController();
-  final TextEditingController clinicalFindingsSearchController = TextEditingController();
-  final TextEditingController investigationSearchController = TextEditingController();
-  final TextEditingController temperatureController = TextEditingController();
-  final TextEditingController bloodPressureController = TextEditingController();
-  final TextEditingController spO2Controller = TextEditingController();
-  final TextEditingController heartRateController = TextEditingController();
-  final TextEditingController specialNotesController = TextEditingController();
-
-  bool isNewSymptomp = false;
-  bool isNewClinicalFinding = false;
-  bool isNewInvestigation = false;
+  final TextEditingController _chiefComplaintSearchController = TextEditingController();
+  final TextEditingController _clinicalFindingsSearchController = TextEditingController();
+  final TextEditingController _investigationSearchController = TextEditingController();
+  final TextEditingController _temperatureController = TextEditingController();
+  final TextEditingController _bloodPressureController = TextEditingController();
+  final TextEditingController _spO2Controller = TextEditingController();
+  final TextEditingController _heartRateController = TextEditingController();
+  final TextEditingController _specialNotesController = TextEditingController();
 
   @override
   void initState() {
@@ -51,24 +46,24 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
     final spO2 = prescriptionCubit.state.spO2;
     final heartRate = prescriptionCubit.state.heartRate;
     final specialNotes = prescriptionCubit.state.specialNote;
-    temperatureController.text = temperature ?? "";
-    bloodPressureController.text = bloodPressure ?? "";
-    spO2Controller.text = spO2 ?? "";
-    heartRateController.text = heartRate ?? "";
-    specialNotesController.text = specialNotes ?? "";
+    _temperatureController.text = temperature ?? "";
+    _bloodPressureController.text = bloodPressure ?? "";
+    _spO2Controller.text = spO2 ?? "";
+    _heartRateController.text = heartRate ?? "";
+    _specialNotesController.text = specialNotes ?? "";
     super.initState();
   }
 
   @override
   void dispose() {
-    chiefComplaintSearchController.dispose();
-    clinicalFindingsSearchController.dispose();
-    investigationSearchController.dispose();
-    temperatureController.dispose();
-    bloodPressureController.dispose();
-    spO2Controller.dispose();
-    heartRateController.dispose();
-    specialNotesController.dispose();
+    _chiefComplaintSearchController.dispose();
+    _clinicalFindingsSearchController.dispose();
+    _investigationSearchController.dispose();
+    _temperatureController.dispose();
+    _bloodPressureController.dispose();
+    _spO2Controller.dispose();
+    _heartRateController.dispose();
+    _specialNotesController.dispose();
     super.dispose();
   }
 
@@ -214,7 +209,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                       ),
                       SizedBox(height: 30.h),
                       TextField(
-                        controller: specialNotesController,
+                        controller: _specialNotesController,
                         textCapitalization: TextCapitalization.sentences,
                         decoration: const InputDecoration(
                           labelText: 'Add Special Notes',
@@ -233,12 +228,12 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                                 Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
                                 return;
                               }
-                              prescriptionCubit.addTemperature(temperatureController.text.trim());
-                              prescriptionCubit.addBloodPressure(bloodPressureController.text.trim());
-                              prescriptionCubit.addSpO2(spO2Controller.text.trim());
-                              prescriptionCubit.addHeartRate(heartRateController.text.trim());
-                              prescriptionCubit.addSpecialNote(specialNotesController.text.trim());
-                              // );
+                              prescriptionCubit.addTemperature(_temperatureController.text.trim());
+                              prescriptionCubit.addBloodPressure(_bloodPressureController.text.trim());
+                              prescriptionCubit.addSpO2(_spO2Controller.text.trim());
+                              prescriptionCubit.addHeartRate(_heartRateController.text.trim());
+                              prescriptionCubit.addSpecialNote(_specialNotesController.text.trim());
+
                               context.goNamed(AddMedicinesScreen.routeName);
                             },
                             label: Icon(Icons.arrow_forward_outlined),
@@ -286,14 +281,14 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             return [...exactMatches, ...partialMatches];
           },
           displayText: (item) => item.name,
-          textEditingController: investigationSearchController,
+          textEditingController: _investigationSearchController,
           items: (state as UserAuthenticated).user.investigations,
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
             context.read<PrescriptionCubit>().onInvestigationSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
-              investigationSearchController.clear();
+              _investigationSearchController.clear();
             });
           },
           onAddSelected: (searchText) {
@@ -306,7 +301,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             prescriptionCubit.onInvestigationSelected(investigation);
 
             Future.delayed(Duration(milliseconds: 1), () {
-              investigationSearchController.clear();
+              _investigationSearchController.clear();
             });
 
             setState(() {});
@@ -349,14 +344,14 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             return [...exactMatches, ...partialMatches];
           },
           displayText: (item) => item.name,
-          textEditingController: clinicalFindingsSearchController,
+          textEditingController: _clinicalFindingsSearchController,
           items: (state as UserAuthenticated).user.clinicalFindings,
           showItemDeleteButton: (item) => true,
           shouldUnFocusOnSelect: false,
           onItemSelected: (item) {
             context.read<PrescriptionCubit>().onClinicalFindingSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
-              clinicalFindingsSearchController.clear();
+              _clinicalFindingsSearchController.clear();
             });
           },
           onAddSelected: (searchText) {
@@ -369,7 +364,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             prescriptionCubit.onClinicalFindingSelected(chiefComplaint);
 
             Future.delayed(Duration(milliseconds: 1), () {
-              clinicalFindingsSearchController.clear();
+              _clinicalFindingsSearchController.clear();
             });
 
             // setState(() {});
@@ -393,7 +388,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    controller: temperatureController,
+                    controller: _temperatureController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
@@ -408,7 +403,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                 SizedBox(width: 20.w),
                 Expanded(
                   child: TextFormField(
-                    controller: bloodPressureController,
+                    controller: _bloodPressureController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -429,7 +424,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           children: [
             Expanded(
               child: TextFormField(
-                controller: spO2Controller,
+                controller: _spO2Controller,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -443,7 +438,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             SizedBox(width: 20.w),
             Expanded(
               child: TextFormField(
-                controller: heartRateController,
+                controller: _heartRateController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -489,14 +484,14 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             return [...exactMatches, ...partialMatches];
           },
           displayText: (item) => item.name,
-          textEditingController: chiefComplaintSearchController,
+          textEditingController: _chiefComplaintSearchController,
           items: (state as UserAuthenticated).user.chiefComplaints,
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
             context.read<PrescriptionCubit>().onCheifComplaintSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
-              chiefComplaintSearchController.clear();
+              _chiefComplaintSearchController.clear();
             });
           },
           onAddSelected: (searchText) {
@@ -505,7 +500,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
               name: searchText.trim(),
             );
             Future.delayed(Duration(milliseconds: 1), () {
-              chiefComplaintSearchController.clear();
+              _chiefComplaintSearchController.clear();
             });
 
             context.read<UserCubit>().addChiefComplaint(chiefComplaint);

@@ -9,9 +9,6 @@ part 'patient_state.dart';
 class PatientCubit extends Cubit<PatientState> {
   PatientCubit({required this.patientRepository}) : super(PatientInitial());
   final PatientRepository patientRepository;
-  // bool isSearching = false;
-
-  // final List<Patient> _cachedPatients = [];
 
   List<Patient> patientsWithSameNumber = [];
 
@@ -19,8 +16,6 @@ class PatientCubit extends Cubit<PatientState> {
     try {
       emit(PatientLoading());
       final List<Patient> patients = await patientRepository.getPatients();
-      // _cachedPatients.clear();
-      // _cachedPatients.addAll(patients);
       emit(PatientLoaded(patients: patients));
     } catch (e) {
       emit(PatientError(message: e.toString()));

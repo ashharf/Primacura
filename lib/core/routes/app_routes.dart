@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/home/data/models/prescription.dart';
-import 'package:opd_management/features/home/presentation/screens/pdf_view_screen.dart';
-import 'package:opd_management/features/home/presentation/screens/prescription_review_screen.dart';
+import '../../features/home/data/models/prescription.dart';
+import '../../features/home/presentation/screens/pdf_view_screen.dart';
+import '../../features/home/presentation/screens/prescription_review_screen.dart';
 import '../../features/home/presentation/screens/add_medicines_screen.dart';
 
 import '../../features/home/presentation/screens/add_patient_screen.dart';

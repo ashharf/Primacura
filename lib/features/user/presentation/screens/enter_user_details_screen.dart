@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/user/data/models/user.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
+import '../../data/models/user.dart';
 import '../cubit/user_cubit.dart';
 
 class EnterUserDetailsScreen extends StatefulWidget {
@@ -24,31 +25,30 @@ class EnterUserDetailsScreen extends StatefulWidget {
 class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  late final TextEditingController nameController;
-  late final TextEditingController specializationController;
-  late final TextEditingController licenseNumberController;
-  late final TextEditingController clinicNameController;
-  late final TextEditingController clinicAddressController;
-  late final TextEditingController clinicTimeController;
-  late final TextEditingController phoneNumberController;
-  late final TextEditingController degreeController;
+  late final TextEditingController _nameController;
+  late final TextEditingController _specializationController;
+  late final TextEditingController _licenseNumberController;
+  late final TextEditingController _clinicNameController;
+  late final TextEditingController _clinicAddressController;
+  late final TextEditingController _clinicTimeController;
+  late final TextEditingController _phoneNumberController;
+  late final TextEditingController _degreeController;
 
   @override
   void initState() {
     final userCubit = context.read<UserCubit>();
-    // final prescriptionCubit = context.read<PrescriptionCubit>();
     userCubit.getSpecializations();
     userCubit.addUserSpecializationToSelectedAtCompleteYourProfile();
-    // prescriptionCubit.syncUnitsFromRemote();
+
     final User user = (userCubit.state as UserProfileNotCompleted).user;
-    nameController = TextEditingController(text: user.name);
-    specializationController = TextEditingController();
-    licenseNumberController = TextEditingController(text: user.licenseNumber);
-    clinicNameController = TextEditingController(text: user.clinicName);
-    clinicAddressController = TextEditingController(text: user.clinicAddress);
-    clinicTimeController = TextEditingController(text: user.clinicTimings);
-    phoneNumberController = TextEditingController(text: user.phoneNumber);
-    degreeController = TextEditingController(text: user.degree);
+    _nameController = TextEditingController(text: user.name);
+    _specializationController = TextEditingController();
+    _licenseNumberController = TextEditingController(text: user.licenseNumber);
+    _clinicNameController = TextEditingController(text: user.clinicName);
+    _clinicAddressController = TextEditingController(text: user.clinicAddress);
+    _clinicTimeController = TextEditingController(text: user.clinicTimings);
+    _phoneNumberController = TextEditingController(text: user.phoneNumber);
+    _degreeController = TextEditingController(text: user.degree);
 
     super.initState();
   }
@@ -57,14 +57,14 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
   void dispose() {
     formKey.currentState?.dispose();
 
-    nameController.dispose();
-    specializationController.dispose();
-    licenseNumberController.dispose();
-    clinicNameController.dispose();
-    clinicAddressController.dispose();
-    clinicTimeController.dispose();
-    phoneNumberController.dispose();
-    degreeController.dispose();
+    _nameController.dispose();
+    _specializationController.dispose();
+    _licenseNumberController.dispose();
+    _clinicNameController.dispose();
+    _clinicAddressController.dispose();
+    _clinicTimeController.dispose();
+    _phoneNumberController.dispose();
+    _degreeController.dispose();
     super.dispose();
   }
 
@@ -90,7 +90,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
               children: [
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: nameController,
+                  controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Name',
                     prefixIcon: Icon(
@@ -112,32 +112,16 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                     size: 20,
                   ),
                   hintText: "Search Specialization",
-                  searchLogic: (searchQuery, items) {
-                    final normalizedQuery = searchQuery.trim().toLowerCase();
-
-                    // Separate exact matches and partial matches
-                    final exactMatches = items.where((element) {
-                      final normalizedBrandName = (element.name).trim().toLowerCase();
-                      return normalizedBrandName == normalizedQuery;
-                    }).toList();
-
-                    final partialMatches = items.where((element) {
-                      final normalizedBrandName = (element.name).trim().toLowerCase();
-                      return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
-                    }).toList();
-
-                    // Combine exact matches at the top, followed by partial matches
-                    return [...exactMatches, ...partialMatches];
-                  },
+                  searchLogic: _searchLogic,
                   displayText: (item) => item.name,
-                  textEditingController: specializationController,
+                  textEditingController: _specializationController,
                   textCapitalization: TextCapitalization.words,
                   items: context.read<UserCubit>().specializations,
                   onItemSelected: (item) {
                     // setState(() {
                     context.read<UserCubit>().selectSpecialization(item);
                     Future.delayed(Duration(milliseconds: 100), () {
-                      specializationController.clear();
+                      _specializationController.clear();
                     });
                     // });
                   },
@@ -150,83 +134,11 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                     context.read<UserCubit>().addSpecialization(specialization);
                     context.read<UserCubit>().selectSpecialization(specialization);
                     Future.delayed(Duration(milliseconds: 100), () {
-                      specializationController.clear();
+                      _specializationController.clear();
                     });
                     // setState(() {});
                   },
                 ),
-                // Autocomplete<Specialization>(
-                //   fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                //     // specializationController = textEditingController;
-                //     return TextFormField(
-                //       controller: textEditingController,
-                //       focusNode: focusNode,
-                //       decoration: const InputDecoration(
-                //           labelText: 'Specialization',
-                //           prefixIcon: Icon(
-                //             FontAwesomeIcons.userDoctor,
-                //             size: 20,
-                //           )
-                //           // border: OutlineInputBorder(),
-                //           ),
-                //       validator: (value) {
-                //         final userCubit = context.read<UserCubit>();
-                //         if (userCubit.selectedSpecializations.isEmpty) {
-                //           return 'Please enter a specialization';
-                //         }
-                //         return null;
-                //       },
-                //     );
-                //   },
-                //   optionsViewBuilder: (context, onSelected, options) {
-                //     return Align(
-                //       alignment: Alignment.topLeft,
-                //       child: Material(
-                //         color: context.read<ThemeProvider>().getCurrentThemeBrightness == Brightness.light
-                //             ? AppTheme.lightBackgroundColor
-                //             : AppTheme.darkBackgroundColor,
-                //         elevation: 4,
-                //         child: SizedBox(
-                //           height: 200,
-                //           child: ListView.builder(
-                //             shrinkWrap: true,
-                //             itemCount: options.length,
-                //             itemBuilder: (context, index) {
-                //               final option = options.elementAt(index);
-                //               return ListTile(
-                //                 title: Text(option.name),
-                //                 onTap: () {
-                //                   onSelected(option);
-                //                 },
-                //               );
-                //             },
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                //   optionsBuilder: (textEditingValue) {
-                //     if (textEditingValue.text.isEmpty) {
-                //       return const Iterable<Specialization>.empty();
-                //     }
-
-                //     final specializations = context.read<UserCubit>().specializations;
-                //     // specializations.removeWhere(
-                //     //   (item) => userCubit.selectedSpecializations.contains(item),
-                //     // );
-
-                //     return specializations.where(
-                //       (specialization) => specialization.name.toLowerCase().contains(
-                //             textEditingValue.text.toLowerCase(),
-                //           ),
-                //     );
-                //   },
-                //   displayStringForOption: (Specialization specialization) => "",
-                //   onSelected: (value) {
-                //     context.read<UserCubit>().selectSpecialization(value);
-                //     // specializationController.clear();
-                //   },
-                // ),
                 SizedBox(height: 10),
                 Wrap(
                   spacing: 10,
@@ -246,7 +158,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: degreeController,
+                  controller: _degreeController,
                   decoration: const InputDecoration(
                     labelText: 'Degree',
                     prefixIcon: Icon(
@@ -263,7 +175,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: licenseNumberController,
+                  controller: _licenseNumberController,
                   decoration: const InputDecoration(
                     labelText: 'License Number',
                     prefixIcon: Icon(
@@ -280,7 +192,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: clinicNameController,
+                  controller: _clinicNameController,
                   decoration: const InputDecoration(
                     labelText: 'Clinic Name',
                     prefixIcon: Icon(
@@ -290,7 +202,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: clinicAddressController,
+                  controller: _clinicAddressController,
                   decoration: const InputDecoration(
                     labelText: 'Clinic Address',
                     prefixIcon: Icon(
@@ -302,7 +214,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: clinicTimeController,
+                  controller: _clinicTimeController,
                   decoration: const InputDecoration(
                     labelText: 'Clinic Timings',
                     prefixIcon: Icon(
@@ -313,7 +225,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: phoneNumberController,
+                  controller: _phoneNumberController,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(
                     labelText: 'Phone Number',
@@ -339,12 +251,12 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                           ? null
                           : () {
                               if (formKey.currentState!.validate()) {
-                                final licenseNumber = licenseNumberController.text.trim();
-                                final clinicName = clinicNameController.text.trim();
-                                final clinicAddress = clinicAddressController.text.trim();
-                                final clinicTime = clinicTimeController.text.trim();
-                                final phoneNumber = phoneNumberController.text.trim();
-                                final degree = degreeController.text.trim();
+                                final licenseNumber = _licenseNumberController.text.trim();
+                                final clinicName = _clinicNameController.text.trim();
+                                final clinicAddress = _clinicAddressController.text.trim();
+                                final clinicTime = _clinicTimeController.text.trim();
+                                final phoneNumber = _phoneNumberController.text.trim();
+                                final degree = _degreeController.text.trim();
                                 final updatedUser = (userCubit.state as UserProfileNotCompleted).user.copyWith(
                                       licenseNumber: licenseNumber,
                                       clinicName: clinicName,
@@ -367,5 +279,23 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
         ),
       ),
     );
+  }
+
+  List<Specialization> _searchLogic(String searchQuery, Iterable<Specialization> items) {
+    final normalizedQuery = searchQuery.trim().toLowerCase();
+
+    // Separate exact matches and partial matches
+    final exactMatches = items.where((element) {
+      final normalizedBrandName = (element.name).trim().toLowerCase();
+      return normalizedBrandName == normalizedQuery;
+    }).toList();
+
+    final partialMatches = items.where((element) {
+      final normalizedBrandName = (element.name).trim().toLowerCase();
+      return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
+    }).toList();
+
+    // Combine exact matches at the top, followed by partial matches
+    return [...exactMatches, ...partialMatches];
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opd_management/core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
   final int currentStep; // The current screen number (1-based index)

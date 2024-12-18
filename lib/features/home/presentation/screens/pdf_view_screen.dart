@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -38,9 +37,9 @@ class PdfViewScreen extends StatefulWidget {
 }
 
 class _PdfViewScreenState extends State<PdfViewScreen> {
-  final pdf = pw.Document(title: "Prescription");
-  Uint8List? savedPdf;
-  bool isLoading = false;
+  final _pdf = pw.Document(title: "Prescription");
+  Uint8List? _savedPdf;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -54,9 +53,9 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
       appBar: AppBar(
         title: Text(widget.prescription.patient.name ?? ""),
       ),
-      body: isLoading
+      body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : savedPdf == null
+          : _savedPdf == null
               ? Center(
                   child: Text("No Prescription Found"),
                 )
@@ -68,7 +67,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                           ? AppTheme.lightBackgroundColor
                           : AppTheme.darkBackgroundColor,
                     ),
-                    build: (format) => savedPdf!,
+                    build: (format) => _savedPdf!,
                     canChangePageFormat: false,
                     canChangeOrientation: false,
                     canDebug: false,
@@ -100,7 +99,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
 
   Future<void> generatePdf() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     final drAcharyaLogo = await rootBundle.load(Assets.icons.acharyaLogo.path);
@@ -117,7 +116,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
     final drAcharyaEmail = "acharya.ps@gmail.com";
 
     try {
-      pdf.addPage(
+      _pdf.addPage(
         pw.MultiPage(
           theme: pw.ThemeData(
             defaultTextStyle: pw.TextStyle(fontSize: 10),
@@ -129,7 +128,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
         ),
       );
 
-      savedPdf = await pdf.save();
+      _savedPdf = await _pdf.save();
     } on PlatformException catch (e) {
       throw e.message ?? "Something went wrong";
     } catch (e) {
@@ -138,7 +137,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
       log(e.toString());
     } finally {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
     }
   }

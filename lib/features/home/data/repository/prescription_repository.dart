@@ -1,4 +1,4 @@
-import 'package:opd_management/features/home/data/models/prescription.dart';
+import '../models/prescription.dart';
 
 import '../models/medicine.dart';
 
@@ -8,18 +8,14 @@ import '../models/units.dart';
 
 abstract class PrescriptionRepository {
   Future<List<Medicine>> getMedicinesFromRemoteDataSource();
-
   Future<List<DosageUnit>> getDosageFromRemote();
   Future<List<FrequencyUnit>> getFrequencyFromRemote();
   Future<List<DurationUnit>> getDurationFromRemote();
-
   Future<DateTime> getDosageSyncTime();
   Future<DateTime> getFrequencySyncTime();
   Future<DateTime> getDurationSyncTime();
-
   Future<void> addPrescription(Prescription prescription);
   Future<List<Prescription>> getPrescriptions();
-
   Future<void> addPrescriptionToRemoteDatabase(Prescription prescription);
 }
 
@@ -92,23 +88,6 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
       rethrow;
     }
   }
-
-  // @override
-  // Future<void> getDosageFromRemote() {
-
-  // }
-
-  // @override
-  // Future<void> getDurationFromRemote() {
-  //   // TODO: implement getDurationFromRemote
-  //   throw UnimplementedError();
-  // }
-
-  // @override
-  // Future<void> getFrequencyFromRemote() {
-  //   // TODO: implement getFrequencyFromRemote
-  //   throw UnimplementedError();
-  // }
 
   @override
   Future<void> addPrescription(Prescription prescription) async {

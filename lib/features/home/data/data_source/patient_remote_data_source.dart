@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:opd_management/core/services/google_drive_service.dart';
+import '../../../../core/services/google_drive_service.dart';
 import '../../../../core/constants/constants.dart';
 
 import '../models/patient.dart';

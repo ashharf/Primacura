@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -28,24 +27,22 @@ class SelectPatientScreen extends StatefulWidget {
 }
 
 class _SelectPatientScreenState extends State<SelectPatientScreen> {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController searchController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  Gender selectedGender = Gender.male;
-  final phoneNumberRegex = RegExp(r'^[0-9]{10}$');
-
-  bool isNewPatient = false;
-  bool newPatientEnteredAsNumber = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  Gender _selectedGender = Gender.male;
+  final _phoneNumberRegex = RegExp(r'^[0-9]{10}$');
+  bool _newPatientEnteredAsNumber = false;
 
   @override
   void dispose() {
-    formKey.currentState?.dispose();
-    searchController.dispose();
-    nameController.dispose();
-    phoneNumberController.dispose();
-    ageController.dispose();
+    _formKey.currentState?.dispose();
+    _searchController.dispose();
+    _nameController.dispose();
+    _phoneNumberController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -64,7 +61,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
         body: Padding(
           padding: AppConstants.defaultPading,
           child: Form(
-            key: formKey,
+            key: _formKey,
             child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
               builder: (context, state) {
                 final Patient? selectedPatient = state.patient;
@@ -91,7 +88,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                           ? Text(item.phoneNumber!)
                                           : null,
                                   displayText: (item) => item.name ?? "",
-                                  textEditingController: searchController,
+                                  textEditingController: _searchController,
                                   textCapitalization: TextCapitalization.words,
                                   items: state.patients,
                                   onItemSelected: _onPatientSelected,
@@ -108,7 +105,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TextFormField(
-                                    controller: nameController,
+                                    controller: _nameController,
                                     readOnly: selectedPatient != null ? true : false,
                                     textCapitalization: TextCapitalization.words,
                                     textInputAction: TextInputAction.next,
@@ -129,7 +126,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                   ),
                                   SizedBox(height: 10),
                                   TextFormField(
-                                    controller: phoneNumberController,
+                                    controller: _phoneNumberController,
                                     readOnly: selectedPatient != null ? true : false,
                                     keyboardType: TextInputType.phone,
                                     textInputAction: TextInputAction.next,
@@ -138,7 +135,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                       prefixIcon: Icon(Icons.phone),
                                     ),
                                     validator: (value) {
-                                      if (value!.isNotEmpty && !phoneNumberRegex.hasMatch(value)) {
+                                      if (value!.isNotEmpty && !_phoneNumberRegex.hasMatch(value)) {
                                         return "Please enter a valid phone number";
                                       }
                                       return null;
@@ -146,7 +143,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                   ),
                                   SizedBox(height: 10),
                                   TextFormField(
-                                    controller: ageController,
+                                    controller: _ageController,
                                     readOnly: selectedPatient != null ? true : false,
                                     keyboardType: TextInputType.number,
                                     textInputAction: TextInputAction.done,
@@ -184,9 +181,9 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                                             },
                                           ).toList(),
                                           initialSelection:
-                                              selectedPatient != null ? selectedPatient.gender : selectedGender,
+                                              selectedPatient != null ? selectedPatient.gender : _selectedGender,
                                           onSelected: (value) {
-                                            selectedGender = value! as Gender;
+                                            _selectedGender = value! as Gender;
                                           },
                                         ),
                                       ),
@@ -282,43 +279,43 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
 
   void _onPatientSelected(Patient item) {
     context.read<PrescriptionCubit>().onSelectPatient(item);
-    nameController.text = item.name ?? "";
-    phoneNumberController.text = item.phoneNumber ?? "";
+    _nameController.text = item.name ?? "";
+    _phoneNumberController.text = item.phoneNumber ?? "";
     if (item.age != null) {
-      ageController.text = item.age.toString();
+      _ageController.text = item.age.toString();
     }
     if (item.gender != null) {
-      selectedGender = PrescriptionUtils.getGenderFromString(item.gender!);
+      _selectedGender = PrescriptionUtils.getGenderFromString(item.gender!);
     }
     FocusScope.of(context).unfocus();
     Future.delayed(Duration(milliseconds: 100), () {
-      searchController.clear();
+      _searchController.clear();
     });
   }
 
   void _onAddPatientSelected(String searchText) {
     final numericRegex = RegExp(r'^[0-9]+$');
-    newPatientEnteredAsNumber = numericRegex.hasMatch(searchText.trim());
+    _newPatientEnteredAsNumber = numericRegex.hasMatch(searchText.trim());
     context.read<PrescriptionCubit>().onDeleteSelectedPatient();
-    if (newPatientEnteredAsNumber) {
-      phoneNumberController.text = searchText.trim();
+    if (_newPatientEnteredAsNumber) {
+      _phoneNumberController.text = searchText.trim();
       FocusScope.of(context).unfocus();
       Future.delayed(Duration(milliseconds: 100), () {
-        searchController.clear();
-        nameController.clear();
-        ageController.clear();
-        selectedGender = Gender.male;
+        _searchController.clear();
+        _nameController.clear();
+        _ageController.clear();
+        _selectedGender = Gender.male;
       });
 
       return;
     } else {
-      nameController.text = searchText.trim();
+      _nameController.text = searchText.trim();
       FocusScope.of(context).unfocus();
       Future.delayed(Duration(milliseconds: 100), () {
-        searchController.clear();
-        phoneNumberController.clear();
-        ageController.clear();
-        selectedGender = Gender.male;
+        _searchController.clear();
+        _phoneNumberController.clear();
+        _ageController.clear();
+        _selectedGender = Gender.male;
       });
       return;
     }
@@ -330,9 +327,9 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
       return;
     }
 
-    if (formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final patientCubit = context.read<PatientCubit>();
-      final phoneNumber = phoneNumberController.text.trim();
+      final phoneNumber = _phoneNumberController.text.trim();
       patientCubit.clearPatientWithSameNumber();
       if (phoneNumber.isNotEmpty) {
         await patientCubit.checkIfPatientExistsWithNumber(phoneNumber);
@@ -361,10 +358,10 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
 
   Future<void> _addPatient() async {
     final userId = (context.read<UserCubit>().state as UserAuthenticated).user.id;
-    final phoneNumber = phoneNumberController.text.trim();
-    final name = nameController.text.trim();
-    final age = int.parse(ageController.text.trim());
-    final gender = selectedGender.name;
+    final phoneNumber = _phoneNumberController.text.trim();
+    final name = _nameController.text.trim();
+    final age = int.parse(_ageController.text.trim());
+    final gender = _selectedGender.name;
 
     final patient = Patient(
       id: Uuid().v1(),

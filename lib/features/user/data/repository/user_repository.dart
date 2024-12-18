@@ -115,20 +115,6 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  // Future<void> checkAndAddMedicines() async {
-  //   try {
-  //     final bool areMedicinesAddedToLocalStorage = await userLocalDataSource.hasMedicinesInLocalStorage();
-  //     if (areMedicinesAddedToLocalStorage) {
-  //       return;
-  //     } else {
-  //       final List<Medicine> medicines = await userRemoteDataSource.getMedicinesFromFirestore();
-  //       await userLocalDataSource.addMedicinesToLocalStorage(medicines);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
   @override
   Future<List<Medicine>> getMedicinesFromRemoteDatabase() async {
     try {

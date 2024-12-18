@@ -19,13 +19,7 @@ class PrescriptionCard extends StatelessWidget {
     return Card(
       color: AppTheme.secondaryColor,
       child: ListTile(
-        // contentPadding: EdgeInsets.zero,
         onTap: () => context.pushNamed(PdfViewScreen.routeName, extra: [prescription, false]),
-        // leading: Icon(
-        //   FontAwesomeIcons.time,
-        //   size: 20,
-        //   color: Colors.white,
-        // ),
         leading: prescription.dateTime != null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,

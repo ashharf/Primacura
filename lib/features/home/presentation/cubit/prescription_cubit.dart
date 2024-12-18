@@ -3,18 +3,18 @@ import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:opd_management/features/home/data/models/investigation.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../user/data/models/user.dart';
 import '../../data/models/clinical_findings.dart';
+import '../../data/models/investigation.dart';
 import '../../data/models/medicine.dart';
-import '../../data/models/units.dart';
-import '../../data/repository/prescription_repository.dart';
+import '../../data/models/patient.dart';
 import '../../data/models/prescription.dart';
 import '../../data/models/prescription_medicine.dart';
 import '../../data/models/symptomps.dart';
-
-import '../../data/models/patient.dart';
+import '../../data/models/units.dart';
+import '../../data/repository/prescription_repository.dart';
 
 part 'prescription_state.dart';
 

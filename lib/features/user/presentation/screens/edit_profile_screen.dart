@@ -24,14 +24,14 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  late final TextEditingController nameController;
-  late final TextEditingController specializationController;
-  late final TextEditingController licenseNumberController;
-  late final TextEditingController clinicNameController;
-  late final TextEditingController clinicAddressController;
-  late final TextEditingController clinincTimingController;
-  late final TextEditingController phoneNumberController;
-  late final TextEditingController degreeController;
+  late final TextEditingController _nameController;
+  late final TextEditingController _specializationController;
+  late final TextEditingController _licenseNumberController;
+  late final TextEditingController _clinicNameController;
+  late final TextEditingController _clinicAddressController;
+  late final TextEditingController _clinincTimingController;
+  late final TextEditingController _phoneNumberController;
+  late final TextEditingController _degreeController;
 
   @override
   void initState() {
@@ -39,14 +39,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     context.read<UserCubit>().addUserSpecializationToSelected();
     final userCubit = context.read<UserCubit>();
     final user = (userCubit.state as UserAuthenticated).user;
-    nameController = TextEditingController(text: user.name);
-    specializationController = TextEditingController();
-    licenseNumberController = TextEditingController(text: user.licenseNumber);
-    clinicNameController = TextEditingController(text: user.clinicName);
-    clinicAddressController = TextEditingController(text: user.clinicAddress);
-    clinincTimingController = TextEditingController(text: user.clinicTimings);
-    phoneNumberController = TextEditingController(text: user.phoneNumber);
-    degreeController = TextEditingController(text: user.degree);
+    _nameController = TextEditingController(text: user.name);
+    _specializationController = TextEditingController();
+    _licenseNumberController = TextEditingController(text: user.licenseNumber);
+    _clinicNameController = TextEditingController(text: user.clinicName);
+    _clinicAddressController = TextEditingController(text: user.clinicAddress);
+    _clinincTimingController = TextEditingController(text: user.clinicTimings);
+    _phoneNumberController = TextEditingController(text: user.phoneNumber);
+    _degreeController = TextEditingController(text: user.degree);
 
     super.initState();
   }
@@ -70,7 +70,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return Column(
                     children: [
                       TextFormField(
-                        controller: nameController,
+                        controller: _nameController,
                         decoration: const InputDecoration(
                           labelText: 'Name',
                           prefixIcon: Icon(
@@ -87,7 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: degreeController,
+                        controller: _degreeController,
                         decoration: const InputDecoration(
                           labelText: 'Degree',
                           prefixIcon: Icon(
@@ -104,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: licenseNumberController,
+                        controller: _licenseNumberController,
                         decoration: const InputDecoration(
                           label: Text('License Number'),
                           prefixIcon: Icon(
@@ -121,7 +121,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: clinicNameController,
+                        controller: _clinicNameController,
                         decoration: const InputDecoration(
                           label: Text('Clinic Name'),
                           prefixIcon: Icon(
@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: clinicAddressController,
+                        controller: _clinicAddressController,
                         keyboardType: TextInputType.streetAddress,
                         decoration: const InputDecoration(
                           label: Text('Clinic Address'),
@@ -144,7 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: clinincTimingController,
+                        controller: _clinincTimingController,
                         decoration: const InputDecoration(
                           label: Text('Clinic Timings'),
                           prefixIcon: Icon(
@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: phoneNumberController,
+                        controller: _phoneNumberController,
                         keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
                           label: Text('Phone Number'),
@@ -196,14 +196,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           return [...exactMatches, ...partialMatches];
                         },
                         displayText: (item) => item.name,
-                        textEditingController: specializationController,
+                        textEditingController: _specializationController,
                         textCapitalization: TextCapitalization.words,
                         items: context.read<UserCubit>().specializations,
                         onItemSelected: (item) {
                           // setState(() {
                           context.read<UserCubit>().selectSpecialization(item, isProfileEditing: true);
                           Future.delayed(Duration(milliseconds: 100), () {
-                            specializationController.clear();
+                            _specializationController.clear();
                           });
                           // });
                         },
@@ -216,7 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           context.read<UserCubit>().addSpecialization(specialization);
                           context.read<UserCubit>().selectSpecialization(specialization, isProfileEditing: true);
                           Future.delayed(Duration(milliseconds: 100), () {
-                            specializationController.clear();
+                            _specializationController.clear();
                           });
                           // setState(() {});
                         },
@@ -266,49 +266,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
               builder: (context, state) => ElevatedButton(
                 // style: ElevatedButton.styleFrom(minimumSize: Size(300, 40)),
-                onPressed: state is UserLoading
-                    ? null
-                    : () async {
-                        if (formKey.currentState!.validate()) {
-                          final userCubit = context.read<UserCubit>();
-                          final user = (userCubit.state as UserAuthenticated).user;
-                          final logoAndSignatureProvider = context.read<LogoAndSignatureProvider>();
-
-                          String? logoUrl;
-                          String? signatureUrl;
-                          if (logoAndSignatureProvider.pickedlogo != null) {
-                            try {
-                              logoUrl = await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedlogo!);
-                            } catch (e) {
-                              return;
-                            }
-                          }
-                          if (logoAndSignatureProvider.pickedSignature != null) {
-                            try {
-                              signatureUrl =
-                                  await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedSignature!);
-                            } catch (e) {
-                              return;
-                            }
-                          }
-                          final updatedUser = user.copyWith(
-                            specializations: userCubit.selectedSpecializations,
-                            licenseNumber: licenseNumberController.text.trim(),
-                            clinicName: clinicNameController.text.trim(),
-                            clinicAddress: clinicAddressController.text.trim(),
-                            clinicTimings: clinincTimingController.text.trim(),
-                            phoneNumber: phoneNumberController.text.trim(),
-                            degree: degreeController.text.trim(),
-                            name: nameController.text.trim(),
-                            logoUrl: logoUrl,
-                            signatureUrl: signatureUrl,
-                          );
-
-                          if (context.mounted) {
-                            context.read<UserCubit>().updateUser(updatedUser);
-                          }
-                        }
-                      },
+                onPressed: state is UserLoading ? null : _onSave,
                 child: state is UserLoading ? CircularProgressIndicator() : const Text('Save'),
               ),
             ),
@@ -317,104 +275,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
-}
 
-class LogoAndSignature extends StatelessWidget {
-  const LogoAndSignature({
-    super.key,
-  });
+  void _onSave() async {
+    if (formKey.currentState!.validate()) {
+      final userCubit = context.read<UserCubit>();
+      final user = (userCubit.state as UserAuthenticated).user;
+      final logoAndSignatureProvider = context.read<LogoAndSignatureProvider>();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<UserCubit, UserState>(
-      builder: (context, state) {
-        return Consumer<LogoAndSignatureProvider>(builder: (context, provider, child) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Logo",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: provider.pickedlogo != null
-                        ? Image.file(
-                            provider.pickedlogo!,
-                            height: 150,
-                            width: 150,
-                            fit: BoxFit.cover,
-                          )
-                        : (state).user?.logoUrl != null
-                            ? Image.network(
-                                state.user!.logoUrl!,
-                                height: 150,
-                              )
-                            : Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                height: 150,
-                                width: 150,
-                                child: Text("No Logo"),
-                              ),
-                  ),
-                  SizedBox(width: 10),
-                  TextButton(
-                    onPressed: provider.pickLogo,
-                    child: Text("Change"),
-                  )
-                ],
-              ),
-              SizedBox(height: 20),
-              Text(
-                "Signature",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: provider.pickedSignature != null
-                        ? Image.file(
-                            provider.pickedSignature!,
-                            height: 150,
-                            width: 150,
-                            fit: BoxFit.cover,
-                          )
-                        : state.user?.signatureUrl != null
-                            ? Image.network(
-                                state.user!.signatureUrl!,
-                                height: 150,
-                              )
-                            : Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                height: 150,
-                                width: 150,
-                                child: Text("No Signature"),
-                              ),
-                  ),
-                  SizedBox(width: 10),
-                  TextButton(
-                    onPressed: provider.pickSignature,
-                    child: Text("Change"),
-                  )
-                ],
-              ),
-            ],
-          );
-        });
-      },
-    );
+      String? logoUrl;
+      String? signatureUrl;
+      if (logoAndSignatureProvider.pickedlogo != null) {
+        try {
+          logoUrl = await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedlogo!);
+        } catch (e) {
+          return;
+        }
+      }
+      if (logoAndSignatureProvider.pickedSignature != null) {
+        try {
+          signatureUrl = await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedSignature!);
+        } catch (e) {
+          return;
+        }
+      }
+      final updatedUser = user.copyWith(
+        specializations: userCubit.selectedSpecializations,
+        licenseNumber: _licenseNumberController.text.trim(),
+        clinicName: _clinicNameController.text.trim(),
+        clinicAddress: _clinicAddressController.text.trim(),
+        clinicTimings: _clinincTimingController.text.trim(),
+        phoneNumber: _phoneNumberController.text.trim(),
+        degree: _degreeController.text.trim(),
+        name: _nameController.text.trim(),
+        logoUrl: logoUrl,
+        signatureUrl: signatureUrl,
+      );
+
+      if (mounted) {
+        context.read<UserCubit>().updateUser(updatedUser);
+      }
+    }
   }
 }

@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import '../../../home/presentation/screens/home_screen.dart';
-import 'enter_user_details_screen.dart';
-import '../../../../core/utils/utils.dart';
-import '../cubit/user_cubit.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/utils/utils.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../home/presentation/screens/home_screen.dart';
+import '../cubit/user_cubit.dart';
+import 'enter_user_details_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
-
   static const routeName = '/login';
+
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
