@@ -199,8 +199,14 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
   }
 
   void onMakePrescription({User? user, Uint8List? qrData}) {
+    String prescriptionId = Uuid().v4();
+
+    if (state.prescription != null) {
+      prescriptionId =
+          state.prescription!.id; // so that new prescription is not created in the local storage or remote database
+    }
     final Prescription prescription = Prescription(
-      id: Uuid().v4(),
+      id: prescriptionId,
       doctor: user,
       patient: state.patient!,
       qrData: qrData,

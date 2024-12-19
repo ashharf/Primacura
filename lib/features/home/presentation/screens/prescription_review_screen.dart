@@ -226,6 +226,9 @@ class PrescriptionReviewScreen extends StatelessWidget {
                       final prescription = state.prescription;
                       prescription!.dateTime = DateTime.now();
 
+                      final prescriptionCubit = context.read<PrescriptionCubit>();
+                      prescriptionCubit.addPrescriptionToRemoteDatabase();
+
                       final capturedImage = await _makeQRImage();
                       prescription.qrData = capturedImage;
 
