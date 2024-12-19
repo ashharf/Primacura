@@ -166,7 +166,7 @@ class UserRemoteDataSource {
     }
   }
 
-  Future<void> addSymptomp(ChiefComplaint symptomp, String userId) async {
+  Future<void> addChiefComplaint(ChiefComplaint symptomp, String userId) async {
     try {
       await firebaseFirestore.collection(AppConstants.userCollection).doc(userId).update(
         {
