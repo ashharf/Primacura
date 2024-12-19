@@ -109,7 +109,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> addChiefComplaint(String userId, ChiefComplaint symptomp) async {
     try {
-      await userRemoteDataSource.addSymptomp(symptomp, userId);
+      await userRemoteDataSource.addChiefComplaint(symptomp, userId);
     } catch (e) {
       rethrow;
     }
