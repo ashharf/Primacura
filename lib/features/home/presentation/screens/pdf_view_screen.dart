@@ -518,7 +518,6 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
 
     try {
       await prescriptionCubit.addPrescriptionToLocalStorage();
-      prescriptionCubit.addPrescriptionToRemoteDatabase();
       if (mounted) {
         context.go(HomeScreen.routeName);
       }

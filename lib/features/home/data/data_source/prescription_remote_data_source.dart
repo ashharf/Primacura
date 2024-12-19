@@ -73,25 +73,4 @@ class PrescriptionRemoteDataSource {
       rethrow;
     }
   }
-
-  // Future<void> getMedicinesFromAssetsAndAddToFirestore() async {
-  //   final String response = await rootBundle.loadString('assets/indian_medicines.json');
-  //   final data = await json.decode(response);
-  //   for (var medicineJson in data) {
-  //     final medicine = Medicine(
-  //       id: Uuid().v1(),
-  //       brandName: medicineJson['brandName'],
-  //       contains: List.generate(medicineJson['contains'].length, (index) => medicineJson['contains'][index]),
-  //       genericName: medicineJson['genericName'],
-  //       dosage: List.generate(medicineJson['dosage'].length, (index) => medicineJson['dosage'][index]),
-  //       type: medicineJson['type'],
-  //     );
-
-  //     try {
-  //       firebaseFirestore.collection("medicines").doc(medicine.id).set(medicine.toJson());
-  //     } catch (e) {
-  //       log(e.toString());
-  //     }
-  //   }
-  // }
 }
