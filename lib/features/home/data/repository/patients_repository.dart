@@ -3,10 +3,10 @@ import '../data_source/patient_remote_data_source.dart';
 import '../models/patient.dart';
 
 abstract class PatientRepository {
-  Future<List<Patient>> getPatients();
-  Future<void> addPatient(Patient patient);
-  Future<void> updatePatient(Patient patient);
-  Future<void> deletePatient(Patient patient);
+  Future<List<Patient>> getPatientsFromLocalData();
+  Future<void> addPatientToLocalData(Patient patient);
+  Future<void> updatePatientInLocalData(Patient patient);
+  Future<void> deletePatientFromlocalData(Patient patient);
   Future<List<Patient>> checkIfPatientExistsWithNumber(String phoneNumber);
   Future<void> takepatientBackup(Patient patient);
 }
@@ -18,7 +18,7 @@ class PatientRepositoryImpl implements PatientRepository {
   PatientRepositoryImpl({required this.patientRemoteDataSource, required this.patientLocalDataSource});
 
   @override
-  Future<List<Patient>> getPatients() async {
+  Future<List<Patient>> getPatientsFromLocalData() async {
     try {
       final patients = await patientLocalDataSource.getPatients();
       return patients;
@@ -28,7 +28,7 @@ class PatientRepositoryImpl implements PatientRepository {
   }
 
   @override
-  Future<void> addPatient(Patient patient) async {
+  Future<void> addPatientToLocalData(Patient patient) async {
     try {
       await patientLocalDataSource.addPatient(patient);
       // await patientRemoteDataSource.addPatient(patient);
@@ -38,7 +38,7 @@ class PatientRepositoryImpl implements PatientRepository {
   }
 
   @override
-  Future<void> updatePatient(Patient patient) async {
+  Future<void> updatePatientInLocalData(Patient patient) async {
     try {
       await patientLocalDataSource.updatePatient(patient);
       // await patientRemoteDataSource.updatePatient(patient);
@@ -48,7 +48,7 @@ class PatientRepositoryImpl implements PatientRepository {
   }
 
   @override
-  Future<void> deletePatient(Patient patient) async {
+  Future<void> deletePatientFromlocalData(Patient patient) async {
     try {
       await patientLocalDataSource.deletePatient(patient.id);
       // await patientRemoteDataSource.deletePatient(patient);

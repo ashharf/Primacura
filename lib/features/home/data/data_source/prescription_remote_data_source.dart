@@ -48,7 +48,7 @@ class PrescriptionRemoteDataSource {
     }
   }
 
-  Future<List<Medicine>> getMedicinesFromFirestore() {
+  Future<List<Medicine>> getMedicines() {
     try {
       return firebaseFirestore.collection(AppConstants.medicinesCollection).get().then((snapshot) {
         return snapshot.docs
@@ -64,7 +64,7 @@ class PrescriptionRemoteDataSource {
     }
   }
 
-  Future<void> addPrescriptionToFirestore(Prescription prescription) async {
+  Future<void> addPrescription(Prescription prescription) async {
     try {
       await firebaseFirestore.collection(AppConstants.prescriptionsCollection).doc(prescription.id).set(
             prescription.toJsonForRemoteDatabase(),

@@ -11,23 +11,6 @@ class PatientRemoteDataSource {
   final GoogleDriveService googleDriveService;
 
   PatientRemoteDataSource({required this.firebaseFirestore, required this.googleDriveService});
-  // Future<List<Patient>> getPatient() async {
-  //   try {
-  //     final snapshot = await firebaseFirestore.collection(AppConstants.patientCollection).get();
-  //     final patients = snapshot.docs
-  //         .map(
-  //           (doc) => Patient.fromMap(
-  //             doc.data(),
-  //           ),
-  //         )
-  //         .toList();
-  //     return patients;
-  //   } on FirebaseException catch (e) {
-  //     throw e.message ?? "Failed to get patients";
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   Future<void> addPatient(Patient patient) async {
     try {

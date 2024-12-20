@@ -262,21 +262,7 @@ class UserRemoteDataSource {
     }
   }
 
-  // Future<List<ClinicalFinding>> getClinicalFindings(String userId) async {
-  //   try {
-  //     final snapshot = await firebaseFirestore.collection(AppConstants.userCollection).doc(userId).get();
-  //     final clinicalFindings = snapshot.data()?['clinicalFindings'] as List<dynamic>;
-  //     return clinicalFindings
-  //         .map((clinicalFinding) => ClinicalFinding.fromJson(clinicalFinding as Map<String, dynamic>))
-  //         .toList();
-  //   } on FirebaseException catch (e) {
-  //     throw e.message ?? "Can't get clinical findings from Database";
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  Future<List<Medicine>> getMedicinesFromFirestore() {
+  Future<List<Medicine>> getMedicines() {
     try {
       return firebaseFirestore.collection(AppConstants.medicinesCollection).get().then((snapshot) {
         return snapshot.docs
@@ -292,7 +278,7 @@ class UserRemoteDataSource {
     }
   }
 
-  Future<void> addMedicineToFirestore(Medicine medicine) async {
+  Future<void> addMedicine(Medicine medicine) async {
     try {
       await firebaseFirestore.collection(AppConstants.medicinesCollection).doc(medicine.id).set(
             medicine.toJson(),
@@ -302,7 +288,7 @@ class UserRemoteDataSource {
     }
   }
 
-  Future<void> deleteMedicineFromFirestore(String medicineId) async {
+  Future<void> deleteMedicine(String medicineId) async {
     try {
       await firebaseFirestore.collection(AppConstants.medicinesCollection).doc(medicineId).delete();
     } catch (e) {
@@ -330,7 +316,7 @@ class UserRemoteDataSource {
           ),
           type: medicineData['type'],
         );
-        await addMedicineToFirestore(medicine);
+        await addMedicine(medicine);
       }
     } catch (e) {
       rethrow;

@@ -7,11 +7,11 @@ class UserLocalDataSource {
 
   UserLocalDataSource({required this.hiveMedicinesBox, required this.hiveAccessTokenBox});
 
-  Future<bool> hasMedicinesInLocalStorage() async {
+  Future<bool> hasMedicines() async {
     return hiveMedicinesBox.isNotEmpty;
   }
 
-  Future<void> addMedicinesToLocalStorage(List<Medicine> medicines) async {
+  Future<void> addMedicines(List<Medicine> medicines) async {
     await hiveMedicinesBox.addAll(medicines.map((e) => e.toJson()).toList());
   }
 
