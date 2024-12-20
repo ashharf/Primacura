@@ -152,7 +152,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                                       .read<PrescriptionCubit>()
                                       .onChiefComplaintDeleted(state.chiefComplaints[index]);
                                 },
-                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
                             ),
                           );
@@ -179,7 +179,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                                       .read<PrescriptionCubit>()
                                       .onClinicalFindingDeleted(state.clinicalFindings[index]);
                                 },
-                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
                             ),
                           );
@@ -201,7 +201,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                                 onDeleted: () {
                                   context.read<PrescriptionCubit>().onInvestigationDeleted(state.investigations[index]);
                                 },
-                                backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
                             ),
                           );
@@ -236,7 +236,10 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
 
                               context.goNamed(AddMedicinesScreen.routeName);
                             },
-                            label: Icon(Icons.arrow_forward_outlined),
+                            label: Icon(
+                              Icons.arrow_forward_outlined,
+                              color: Colors.white,
+                            ),
                             icon: Text("Add Medicines"),
                           );
                         },
