@@ -20,7 +20,7 @@ android {
     namespace = "com.example.opd_management"
     compileSdk = 34
     // ndkVersion = flutter.ndkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.0.12674087"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -69,3 +69,5 @@ signingConfigs {
 flutter {
     source = "../.."
 }
+
+android.buildTypes.release.ndk.debugSymbolLevel = 'FULL'
