@@ -8,14 +8,14 @@ import '../models/units.dart';
 
 abstract class PrescriptionRepository {
   Future<List<Medicine>> getMedicinesFromRemoteDataSource();
-  Future<List<DosageUnit>> getDosageFromRemote();
-  Future<List<FrequencyUnit>> getFrequencyFromRemote();
-  Future<List<DurationUnit>> getDurationFromRemote();
+  Future<List<DosageUnit>> getDosageFromRemoteDataSource();
+  Future<List<FrequencyUnit>> getFrequencyFromRemoteDataSource();
+  Future<List<DurationUnit>> getDurationFromRemoteDataSource();
   Future<DateTime> getDosageSyncTime();
   Future<DateTime> getFrequencySyncTime();
   Future<DateTime> getDurationSyncTime();
-  Future<void> addPrescription(Prescription prescription);
-  Future<List<Prescription>> getPrescriptions();
+  Future<void> addPrescriptionToLocalData(Prescription prescription);
+  Future<List<Prescription>> getPrescriptionsFromLocalData();
   Future<void> addPrescriptionToRemoteDatabase(Prescription prescription);
 }
 
@@ -29,14 +29,14 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   Future<List<Medicine>> getMedicinesFromRemoteDataSource() async {
     try {
       // return prescriptionLocalDataSource.getMedicines();
-      return prescriptionRemoteDataSource.getMedicinesFromFirestore();
+      return prescriptionRemoteDataSource.getMedicines();
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<List<DosageUnit>> getDosageFromRemote() async {
+  Future<List<DosageUnit>> getDosageFromRemoteDataSource() async {
     try {
       return prescriptionRemoteDataSource.getDosages();
     } catch (e) {
@@ -45,7 +45,7 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<List<FrequencyUnit>> getFrequencyFromRemote() async {
+  Future<List<FrequencyUnit>> getFrequencyFromRemoteDataSource() async {
     try {
       return prescriptionRemoteDataSource.getFrequencies();
     } catch (e) {
@@ -54,7 +54,7 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<List<DurationUnit>> getDurationFromRemote() async {
+  Future<List<DurationUnit>> getDurationFromRemoteDataSource() async {
     try {
       return prescriptionRemoteDataSource.getDurations();
     } catch (e) {
@@ -90,7 +90,7 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<void> addPrescription(Prescription prescription) async {
+  Future<void> addPrescriptionToLocalData(Prescription prescription) async {
     try {
       return prescriptionLocalDataSource.addPrescription(prescription);
     } catch (e) {
@@ -99,7 +99,7 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<List<Prescription>> getPrescriptions() async {
+  Future<List<Prescription>> getPrescriptionsFromLocalData() async {
     try {
       return prescriptionLocalDataSource.getPrescriptions();
     } catch (e) {
@@ -110,7 +110,7 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   @override
   Future<void> addPrescriptionToRemoteDatabase(Prescription prescription) async {
     try {
-      return prescriptionRemoteDataSource.addPrescriptionToFirestore(prescription);
+      return prescriptionRemoteDataSource.addPrescription(prescription);
     } catch (e) {
       rethrow;
     }

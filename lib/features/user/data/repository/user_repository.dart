@@ -23,7 +23,6 @@ abstract class UserRepository {
   Future<void> deleteClinicalFinding(String userId, ClinicalFinding clinicalFinding);
   Future<void> addInvestigation(String userId, Investigation investigation);
   Future<void> deleteInvestigation(String userId, Investigation investigation);
-  // Future<void> checkAndAddMedicines();
   Future<List<Medicine>> getMedicinesFromLocalDatabase();
   Future<List<Medicine>> getMedicinesFromRemoteDatabase();
   Future<void> addMedicineToRemoteDatabase(Medicine medicine);
@@ -118,7 +117,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<List<Medicine>> getMedicinesFromRemoteDatabase() async {
     try {
-      return await userRemoteDataSource.getMedicinesFromFirestore();
+      return await userRemoteDataSource.getMedicines();
     } catch (e) {
       rethrow;
     }
@@ -136,7 +135,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> addMedicineToRemoteDatabase(Medicine medicine) async {
     try {
-      return userRemoteDataSource.addMedicineToFirestore(medicine);
+      return userRemoteDataSource.addMedicine(medicine);
     } catch (e) {
       rethrow;
     }
@@ -163,7 +162,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> deleteMedicineFromRemoteDatabase(String medicineId) async {
     try {
-      return userRemoteDataSource.deleteMedicineFromFirestore(medicineId);
+      return userRemoteDataSource.deleteMedicine(medicineId);
     } catch (e) {
       rethrow;
     }

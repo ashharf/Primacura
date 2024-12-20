@@ -174,7 +174,7 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
       ),
     );
     try {
-      final pres = await prescriptionRepository.getPrescriptions();
+      final pres = await prescriptionRepository.getPrescriptionsFromLocalData();
 
       emit(state.copyWith(prescriptions: pres));
 
@@ -238,9 +238,9 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
 
   Future<void> getUnits() async {
     try {
-      dosages.addAll(await prescriptionRepository.getDosageFromRemote());
-      frequencies.addAll(await prescriptionRepository.getFrequencyFromRemote());
-      durations.addAll(await prescriptionRepository.getDurationFromRemote());
+      dosages.addAll(await prescriptionRepository.getDosageFromRemoteDataSource());
+      frequencies.addAll(await prescriptionRepository.getFrequencyFromRemoteDataSource());
+      durations.addAll(await prescriptionRepository.getDurationFromRemoteDataSource());
     } catch (e) {
       log(e.toString());
     }
@@ -253,7 +253,7 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
         emit(state.copyWith(message: "Prescription is empty"));
         return;
       }
-      await prescriptionRepository.addPrescription(state.prescription!);
+      await prescriptionRepository.addPrescriptionToLocalData(state.prescription!);
     } catch (e) {
       state.copyWith(message: "An error occured while saving prescription");
     } finally {

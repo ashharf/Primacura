@@ -15,7 +15,7 @@ class PatientCubit extends Cubit<PatientState> {
   Future<void> getPatients() async {
     try {
       emit(PatientLoading());
-      final List<Patient> patients = await patientRepository.getPatients();
+      final List<Patient> patients = await patientRepository.getPatientsFromLocalData();
       emit(PatientLoaded(patients: patients));
     } catch (e) {
       emit(PatientError(message: e.toString()));
@@ -25,7 +25,7 @@ class PatientCubit extends Cubit<PatientState> {
   Future<void> addPatient(Patient patient) async {
     try {
       emit(PatientLoading(patients: state.patients));
-      await patientRepository.addPatient(patient);
+      await patientRepository.addPatientToLocalData(patient);
       state.patients.add(patient);
       emit(PatientAdded(patients: state.patients));
       emit(PatientLoaded(patients: state.patients));
@@ -58,7 +58,7 @@ class PatientCubit extends Cubit<PatientState> {
     try {
       final patients = (state as PatientLoaded).patients;
       emit(PatientLoading(patients: patients));
-      await patientRepository.updatePatient(patient);
+      await patientRepository.updatePatientInLocalData(patient);
       patients.removeWhere((item) => item.id == patient.id);
       patients.add(patient);
       emit(PatientActionSuccess(message: "Patient updated successfully"));
@@ -72,7 +72,7 @@ class PatientCubit extends Cubit<PatientState> {
     try {
       final patients = (state as PatientLoaded).patients;
       emit(PatientLoading());
-      await patientRepository.deletePatient(patient);
+      await patientRepository.deletePatientFromlocalData(patient);
       patients.removeWhere((item) => item.id == patient.id);
       emit(PatientDeleted(
         message: "Patient deleted successfully",
