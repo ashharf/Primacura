@@ -13,7 +13,7 @@ class AppTheme {
   static const PdfColor pdfPrimaryColor = PdfColor.fromInt(_primaryColorInt);
   static const PdfColor pdfSecondaryColor = PdfColor.fromInt(_secondaryColorInt);
 
-  static Color specializationChipColor = AppTheme.primaryColor.withOpacity(0.8);
+  static Color specializationChipColor = AppTheme.primaryColor.withValues(alpha: 0.6);
 
   static const Size elevatedButtonSize = Size(double.infinity, 50);
 

@@ -105,7 +105,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                             state.prescription!.chiefComplaints.length,
                             (index) => Chip(
                               label: Text(state.prescription!.chiefComplaints[index].name),
-                              backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -120,7 +120,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                             state.prescription!.clinicalFindings.length,
                             (index) => Chip(
                               label: Text(state.prescription!.clinicalFindings[index].name),
-                              backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -137,7 +137,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                             state.prescription!.investigations.length,
                             (index) => Chip(
                               label: Text(state.prescription!.investigations[index].name),
-                              backgroundColor: AppTheme.primaryColor.withOpacity(0.6),
+                              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
                         ),

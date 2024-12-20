@@ -91,6 +91,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
                 icon: Icon(
                   Icons.edit,
                   size: 20,
+                  color: Colors.white,
                 ),
               ),
       ),
