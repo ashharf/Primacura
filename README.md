@@ -1,6 +1,6 @@
 # Primacura
 
-![Primacura Logo](assets/icons/app-logo.png)
+<img src="assets/icons/app-logo.png" alt="Primacura Logo" width="200"/>
 
 ## Objective
 
