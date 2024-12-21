@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               padding: AppConstants.defaultPading,
-              height: 250,
+              height: 300,
               child: SfDateRangePicker(
                 headerStyle: DateRangePickerHeaderStyle(
                   backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
