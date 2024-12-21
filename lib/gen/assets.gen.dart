@@ -42,6 +42,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/google_icon.svg
   String get googleIcon => 'assets/icons/google_icon.svg';
 
+  /// File path: assets/icons/lazy_man.svg
+  String get lazyMan => 'assets/icons/lazy_man.svg';
+
   /// File path: assets/icons/rod-of-asclepius.jpg
   AssetGenImage get rodOfAsclepius =>
       const AssetGenImage('assets/icons/rod-of-asclepius.jpg');
@@ -62,6 +65,7 @@ class $AssetsIconsGen {
         bloodPressure,
         doctorSymbol,
         googleIcon,
+        lazyMan,
         rodOfAsclepius,
         signature,
         splashIcon
@@ -109,7 +113,7 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
     FilterQuality filterQuality = FilterQuality.low,
