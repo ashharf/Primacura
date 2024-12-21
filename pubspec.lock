@@ -414,6 +414,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.19.0"
+  firebase_crashlytics:
+    dependency: "direct main"
+    description:
+      name: firebase_crashlytics
+      sha256: e235c8452d5622fc271404592388fde179e4b62c50e777ad3c8c3369296104ed
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
+  firebase_crashlytics_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_crashlytics_platform_interface
+      sha256: "4ddadf44ed0a202f3acad053f12c083877940fa8cc1a9f747ae09e1ef4372160"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.7.0"
+  firebase_performance:
+    dependency: "direct main"
+    description:
+      name: firebase_performance
+      sha256: "33f840ac0d3693cb2db8a05e5f181882bb4e13e784927102030c907b958a5fc1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.0+11"
+  firebase_performance_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_performance_platform_interface
+      sha256: "79dffbe35d75fe5ef857a06f7880432d39fcc160224051bd17e4f4f5171edb37"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.4+47"
+  firebase_performance_web:
+    dependency: transitive
+    description:
+      name: firebase_performance_web
+      sha256: "5d804346dcc65154a4b13ea82381a00e42e49c65004114c336a89537bbf47b64"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.7+5"
   firebase_storage:
     dependency: "direct main"
     description:

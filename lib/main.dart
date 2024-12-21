@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -32,41 +35,73 @@ import 'firebase_options.dart';
 
 void main() async {
   final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await Hive.initFlutter();
-  final hivePatientBox = await Hive.openBox('patients');
-  final hiveMedicinesBox = await Hive.openBox('medicines');
-  final hivePrescriptionsBox = await Hive.openBox('prescriptions');
-  final hiveDosageBox = await Hive.openBox('dosages');
-  final hiveFrequencyBox = await Hive.openBox('frequency');
-  final hiveDurationBox = await Hive.openBox('duration');
-  final hiveAccessTokenBox = await Hive.openBox<String>('accessToken');
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FlutterNativeSplash.remove();
+  if (kReleaseMode) {
+    // Track app startup time
+    // Enable Performance Monitoring for production
+    await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
+    final trace = FirebasePerformance.instance.newTrace("app_startup_time");
+    await trace.start();
 
-  runApp(
-    Primacura(
-      patientBox: hivePatientBox,
-      hiveMedicinesBox: hiveMedicinesBox,
-      prescriptionsBox: hivePrescriptionsBox,
-      hiveDosageBox: hiveDosageBox,
-      hiveFrequencyBox: hiveFrequencyBox,
-      hiveDurationBox: hiveDurationBox,
-      hiveAccessTokenBox: hiveAccessTokenBox,
-    ),
-    // PrimacuraAdminPanel(
-    //   prescriptionBox: hivePrescriptionsBox,
-    //   hiveMedicinesBox: hiveMedicinesBox,
-    //   hiveDosageBox: hiveDosageBox,
-    //   hiveFrequencyBox: hiveFrequencyBox,
-    //   hiveDurationBox: hiveDurationBox,
-    //   hiveAccessTokenBox: hiveAccessTokenBox,
-    // ),
-  );
+    await Hive.initFlutter();
+    final hivePatientBox = await Hive.openBox('patients');
+    final hiveMedicinesBox = await Hive.openBox('medicines');
+    final hivePrescriptionsBox = await Hive.openBox('prescriptions');
+    final hiveDosageBox = await Hive.openBox('dosages');
+    final hiveFrequencyBox = await Hive.openBox('frequency');
+    final hiveDurationBox = await Hive.openBox('duration');
+    final hiveAccessTokenBox = await Hive.openBox<String>('accessToken');
+    // Enable Crashlytics for production
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    FlutterNativeSplash.remove();
+
+    runApp(
+      Primacura(
+        patientBox: hivePatientBox,
+        hiveMedicinesBox: hiveMedicinesBox,
+        prescriptionsBox: hivePrescriptionsBox,
+        hiveDosageBox: hiveDosageBox,
+        hiveFrequencyBox: hiveFrequencyBox,
+        hiveDurationBox: hiveDurationBox,
+        hiveAccessTokenBox: hiveAccessTokenBox,
+      ),
+    );
+    await trace.stop();
+  } else {
+    // Disable in non-production modes
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    FirebasePerformance.instance.setPerformanceCollectionEnabled(false);
+
+    await Hive.initFlutter();
+    final hivePatientBox = await Hive.openBox('patients');
+    final hiveMedicinesBox = await Hive.openBox('medicines');
+    final hivePrescriptionsBox = await Hive.openBox('prescriptions');
+    final hiveDosageBox = await Hive.openBox('dosages');
+    final hiveFrequencyBox = await Hive.openBox('frequency');
+    final hiveDurationBox = await Hive.openBox('duration');
+    final hiveAccessTokenBox = await Hive.openBox<String>('accessToken');
+
+    FlutterNativeSplash.remove();
+    runApp(
+      Primacura(
+        patientBox: hivePatientBox,
+        hiveMedicinesBox: hiveMedicinesBox,
+        prescriptionsBox: hivePrescriptionsBox,
+        hiveDosageBox: hiveDosageBox,
+        hiveFrequencyBox: hiveFrequencyBox,
+        hiveDurationBox: hiveDurationBox,
+        hiveAccessTokenBox: hiveAccessTokenBox,
+      ),
+    );
+  }
 }
 
 class Primacura extends StatelessWidget {
