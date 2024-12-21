@@ -148,7 +148,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                             gender: newGender.name,
                           );
                           context.read<PatientCubit>().updatePatient(newPatient);
-                          context.read<PatientCubit>().takePatientBackup(patient);
+                          // context.read<PatientCubit>().takePatientBackup(patient);
                           // Navigator.pop(context);
                         },
                   child: state is PatientLoading ? CircularProgressIndicator() : const Text("Update"),
