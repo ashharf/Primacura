@@ -58,9 +58,9 @@ class Patient {
     return Patient(
       id: map['id'] as String,
       name: map['name'] != null ? map['name'] as String : null,
-      doctorId: map['doctorId'] as List<String>,
+      doctorId: (map['doctorId'] as List<dynamic>).map((e) => e as String).toList(),
       gender: map['gender'] != null ? map['gender'] as String : null,
-      phoneNumber: map['phoneNumber'] as String,
+      phoneNumber: map['phoneNumber'] as String?,
       age: map['age'] != null ? map['age'] as int : null,
     );
   }
