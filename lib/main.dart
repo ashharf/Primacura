@@ -46,18 +46,30 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MyApp(
-    patientBox: hivePatientBox,
-    hiveMedicinesBox: hiveMedicinesBox,
-    prescriptionsBox: hivePrescriptionsBox,
-    hiveDosageBox: hiveDosageBox,
-    hiveFrequencyBox: hiveFrequencyBox,
-    hiveDurationBox: hiveDurationBox,
-    hiveAccessTokenBox: hiveAccessTokenBox,
-  ));
+  FlutterNativeSplash.remove();
+
+  runApp(
+    Primacura(
+      patientBox: hivePatientBox,
+      hiveMedicinesBox: hiveMedicinesBox,
+      prescriptionsBox: hivePrescriptionsBox,
+      hiveDosageBox: hiveDosageBox,
+      hiveFrequencyBox: hiveFrequencyBox,
+      hiveDurationBox: hiveDurationBox,
+      hiveAccessTokenBox: hiveAccessTokenBox,
+    ),
+    // PrimacuraAdminPanel(
+    //   prescriptionBox: hivePrescriptionsBox,
+    //   hiveMedicinesBox: hiveMedicinesBox,
+    //   hiveDosageBox: hiveDosageBox,
+    //   hiveFrequencyBox: hiveFrequencyBox,
+    //   hiveDurationBox: hiveDurationBox,
+    //   hiveAccessTokenBox: hiveAccessTokenBox,
+    // ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class Primacura extends StatelessWidget {
   static final router = AppRoutes.getRouter();
   final Box patientBox;
   final Box hiveMedicinesBox;
@@ -67,7 +79,7 @@ class MyApp extends StatelessWidget {
   final Box hiveDurationBox;
   final Box<String> hiveAccessTokenBox;
 
-  const MyApp({
+  const Primacura({
     super.key,
     required this.patientBox,
     required this.hiveMedicinesBox,
@@ -145,10 +157,9 @@ class MyApp extends StatelessWidget {
             return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
               bool isLightTheme = themeProvider.currentThemeBrightness == Brightness.light;
               return MaterialApp.router(
-                restorationScopeId: "primacura",
                 scrollBehavior: BouncyScrollBehavior(),
                 title: 'Primacura',
-                debugShowCheckedModeBanner: false,
+                debugShowCheckedModeBanner: true,
                 theme: isLightTheme ? AppTheme.lightThemeData : AppTheme.darkThemeData,
                 routerConfig: router,
               );
