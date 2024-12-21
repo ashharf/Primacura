@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/core/theme/app_theme.dart';
-import 'package:opd_management/gen/assets.gen.dart';
-import '../../features/user/presentation/screens/enter_user_details_screen.dart';
-import '../../features/user/presentation/cubit/user_cubit.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
 
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/user/presentation/cubit/user_cubit.dart';
+import '../../features/user/presentation/screens/enter_user_details_screen.dart';
 import '../../features/user/presentation/screens/login_screen.dart';
+import '../../gen/assets.gen.dart';
+import '../theme/app_theme.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
