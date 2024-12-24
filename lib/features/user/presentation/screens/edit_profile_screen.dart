@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +9,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
-import '../cubit/user_cubit.dart';
 import '../provider/logo_and_signature_provider.dart';
+import '../provider/user_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -35,10 +34,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    context.read<UserCubit>().getSpecializations();
-    context.read<UserCubit>().addUserSpecializationToSelected();
-    final userCubit = context.read<UserCubit>();
-    final user = (userCubit.state as UserAuthenticated).user;
+    final userProvider = context.read<UserProvider>();
+    userProvider.getSpecializations();
+    userProvider.addUserSpecializationToSelected();
+
+    final user = userProvider.user;
+    if (user == null) {
+      Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+      return;
+    }
     _nameController = TextEditingController(text: user.name);
     _specializationController = TextEditingController();
     _licenseNumberController = TextEditingController(text: user.licenseNumber);
@@ -64,9 +68,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             Form(
               key: formKey,
-              child: BlocBuilder<UserCubit, UserState>(
-                builder: (context, state) {
-                  final userCubit = context.read<UserCubit>();
+              child: Consumer<UserProvider>(
+                builder: (context, state, child) {
                   return Column(
                     children: [
                       TextFormField(
@@ -198,10 +201,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         displayText: (item) => item.name,
                         textEditingController: _specializationController,
                         textCapitalization: TextCapitalization.words,
-                        items: context.read<UserCubit>().specializations,
+                        items: state.specializations,
                         onItemSelected: (item) {
                           // setState(() {
-                          context.read<UserCubit>().selectSpecialization(item, isProfileEditing: true);
+                          state.selectSpecialization(item, isProfileEditing: true);
                           Future.delayed(Duration(milliseconds: 100), () {
                             _specializationController.clear();
                           });
@@ -213,8 +216,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             name: searchText,
                           );
 
-                          context.read<UserCubit>().addSpecialization(specialization);
-                          context.read<UserCubit>().selectSpecialization(specialization, isProfileEditing: true);
+                          state.addSpecialization(specialization);
+                          state.selectSpecialization(specialization, isProfileEditing: true);
                           Future.delayed(Duration(milliseconds: 100), () {
                             _specializationController.clear();
                           });
@@ -226,17 +229,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Wrap(
                           spacing: 10,
                           children: List.generate(
-                            userCubit.selectedSpecializations.length,
+                            state.selectedSpecializations.length,
                             (index) => Chip(
                               backgroundColor: AppTheme.specializationChipColor,
                               label: Text(
-                                userCubit.selectedSpecializations[index].name,
+                                state.selectedSpecializations[index].name,
                                 style: TextStyle(color: Colors.white),
                               ),
-                              onDeleted: () => context.read<UserCubit>().deletedSelecteddSpecialization(
-                                    userCubit.selectedSpecializations[index],
-                                    isEditingProfile: true,
-                                  ),
+                              onDeleted: () => state.deletedSelecteddSpecialization(
+                                state.selectedSpecializations[index],
+                                isEditingProfile: true,
+                              ),
                             ),
                           ),
                         ),
@@ -249,25 +252,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             SizedBox(height: 20),
             // LogoAndSignature(),
             // SizedBox(height: 100),
-            BlocConsumer<UserCubit, UserState>(
-              listener: (context, state) {
-                // if (state is UserAuthenticated) {
-                //   Navigator.of(context).pop();
-                // }
-
-                if (state is UserActionSuccess) {
-                  Utils.showSnackBar(context, Text("Profile Updated Successfully"));
-                  context.pop();
-                }
-
-                if (state is UserError) {
-                  Utils.showSnackBar(context, Text(state.error));
-                }
-              },
-              builder: (context, state) => ElevatedButton(
+            Consumer<UserProvider>(
+              builder: (context, state, child) => ElevatedButton(
                 // style: ElevatedButton.styleFrom(minimumSize: Size(300, 40)),
-                onPressed: state is UserLoading ? null : _onSave,
-                child: state is UserLoading ? CircularProgressIndicator() : const Text('Save'),
+                onPressed: state.isLoading ? null : _onSave,
+                child: state.isLoading ? CircularProgressIndicator() : const Text('Save'),
               ),
             ),
           ],
@@ -278,10 +267,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _onSave() async {
     if (formKey.currentState!.validate()) {
-      final userCubit = context.read<UserCubit>();
-      final user = (userCubit.state as UserAuthenticated).user;
+      final userProvider = context.read<UserProvider>();
+      final user = userProvider.user;
+      if (user == null) {
+        Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+        return;
+      }
       final updatedUser = user.copyWith(
-        specializations: userCubit.selectedSpecializations,
+        specializations: userProvider.selectedSpecializations,
         licenseNumber: _licenseNumberController.text.trim(),
         clinicName: _clinicNameController.text.trim(),
         clinicAddress: _clinicAddressController.text.trim(),
@@ -291,8 +284,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         name: _nameController.text.trim(),
       );
 
-      if (mounted) {
-        context.read<UserCubit>().updateUser(updatedUser);
+      try {
+        await userProvider.updateUser(updatedUser);
+        if (!mounted) return;
+        context.pop();
+        Utils.showSnackBar(context, Text('Profile Updated Successfully'));
+      } catch (e) {
+        Utils.showSnackBar(context, Text(e.toString()));
       }
     }
   }

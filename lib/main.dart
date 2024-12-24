@@ -10,6 +10,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:opd_management/features/user/presentation/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/scroll_pyhsics.dart';
@@ -131,6 +132,21 @@ class Primacura extends StatelessWidget {
             create: (context) => ThemeProvider(),
           ),
           ChangeNotifierProvider(
+            create: (context) => UserProvider(
+              userRepository: UserRepositoryImpl(
+                userRemoteDataSource: UserRemoteDataSource(
+                  googleSignIn: GoogleSignIn(),
+                  firebaseAuth: FirebaseAuth.instance,
+                  firebaseFirestore: FirebaseFirestore.instance,
+                ),
+                userLocalDataSource: UserLocalDataSource(
+                  hiveMedicinesBox: hiveMedicinesBox,
+                  hiveAccessTokenBox: hiveAccessTokenBox,
+                ),
+              ),
+            ),
+          ),
+          ChangeNotifierProvider(
             create: (context) => PatientsProvider(
               patientRepository: PatientRepositoryWithLocalDatabaseImpl(
                 patientLocalDataSource: PatientLocalDataSource(
@@ -142,23 +158,23 @@ class Primacura extends StatelessWidget {
         ],
         child: MultiBlocProvider(
           providers: [
-            BlocProvider(
-              create: (context) => UserCubit(
-                authRepository: UserRepositoryImpl(
-                  userRemoteDataSource: UserRemoteDataSource(
-                    googleSignIn: GoogleSignIn(),
-                    firebaseAuth: FirebaseAuth.instance,
-                    firebaseFirestore: FirebaseFirestore.instance,
-                  ),
-                  userLocalDataSource: UserLocalDataSource(
-                    hiveMedicinesBox: hiveMedicinesBox,
-                    hiveAccessTokenBox: hiveAccessTokenBox,
-                  ),
-                ),
-              )
-              // ..checkAuthState()
-              ,
-            ),
+            // BlocProvider(
+            //   create: (context) => UserCubit(
+            //     authRepository: UserRepositoryImpl(
+            //       userRemoteDataSource: UserRemoteDataSource(
+            //         googleSignIn: GoogleSignIn(),
+            //         firebaseAuth: FirebaseAuth.instance,
+            //         firebaseFirestore: FirebaseFirestore.instance,
+            //       ),
+            //       userLocalDataSource: UserLocalDataSource(
+            //         hiveMedicinesBox: hiveMedicinesBox,
+            //         hiveAccessTokenBox: hiveAccessTokenBox,
+            //       ),
+            //     ),
+            //   )
+            //   // ..checkAuthState()
+            //   ,
+            // ),
             // BlocProvider(
             //   create: (context) => PatientCubit(
             //     patientRepository: PatientRepositoryWithLocalDatabaseImpl(

@@ -7,11 +7,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/user/presentation/cubit/user_cubit.dart';
+import '../../features/user/presentation/provider/user_provider.dart';
 import '../../features/user/presentation/screens/enter_user_details_screen.dart';
 import '../../features/user/presentation/screens/login_screen.dart';
 import '../../gen/assets.gen.dart';
 import '../theme/app_theme.dart';
+import '../utils/utils.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
@@ -49,19 +50,23 @@ class _SplashScreenState extends State<SplashScreen> {
     initializeFirebasePerformance();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final authCubit = context.read<UserCubit>();
-      await authCubit.checkAuthState();
+      final UserProvider userProvider = context.read<UserProvider>();
+      try {
+        await userProvider.checkAuthState();
+        final user = userProvider.user;
 
-      final state = authCubit.state;
+        if (!mounted) return;
 
-      if (mounted) {
-        if (state is UserAuthenticated) {
-          context.go(HomeScreen.routeName);
-        } else if (state is UserProfileNotCompleted) {
+        if (user == null) {
+          context.go(LoginScreen.routeName);
+        } else if (user.licenseNumber == null) {
           context.go(EnterUserDetailsScreen.routeName);
         } else {
-          context.go(LoginScreen.routeName);
+          context.go(HomeScreen.routeName);
         }
+      } catch (e) {
+        Utils.showSnackBar(context, Text(e.toString()));
+        context.go(LoginScreen.routeName);
       }
 
       // Stop the trace after navigation is complete

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opd_management/core/utils/utils.dart';
+import 'package:opd_management/features/user/presentation/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -353,7 +355,13 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
   }
 
   Future<void> _addPatient() async {
-    final userId = (context.read<UserCubit>().state as UserAuthenticated).user.id;
+    final userProvider = context.read<UserProvider>();
+    final user = userProvider.user;
+    if (user == null) {
+      Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+      return;
+    }
+    final userId = user.id;
     final phoneNumber = _phoneNumberController.text.trim();
     final name = _nameController.text.trim();
     final age = int.parse(_ageController.text.trim());

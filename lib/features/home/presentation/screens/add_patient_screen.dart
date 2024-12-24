@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../user/presentation/provider/user_provider.dart';
 import '../../data/models/patient.dart';
 import '../cubit/prescription_cubit.dart';
 import '../providers/patients_provider.dart';
@@ -141,7 +141,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   }
 
   Future<void> addPatient() async {
-    final userId = (context.read<UserCubit>().state as UserAuthenticated).user.id;
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.user == null) {
+      Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+      return;
+    }
+    final userId = userProvider.user!.id;
     final phoneNumber = phoneNumberController.text.trim();
     final name = nameController.text.trim();
     final age = int.parse(ageController.text.trim());

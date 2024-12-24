@@ -15,4 +15,8 @@ class AppConstants {
   static const String prescriptionsCollection = 'prescriptions';
   static const googleDrivePatientsFileName = 'patients_backup.json';
   static const googleDrivePrescriptionsFileName = 'prescriptions_backup.json';
+
+  static const somethingWentWrong = 'Something went wrong';
+  static const cannotCheckAuthState = 'Cannot check auth state';
+  static const pleaseTryLoggingInAgain = 'Please try logging in again';
 }

@@ -11,25 +11,29 @@ class AppException implements Exception {
 }
 
 class FetchDataException extends AppException {
-  FetchDataException([super.message]);
+  FetchDataException([String? message]) : super(message, "Error During Communication: Please try again");
 }
 
 class BadRequestException extends AppException {
-  BadRequestException([super.smessage]);
+  BadRequestException([String? message]) : super(message, "Bad Request: Please try again");
 }
 
 class UnauthorisedException extends AppException {
-  UnauthorisedException([super.smessage]);
+  UnauthorisedException([String? message]) : super(message, "Unauthorised request Please try again");
 }
 
 class TimeoutException extends AppException {
-  TimeoutException([super.smessage]);
+  TimeoutException([String? message]) : super(message, "Timeout: Please check your internet connection");
 }
 
 class InvalidInputException extends AppException {
-  InvalidInputException([super.message]);
+  InvalidInputException([String? message]) : super(message ?? "Invalid input");
 }
 
-class LocalDatabaseError extends AppException {
-  LocalDatabaseError([super.message]);
+class LocalDatabaseException extends AppException {
+  LocalDatabaseException([String? message]) : super(message ?? "An error occurred while accessing the local database");
+}
+
+class UnknownErrorException extends AppException {
+  UnknownErrorException([String? message]) : super(message ?? "An unknown error occurred");
 }

@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../user/presentation/provider/user_provider.dart';
 import '../../data/models/medicine.dart';
 import '../../data/models/prescription_medicine.dart';
 import '../../data/models/units.dart';
@@ -86,8 +87,8 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       body: BlocBuilder<PrescriptionCubit, PrescriptionState>(
         builder: (context, state) {
           final prescriptionCubit = BlocProvider.of<PrescriptionCubit>(context);
-          return BlocBuilder<UserCubit, UserState>(
-            builder: (context, userState) {
+          return Consumer<UserProvider>(
+            builder: (context, userProvider, _) {
               return Column(
                 children: [
                   CustomProgressIndicator(
@@ -116,7 +117,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                 textEditingController: _searchController,
                                 textCapitalization: TextCapitalization.words,
                                 items: prescriptionCubit.medicines,
-                                showItemDeleteButton: (item) => item.userId == userState.user?.id,
+                                showItemDeleteButton: (item) => item.userId == userProvider.user?.id,
                                 onItemSelected: (item) {
                                   setState(() {
                                     _selectedMedicine = item;
@@ -125,7 +126,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                 onAddSelected: _onAddSelected,
                                 onDelete: (item) {
                                   prescriptionCubit.medicines.remove(item);
-                                  context.read<UserCubit>().deleteMedicineFromRemoteDatabase(item.id);
+                                  userProvider.deleteMedicineFromRemoteDatabase(item.id);
                                 },
                               ),
                             ),
@@ -285,8 +286,9 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
               onPressed: state.prescribedMedicines.isEmpty
                   ? null
                   : () {
+                      final userProvider = context.read<UserProvider>();
                       context.read<PrescriptionCubit>().onMakePrescription(
-                            user: context.read<UserCubit>().state.user,
+                            user: userProvider.user,
                           );
                       context.goNamed(PrescriptionReviewScreen.routeName);
                     },
@@ -598,15 +600,14 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   void _onAddSelected(String searchText) {
-    final userCubit = context.read<UserCubit>();
     final prescriptionCubit = context.read<PrescriptionCubit>();
-    final userState = userCubit.state;
+    final userProvider = context.read<UserProvider>();
     final Medicine medicine = Medicine(
       id: Uuid().v4(),
       brandName: searchText.trim(),
-      userId: userState.user?.id,
+      userId: userProvider.user?.id,
     );
-    userCubit.addMedicineToRemoteDatabase(medicine);
+    userProvider.addMedicineToRemoteDatabase(medicine);
     prescriptionCubit.medicines.add(medicine);
     setState(() {
       _selectedMedicine = medicine;

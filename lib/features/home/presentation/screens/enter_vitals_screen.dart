@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/blood_pressure_input_parameters.dart';
@@ -10,6 +11,7 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../user/presentation/provider/user_provider.dart';
 import '../../data/models/clinical_findings.dart';
 import '../../data/models/investigation.dart';
 import '../../data/models/patient.dart';
@@ -256,10 +258,10 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
     );
   }
 
-  BlocBuilder<UserCubit, UserState> _buildInvestigationsDropdown() {
+  Widget _buildInvestigationsDropdown() {
     final prescriptionCubit = context.read<PrescriptionCubit>();
-    return BlocBuilder<UserCubit, UserState>(
-      builder: (context, state) {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, _) {
         return CustomSearchableDropdown<Investigation>(
           prefixIcon: Icon(
             FontAwesomeIcons.microscope,
@@ -285,7 +287,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           },
           displayText: (item) => item.name,
           textEditingController: _investigationSearchController,
-          items: (state as UserAuthenticated).user.investigations,
+          items: userProvider.user!.investigations,
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
@@ -300,7 +302,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
               name: searchText.trim(),
             );
 
-            context.read<UserCubit>().addInvestigation(investigation);
+            userProvider.addInvestigation(investigation);
             prescriptionCubit.onInvestigationSelected(investigation);
 
             Future.delayed(Duration(milliseconds: 1), () {
@@ -310,7 +312,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             setState(() {});
           },
           onDelete: (item) {
-            context.read<UserCubit>().deleteInvestigation(item);
+            userProvider.deleteInvestigation(item);
             setState(() {});
           },
           textCapitalization: TextCapitalization.words,
@@ -319,10 +321,10 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
     );
   }
 
-  BlocBuilder<UserCubit, UserState> _buildClinicalFindingDrodown() {
+  Widget _buildClinicalFindingDrodown() {
     final prescriptionCubit = context.read<PrescriptionCubit>();
-    return BlocBuilder<UserCubit, UserState>(
-      builder: (context, state) {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, _) {
         return CustomSearchableDropdown<ClinicalFinding>(
           prefixIcon: Icon(
             FontAwesomeIcons.magnifyingGlassPlus,
@@ -348,7 +350,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           },
           displayText: (item) => item.name,
           textEditingController: _clinicalFindingsSearchController,
-          items: (state as UserAuthenticated).user.clinicalFindings,
+          items: userProvider.user!.clinicalFindings,
           showItemDeleteButton: (item) => true,
           shouldUnFocusOnSelect: false,
           onItemSelected: (item) {
@@ -363,7 +365,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
               name: searchText.trim(),
             );
 
-            context.read<UserCubit>().addClinicalFinding(chiefComplaint);
+            userProvider.addClinicalFinding(chiefComplaint);
             prescriptionCubit.onClinicalFindingSelected(chiefComplaint);
 
             Future.delayed(Duration(milliseconds: 1), () {
@@ -373,7 +375,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             // setState(() {});
           },
           onDelete: (item) {
-            context.read<UserCubit>().deleteClinicalFinding(item);
+            userProvider.deleteClinicalFinding(item);
             setState(() {});
           },
           textCapitalization: TextCapitalization.words,
@@ -459,10 +461,10 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
     );
   }
 
-  BlocBuilder<UserCubit, UserState> _buildCheifComplaintDropDown() {
+  Widget _buildCheifComplaintDropDown() {
     final prescriptionCubit = context.read<PrescriptionCubit>();
-    return BlocBuilder<UserCubit, UserState>(
-      builder: (context, state) {
+    return Consumer<UserProvider>(
+      builder: (context, state, _) {
         return CustomSearchableDropdown<ChiefComplaint>(
           prefixIcon: Icon(
             FontAwesomeIcons.headSideVirus,
@@ -488,7 +490,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           },
           displayText: (item) => item.name,
           textEditingController: _chiefComplaintSearchController,
-          items: (state as UserAuthenticated).user.chiefComplaints,
+          items: state.user!.chiefComplaints,
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
@@ -506,13 +508,13 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
               _chiefComplaintSearchController.clear();
             });
 
-            context.read<UserCubit>().addChiefComplaint(chiefComplaint);
+            state.addChiefComplaint(chiefComplaint);
             prescriptionCubit.onCheifComplaintSelected(chiefComplaint);
 
             setState(() {});
           },
           onDelete: (item) {
-            context.read<UserCubit>().deleteChiefComplaint(item);
+            state.deleteChiefComplaint(item);
             setState(() {});
           },
           textCapitalization: TextCapitalization.words,

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opd_management/features/home/presentation/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../home/presentation/screens/home_screen.dart';
 import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
-import '../../data/models/user.dart';
-import '../cubit/user_cubit.dart';
+import '../provider/user_provider.dart';
 
 class EnterUserDetailsScreen extends StatefulWidget {
   const EnterUserDetailsScreen({super.key});
@@ -36,11 +35,17 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
 
   @override
   void initState() {
-    final userCubit = context.read<UserCubit>();
-    userCubit.getSpecializations();
-    userCubit.addUserSpecializationToSelectedAtCompleteYourProfile();
+    final userProvider = context.read<UserProvider>();
+    userProvider.getSpecializations();
+    userProvider.addUserSpecializationToSelectedAtCompleteYourProfile();
 
-    final User user = (userCubit.state as UserProfileNotCompleted).user;
+    final user = userProvider.user;
+
+    if (user == null) {
+      Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+      return;
+    }
+
     _nameController = TextEditingController(text: user.name);
     _specializationController = TextEditingController();
     _licenseNumberController = TextEditingController(text: user.licenseNumber);
@@ -76,15 +81,8 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
       ),
       body: Form(
         key: formKey,
-        child: BlocConsumer<UserCubit, UserState>(
-          listener: (context, state) {
-            if (state is UserError) {
-              Utils.showSnackBar(context, Text((state).error));
-            }
-          },
-          builder: (context, state) {
-            final userCubit = context.read<UserCubit>();
-
+        child: Consumer<UserProvider>(
+          builder: (context, state, child) {
             return ListView(
               padding: AppConstants.defaultPading,
               children: [
@@ -116,10 +114,10 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                   displayText: (item) => item.name,
                   textEditingController: _specializationController,
                   textCapitalization: TextCapitalization.words,
-                  items: context.read<UserCubit>().specializations,
+                  items: state.specializations,
                   onItemSelected: (item) {
                     // setState(() {
-                    context.read<UserCubit>().selectSpecialization(item);
+                    state.selectSpecialization(item);
                     Future.delayed(Duration(milliseconds: 100), () {
                       _specializationController.clear();
                     });
@@ -131,8 +129,8 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                       name: searchText,
                     );
 
-                    context.read<UserCubit>().addSpecialization(specialization);
-                    context.read<UserCubit>().selectSpecialization(specialization);
+                    state.addSpecialization(specialization);
+                    state.selectSpecialization(specialization);
                     Future.delayed(Duration(milliseconds: 100), () {
                       _specializationController.clear();
                     });
@@ -143,16 +141,14 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                 Wrap(
                   spacing: 10,
                   children: List.generate(
-                    userCubit.selectedSpecializations.length,
+                    state.selectedSpecializations.length,
                     (index) => Chip(
                       backgroundColor: AppTheme.specializationChipColor,
                       label: Text(
-                        userCubit.selectedSpecializations[index].name,
+                        state.selectedSpecializations[index].name,
                         style: TextStyle(color: Colors.white),
                       ),
-                      onDeleted: () => context
-                          .read<UserCubit>()
-                          .deletedSelecteddSpecialization(userCubit.selectedSpecializations[index]),
+                      onDeleted: () => state.deletedSelecteddSpecialization(state.selectedSpecializations[index]),
                     ),
                   ),
                 ),
@@ -239,17 +235,12 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-                BlocConsumer<UserCubit, UserState>(
-                  listener: (context, state) {
-                    if (state is UserAuthenticated) {
-                      context.go(HomeScreen.routeName);
-                    }
-                  },
-                  builder: (context, state) {
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, _) {
                     return ElevatedButton(
-                      onPressed: state is UserLoading
+                      onPressed: userProvider.isLoading
                           ? null
-                          : () {
+                          : () async {
                               if (formKey.currentState!.validate()) {
                                 final licenseNumber = _licenseNumberController.text.trim();
                                 final clinicName = _clinicNameController.text.trim();
@@ -257,19 +248,33 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
                                 final clinicTime = _clinicTimeController.text.trim();
                                 final phoneNumber = _phoneNumberController.text.trim();
                                 final degree = _degreeController.text.trim();
-                                final updatedUser = (userCubit.state as UserProfileNotCompleted).user.copyWith(
-                                      licenseNumber: licenseNumber,
-                                      clinicName: clinicName,
-                                      clinicAddress: clinicAddress,
-                                      clinicTimings: clinicTime,
-                                      phoneNumber: phoneNumber,
-                                      specializations: userCubit.selectedSpecializations,
-                                      degree: degree,
-                                    );
-                                context.read<UserCubit>().updateUser(updatedUser);
+                                final user = userProvider.user;
+                                if (user == null) {
+                                  Utils.showSnackBar(context, Text(AppConstants.pleaseTryLoggingInAgain));
+                                  return;
+                                }
+                                final updatedUser = user.copyWith(
+                                  licenseNumber: licenseNumber,
+                                  clinicName: clinicName,
+                                  clinicAddress: clinicAddress,
+                                  clinicTimings: clinicTime,
+                                  phoneNumber: phoneNumber,
+                                  specializations: userProvider.selectedSpecializations,
+                                  degree: degree,
+                                );
+                                try {
+                                  await userProvider.updateUser(updatedUser);
+                                  if (context.mounted) {
+                                    context.go(HomeScreen.routeName);
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    Utils.showSnackBar(context, Text(e.toString()));
+                                  }
+                                }
                               }
                             },
-                      child: state is UserLoading ? CircularProgressIndicator() : const Text('Save'),
+                      child: userProvider.isLoading ? CircularProgressIndicator() : const Text('Save'),
                     );
                   },
                 ),

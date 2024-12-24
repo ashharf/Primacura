@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -10,7 +11,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../theme/provider/theme_provider.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../user/presentation/provider/user_provider.dart';
 import '../../../user/presentation/screens/profile_screen.dart';
 import '../cubit/prescription_cubit.dart';
 import '../providers/patients_provider.dart';
@@ -56,16 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<UserCubit, UserState>(
-          builder: (context, state) {
+        title: Consumer<UserProvider>(
+          builder: (context, state, _) {
             return Column(
               children: [
                 Text("Dashboard", style: Theme.of(context).textTheme.titleMedium),
-                if (state is UserAuthenticated)
-                  Text(
-                    (context.read<UserCubit>().state as UserAuthenticated).user.clinicName ?? "",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                Text(
+                  state.user?.clinicName ?? "",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             );
           },
@@ -91,14 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               context.goNamed(ProfileScreen.routeName);
             },
-            icon: BlocBuilder<UserCubit, UserState>(
-              builder: (context, state) {
-                return state is UserAuthenticated
-                    ? (state).user.name != null && (state).user.name!.isNotEmpty
+            icon: Consumer<UserProvider>(
+              builder: (context, state, _) {
+                return state.user != null
+                    ? (state).user!.name != null && (state).user!.name!.isNotEmpty
                         ? CircleAvatar(
                             backgroundColor: AppTheme.tertiaryColor,
                             child: Text(
-                              (state).user.name?.substring(0, 1).toUpperCase() ?? "",
+                              (state).user!.name?.substring(0, 1).toUpperCase() ?? "",
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: context.read<ThemeProvider>().currentThemeBrightness == Brightness.dark
                                         ? Colors.black
