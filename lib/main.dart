@@ -159,7 +159,7 @@ class Primacura extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => PatientCubit(
-                patientRepository: PatientRepositoryImpl(
+                patientRepository: PatientRepositoryWithLocalDatabaseImpl(
                   patientRemoteDataSource: PatientRemoteDataSource(
                     firebaseFirestore: FirebaseFirestore.instance,
                     googleDriveService: GoogleDriveService(),
