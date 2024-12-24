@@ -8,14 +8,12 @@ abstract class PatientRepository {
   Future<void> updatePatientInLocalData(Patient patient);
   Future<void> deletePatientFromlocalData(Patient patient);
   Future<List<Patient>> checkIfPatientExistsWithNumber(String phoneNumber);
-  Future<void> takepatientBackup(Patient patient);
 }
 
-class PatientRepositoryImpl implements PatientRepository {
-  final PatientRemoteDataSource patientRemoteDataSource;
+class PatientRepositoryWithLocalDatabaseImpl implements PatientRepository {
   final PatientLocalDataSource patientLocalDataSource;
 
-  PatientRepositoryImpl({required this.patientRemoteDataSource, required this.patientLocalDataSource});
+  PatientRepositoryWithLocalDatabaseImpl({required this.patientLocalDataSource});
 
   @override
   Future<List<Patient>> getPatientsFromLocalData() async {
@@ -61,15 +59,6 @@ class PatientRepositoryImpl implements PatientRepository {
   Future<List<Patient>> checkIfPatientExistsWithNumber(String phoneNumber) {
     try {
       return patientLocalDataSource.checkIfPatientExistsWithNumber(phoneNumber);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> takepatientBackup(Patient patient) async {
-    try {
-      return patientRemoteDataSource.takePatientBackup(patient);
     } catch (e) {
       rethrow;
     }
