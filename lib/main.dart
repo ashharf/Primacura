@@ -11,6 +11,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:opd_management/features/home/presentation/providers/patients_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/scroll_pyhsics.dart';
@@ -134,6 +135,15 @@ class Primacura extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => ThemeProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => PatientsProvider(
+              patientRepository: PatientRepositoryWithLocalDatabaseImpl(
+                patientLocalDataSource: PatientLocalDataSource(
+                  hivePatientBox: patientBox,
+                ),
+              ),
+            ),
+          )
         ],
         child: MultiBlocProvider(
           providers: [
@@ -157,19 +167,15 @@ class Primacura extends StatelessWidget {
               // ..checkAuthState()
               ,
             ),
-            BlocProvider(
-              create: (context) => PatientCubit(
-                patientRepository: PatientRepositoryWithLocalDatabaseImpl(
-                  patientRemoteDataSource: PatientRemoteDataSource(
-                    firebaseFirestore: FirebaseFirestore.instance,
-                    googleDriveService: GoogleDriveService(),
-                  ),
-                  patientLocalDataSource: PatientLocalDataSource(
-                    hivePatientBox: patientBox,
-                  ),
-                ),
-              ),
-            ),
+            // BlocProvider(
+            //   create: (context) => PatientCubit(
+            //     patientRepository: PatientRepositoryWithLocalDatabaseImpl(
+            //       patientLocalDataSource: PatientLocalDataSource(
+            //         hivePatientBox: patientBox,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             BlocProvider(
               create: (context) => PrescriptionCubit(
                 prescriptionRepository: PrescriptionRepositoryImpl(

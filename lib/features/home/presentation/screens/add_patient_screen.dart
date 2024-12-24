@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/functions/app_functions.dart';
-import '../cubit/prescription_cubit.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/functions/app_functions.dart';
+import '../../../../core/utils/utils.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../data/models/patient.dart';
-import '../cubit/patient_cubit.dart';
+import '../cubit/prescription_cubit.dart';
+import '../providers/patients_provider.dart';
 import 'enter_vitals_screen.dart';
 
 class AddPatientScreen extends StatefulWidget {
@@ -99,17 +99,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   },
                 ),
                 SizedBox(height: 50),
-                BlocConsumer<PatientCubit, PatientState>(
-                  listener: (context, state) {
-                    if (state is PatientAdded) {
-                      context.pop();
-                    }
-                  },
-                  builder: (context, state) {
+                Consumer<PatientsProvider>(
+                  builder: (context, patientsProvider, child) {
                     bool patientSelected = context.read<PrescriptionCubit>().state.patient != null;
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(),
-                      onPressed: state is PatientLoading
+                      onPressed: patientsProvider.isLoading
                           ? null
                           : () async {
                               if (patientSelected) {
@@ -118,17 +113,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                               }
 
                               if (formKey.currentState!.validate()) {
-                                final patientCubit = context.read<PatientCubit>();
                                 final phoneNumber = phoneNumberController.text.trim();
-                                await patientCubit.checkIfPatientExistsWithNumber(phoneNumber);
-                                if (patientCubit.patientsWithSameNumber.isNotEmpty && context.mounted) {
+                                await patientsProvider.checkIfPatientExistsWithNumber(phoneNumber);
+                                if (patientsProvider.patientsWithSameNumber.isNotEmpty && context.mounted) {
                                   final shouldAddPatient =
                                       await AppFunctions.showPatientWithSameNumberDialog(context) ?? false;
                                   if (shouldAddPatient) {
                                     await addPatient();
-                                    // if (context.mounted) {
-                                    //   context.pop();
-                                    // }
                                   } else {
                                     return;
                                   }
@@ -137,7 +128,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                 }
                               }
                             },
-                      child: state is PatientLoading ? CircularProgressIndicator() : Text("Add Patient"),
+                      child: patientsProvider.isLoading ? CircularProgressIndicator() : Text("Add Patient"),
                     );
                   },
                 )
@@ -164,6 +155,16 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       age: age,
       gender: gender,
     );
-    await context.read<PatientCubit>().addPatient(patient);
+    try {
+      await context.read<PatientsProvider>().addPatient(patient);
+      if (mounted) {
+        context.pop();
+        Utils.showSnackBar(context, Text("Patient added successfully"));
+      }
+    } catch (e) {
+      if (mounted) {
+        Utils.showSnackBar(context, Text("Something went wrong"));
+      }
+    }
   }
 }

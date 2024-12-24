@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/utils/utils.dart';
-import '../../data/models/patient.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../cubit/patient_cubit.dart';
+import '../../../../core/utils/utils.dart';
+import '../../data/models/patient.dart';
+import '../providers/patients_provider.dart';
 
 class EditPatientScreen extends StatefulWidget {
   const EditPatientScreen({required this.patientId, super.key});
@@ -27,8 +27,8 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
 
   @override
   void initState() {
-    final patientCubit = context.read<PatientCubit>();
-    patient = (patientCubit.state as PatientLoaded).patients.firstWhere((element) => element.id == widget.patientId);
+    final patientsProvider = context.read<PatientsProvider>();
+    patient = patientsProvider.patients.firstWhere((element) => element.id == widget.patientId);
     nameController = TextEditingController(text: patient.name);
     phoneNumberController = TextEditingController(text: patient.phoneNumber);
     ageController = TextEditingController(text: patient.age.toString());
@@ -53,14 +53,23 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              context.pop(context);
                             },
                             child: Text("Cancel"),
                           ),
                           TextButton(
-                            onPressed: () {
-                              context.read<PatientCubit>().deletePatient(patient);
-                              Navigator.pop(context);
+                            onPressed: () async {
+                              try {
+                                if (context.mounted) {
+                                  context.pop(context);
+                                  context.pop();
+                                  Utils.showSnackBar(context, Text("Patient deleted successfully"));
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  Utils.showSnackBar(context, Text("Something went wrong"));
+                                }
+                              }
                             },
                             child: Text("Delete"),
                           ),
@@ -116,26 +125,12 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
               },
             ),
             SizedBox(height: 100),
-            BlocConsumer<PatientCubit, PatientState>(
-              listener: (context, state) {
-                if (state is PatientError) {
-                  Utils.showSnackBar(context, Text(state.message ?? "Something went wrong"));
-                }
-
-                if (state is PatientActionSuccess) {
-                  Utils.showSnackBar(context, Text(state.message ?? "Action Successful"));
-                }
-
-                if (state is PatientDeleted) {
-                  context.pop();
-                  Utils.showSnackBar(context, Text(state.message ?? "Patient Deleted"));
-                }
-              },
-              builder: (context, state) {
+            Consumer<PatientsProvider>(
+              builder: (context, patientsProvider, child) {
                 return ElevatedButton(
-                  onPressed: state is PatientLoading
+                  onPressed: patientsProvider.isLoading
                       ? null
-                      : () {
+                      : () async {
                           final newName = nameController.text;
                           final newPhoneNumber = phoneNumberController.text;
                           final newAge = int.parse(ageController.text);
@@ -147,21 +142,24 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                             age: newAge,
                             gender: newGender.name,
                           );
-                          context.read<PatientCubit>().updatePatient(newPatient);
+                          try {
+                            await patientsProvider.updatePatient(newPatient);
+                            if (context.mounted) {
+                              Utils.showSnackBar(context, Text("Patient updated successfully"));
+                              context.pop();
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              Utils.showSnackBar(context, Text("Something went wrong"));
+                            }
+                          }
                           // context.read<PatientCubit>().takePatientBackup(patient);
                           // Navigator.pop(context);
                         },
-                  child: state is PatientLoading ? CircularProgressIndicator() : const Text("Update"),
+                  child: patientsProvider.isSearching ? CircularProgressIndicator() : const Text("Update"),
                 );
               },
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     context.read<PatientCubit>().deletePatient(patient);
-            //     Navigator.pop(context);
-            //   },
-            //   child: const Text("Delete"),
-            // ),
           ],
         ),
       ),

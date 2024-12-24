@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -11,8 +12,8 @@ import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/prescription_utils.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../data/models/patient.dart';
-import '../cubit/patient_cubit.dart';
 import '../cubit/prescription_cubit.dart';
+import '../providers/patients_provider.dart';
 import '../widget/custom_autocomplete.dart';
 import '../widget/prescription_card.dart';
 import 'enter_vitals_screen.dart';
@@ -65,158 +66,153 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
             child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
               builder: (context, state) {
                 final Patient? selectedPatient = state.patient;
-                return state is PatientLoading
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : SingleChildScrollView(
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5),
+                      Consumer<PatientsProvider>(
+                        builder: (context, patientsProvider, child) {
+                          return CustomSearchableDropdown<Patient>(
+                            prefixIcon: Icon(
+                              Icons.search,
+                              size: 20,
+                            ),
+                            hintText: "Search to select patient",
+                            searchLogic: _searchLogic,
+                            subtitleBuilder: (context, item) => item.phoneNumber != null && item.phoneNumber!.isNotEmpty
+                                ? Text(item.phoneNumber!)
+                                : null,
+                            displayText: (item) => item.name ?? "",
+                            textEditingController: _searchController,
+                            textCapitalization: TextCapitalization.words,
+                            items: patientsProvider.patients,
+                            onItemSelected: _onPatientSelected,
+                            onAddSelected: _onAddPatientSelected,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      SizedBox(height: 20),
+                      AnimatedOpacity(
+                        opacity: selectedPatient != null ? 0.5 : 1,
+                        duration: Duration(milliseconds: 500),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 5),
-                            BlocBuilder<PatientCubit, PatientState>(
-                              builder: (context, state) {
-                                return CustomSearchableDropdown<Patient>(
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    size: 20,
-                                  ),
-                                  hintText: "Search to select patient",
-                                  searchLogic: _searchLogic,
-                                  subtitleBuilder: (context, item) =>
-                                      item.phoneNumber != null && item.phoneNumber!.isNotEmpty
-                                          ? Text(item.phoneNumber!)
-                                          : null,
-                                  displayText: (item) => item.name ?? "",
-                                  textEditingController: _searchController,
-                                  textCapitalization: TextCapitalization.words,
-                                  items: state.patients,
-                                  onItemSelected: _onPatientSelected,
-                                  onAddSelected: _onAddPatientSelected,
-                                );
+                            TextFormField(
+                              controller: _nameController,
+                              readOnly: selectedPatient != null ? true : false,
+                              textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecoration(
+                                hintText: "Patient Name",
+                                prefixIcon: Icon(
+                                  FontAwesomeIcons.hospitalUser,
+                                  size: 20,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter patient name";
+                                }
+                                return null;
                               },
                             ),
                             SizedBox(height: 10),
-                            SizedBox(height: 20),
-                            AnimatedOpacity(
-                              opacity: selectedPatient != null ? 0.5 : 1,
-                              duration: Duration(milliseconds: 500),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextFormField(
-                                    controller: _nameController,
-                                    readOnly: selectedPatient != null ? true : false,
-                                    textCapitalization: TextCapitalization.words,
-                                    textInputAction: TextInputAction.next,
-                                    keyboardType: TextInputType.name,
-                                    decoration: InputDecoration(
-                                      hintText: "Patient Name",
-                                      prefixIcon: Icon(
-                                        FontAwesomeIcons.hospitalUser,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Please enter patient name";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 10),
-                                  TextFormField(
-                                    controller: _phoneNumberController,
-                                    readOnly: selectedPatient != null ? true : false,
-                                    keyboardType: TextInputType.phone,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      hintText: "Patient Phone Number",
-                                      prefixIcon: Icon(Icons.phone),
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isNotEmpty && !_phoneNumberRegex.hasMatch(value)) {
-                                        return "Please enter a valid phone number";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 10),
-                                  TextFormField(
-                                    controller: _ageController,
-                                    readOnly: selectedPatient != null ? true : false,
-                                    keyboardType: TextInputType.number,
-                                    textInputAction: TextInputAction.done,
-                                    decoration: InputDecoration(
-                                      hintText: "Patient Age",
-                                      prefixIcon: Icon(FontAwesomeIcons.personWalkingWithCane),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Please enter patient age";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 15),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        FontAwesomeIcons.venusMars,
-                                        size: 20,
-                                        // color: Colors.white70,
-                                      ),
-                                      SizedBox(width: 20),
-                                      IgnorePointer(
-                                        ignoring: selectedPatient != null ? true : false,
-                                        child: DropdownMenu(
-                                          dropdownMenuEntries: Gender.values.map(
-                                            (e) {
-                                              final String genderName = PrescriptionUtils.getGenderString(e);
-
-                                              return DropdownMenuEntry(
-                                                value: e,
-                                                label: genderName,
-                                              );
-                                            },
-                                          ).toList(),
-                                          initialSelection:
-                                              selectedPatient != null ? selectedPatient.gender : _selectedGender,
-                                          onSelected: (value) {
-                                            _selectedGender = value! as Gender;
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                            TextFormField(
+                              controller: _phoneNumberController,
+                              readOnly: selectedPatient != null ? true : false,
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                hintText: "Patient Phone Number",
+                                prefixIcon: Icon(Icons.phone),
                               ),
-                            ),
-                            if (state.patientPrescriptions.isNotEmpty) ...[
-                              SizedBox(height: 20),
-                              Divider(),
-                              SizedBox(height: 10),
-                            ],
-                            BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                              builder: (context, state) {
-                                final patientPrescriptions = state.patientPrescriptions;
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: patientPrescriptions.length,
-                                  itemBuilder: (context, index) {
-                                    final prescription = patientPrescriptions[index];
-                                    return PrescriptionCard(
-                                      prescription: prescription,
-                                    );
-                                  },
-                                );
+                              validator: (value) {
+                                if (value!.isNotEmpty && !_phoneNumberRegex.hasMatch(value)) {
+                                  return "Please enter a valid phone number";
+                                }
+                                return null;
                               },
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: _ageController,
+                              readOnly: selectedPatient != null ? true : false,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
+                              decoration: InputDecoration(
+                                hintText: "Patient Age",
+                                prefixIcon: Icon(FontAwesomeIcons.personWalkingWithCane),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter patient age";
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 15),
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.venusMars,
+                                  size: 20,
+                                  // color: Colors.white70,
+                                ),
+                                SizedBox(width: 20),
+                                IgnorePointer(
+                                  ignoring: selectedPatient != null ? true : false,
+                                  child: DropdownMenu(
+                                    dropdownMenuEntries: Gender.values.map(
+                                      (e) {
+                                        final String genderName = PrescriptionUtils.getGenderString(e);
+
+                                        return DropdownMenuEntry(
+                                          value: e,
+                                          label: genderName,
+                                        );
+                                      },
+                                    ).toList(),
+                                    initialSelection:
+                                        selectedPatient != null ? selectedPatient.gender : _selectedGender,
+                                    onSelected: (value) {
+                                      _selectedGender = value! as Gender;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                      );
+                      ),
+                      if (state.patientPrescriptions.isNotEmpty) ...[
+                        SizedBox(height: 20),
+                        Divider(),
+                        SizedBox(height: 10),
+                      ],
+                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
+                        builder: (context, state) {
+                          final patientPrescriptions = state.patientPrescriptions;
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: patientPrescriptions.length,
+                            itemBuilder: (context, index) {
+                              final prescription = patientPrescriptions[index];
+                              return PrescriptionCard(
+                                prescription: prescription,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                );
               },
             ),
           ),
@@ -228,8 +224,8 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
               bool isPatientSelected = state.patient != null;
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(),
-                onPressed: state is PatientLoading ? null : () => _next(isPatientSelected),
-                child: state is PatientLoading ? CircularProgressIndicator() : Text("Next"),
+                onPressed: state.isLoading ? null : () => _next(isPatientSelected),
+                child: state.isLoading ? CircularProgressIndicator() : Text("Next"),
               );
             },
           ),
@@ -328,13 +324,13 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
-      final patientCubit = context.read<PatientCubit>();
+      final patientsProvider = context.read<PatientsProvider>();
       final phoneNumber = _phoneNumberController.text.trim();
-      patientCubit.clearPatientWithSameNumber();
+      patientsProvider.clearPatientWithSameNumber();
       if (phoneNumber.isNotEmpty) {
-        await patientCubit.checkIfPatientExistsWithNumber(phoneNumber);
+        await patientsProvider.checkIfPatientExistsWithNumber(phoneNumber);
       }
-      if (patientCubit.patientsWithSameNumber.isNotEmpty && mounted) {
+      if (patientsProvider.patientsWithSameNumber.isNotEmpty && mounted) {
         final shouldAddPatient = await AppFunctions.showPatientWithSameNumberDialog(context) ?? false;
 
         if (shouldAddPatient) {
@@ -371,8 +367,8 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
       age: age,
       gender: gender,
     );
-    // context.read<PrescriptionCubit>().selectedPatient = patient;
+
     context.read<PrescriptionCubit>().onSelectPatient(patient);
-    await context.read<PatientCubit>().addPatient(patient);
+    await context.read<PatientsProvider>().addPatient(patient);
   }
 }

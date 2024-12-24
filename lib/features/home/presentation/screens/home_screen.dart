@@ -12,8 +12,8 @@ import '../../../../gen/assets.gen.dart';
 import '../../../theme/provider/theme_provider.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../../user/presentation/screens/profile_screen.dart';
-import '../cubit/patient_cubit.dart';
 import '../cubit/prescription_cubit.dart';
+import '../providers/patients_provider.dart';
 import '../widget/prescription_card.dart';
 import 'qr_scanner_screen.dart';
 import 'select_patient_screen.dart';
@@ -35,9 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final prescriptionCubit = context.read<PrescriptionCubit>();
-      final patientCubit = context.read<PatientCubit>();
+      final patientsProvider = context.read<PatientsProvider>();
 
-      patientCubit.getPatients();
+      patientsProvider.getPatients();
       prescriptionCubit.getMedicinesFromRemoteDataSource();
       prescriptionCubit.getUnits();
       prescriptionCubit.getPrescriptions();

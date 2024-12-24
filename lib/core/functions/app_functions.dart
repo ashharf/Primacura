@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../features/home/data/models/units.dart';
 import '../../features/home/presentation/cubit/prescription_cubit.dart';
-
-import '../../features/home/presentation/cubit/patient_cubit.dart';
+import '../../features/home/presentation/providers/patients_provider.dart';
 
 class AppFunctions {
   static Future<bool?> showPatientWithSameNumberDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
       builder: (context) {
-        final patientsWithSamePhoneNumber = context.read<PatientCubit>().patientsWithSameNumber;
+        final patientsWithSamePhoneNumber = context.read<PatientsProvider>().patientsWithSameNumber;
         return AlertDialog(
           title: Text(
               "${patientsWithSamePhoneNumber.length > 1 ? "Patients" : "Patient"} with same number ${patientsWithSamePhoneNumber.length > 1 ? "exist" : "exists"}"),
