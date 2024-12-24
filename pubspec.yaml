@@ -37,7 +37,6 @@ dependencies:
   qr_flutter: ^4.1.0
   mobile_scanner: ^6.0.2
   http: ^1.2.2
-  firebase_storage: ^12.3.5
   image_picker: ^1.1.2
   googleapis: ^13.2.0
   googleapis_auth: ^1.6.0

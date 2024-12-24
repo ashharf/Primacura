@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/services/upload_file_service.dart';
 import '../../../home/data/models/clinical_findings.dart';
 import '../../../home/data/models/investigation.dart';
 import '../../../home/data/models/medicine.dart';
@@ -16,8 +13,7 @@ part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
   final UserRepository authRepository;
-  final UploadFileService uploadFileService;
-  UserCubit({required this.authRepository, required this.uploadFileService}) : super(UserInitial());
+  UserCubit({required this.authRepository}) : super(UserInitial());
 
   final List<Specialization> specializations = [];
   final List<Specialization> selectedSpecializations = [];
@@ -178,17 +174,6 @@ class UserCubit extends Cubit<UserState> {
     try {
       await authRepository.createFileInGoogleDrive();
     } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<String> uploadImageAndGetUrl(File file) async {
-    try {
-      final url = await uploadFileService.uploadImageToFirebaseStorage(file, (state as UserAuthenticated).user.id);
-      return url;
-    } catch (e) {
-      emit(UserError(user: (state as UserAuthenticated).user, error: "Failed to upload image"));
-      emit(UserAuthenticated(user: (state as UserError).user));
       rethrow;
     }
   }

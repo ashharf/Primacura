@@ -280,24 +280,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (formKey.currentState!.validate()) {
       final userCubit = context.read<UserCubit>();
       final user = (userCubit.state as UserAuthenticated).user;
-      final logoAndSignatureProvider = context.read<LogoAndSignatureProvider>();
-
-      String? logoUrl;
-      String? signatureUrl;
-      if (logoAndSignatureProvider.pickedlogo != null) {
-        try {
-          logoUrl = await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedlogo!);
-        } catch (e) {
-          return;
-        }
-      }
-      if (logoAndSignatureProvider.pickedSignature != null) {
-        try {
-          signatureUrl = await userCubit.uploadImageAndGetUrl(logoAndSignatureProvider.pickedSignature!);
-        } catch (e) {
-          return;
-        }
-      }
       final updatedUser = user.copyWith(
         specializations: userCubit.selectedSpecializations,
         licenseNumber: _licenseNumberController.text.trim(),
@@ -307,8 +289,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         phoneNumber: _phoneNumberController.text.trim(),
         degree: _degreeController.text.trim(),
         name: _nameController.text.trim(),
-        logoUrl: logoUrl,
-        signatureUrl: signatureUrl,
       );
 
       if (mounted) {

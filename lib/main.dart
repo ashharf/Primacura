@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +14,6 @@ import 'package:provider/provider.dart';
 
 import 'core/config/scroll_pyhsics.dart';
 import 'core/routes/app_routes.dart';
-import 'core/services/upload_file_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/data/data_source/patient_local_data_source.dart';
 import 'features/home/data/data_source/prescription_local_data_source.dart';
@@ -156,9 +154,6 @@ class Primacura extends StatelessWidget {
                     hiveMedicinesBox: hiveMedicinesBox,
                     hiveAccessTokenBox: hiveAccessTokenBox,
                   ),
-                ),
-                uploadFileService: UploadFileService(
-                  firebaseStorage: FirebaseStorage.instance,
                 ),
               )
               // ..checkAuthState()
