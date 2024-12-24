@@ -2,7 +2,7 @@ name: opd_management
 description: "A new Flutter project."
 publish_to: "none"
 
-version: 1.0.0-alpha.10+12
+version: 1.0.0-beta.1+13
 
 environment:
   sdk: ^3.5.3
