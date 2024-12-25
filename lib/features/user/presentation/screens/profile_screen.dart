@@ -118,40 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: Text("Clinic Timings"),
               subtitle: Text(user.clinicTimings ?? "-"),
             ),
-            // ListTile(
-            //   contentPadding: EdgeInsets.zero,
-            //   leading: const Icon(
-            //     FontAwesomeIcons.image,
-            //     size: 20,
-            //   ),
-            //   title: Text("Signature and Logo"),
-            //   subtitle: user.logoUrl != null || user.signatureUrl != null
-            //       ? Row(
-            //           children: [
-            //             if (user.logoUrl != null)
-            //               ClipRRect(
-            //                 borderRadius: BorderRadius.circular(8),
-            //                 child: Image.network(
-            //                   user.logoUrl!,
-            //                   height: 30,
-            //                 ),
-            //               ),
-            //             if (user.signatureUrl != null) ...[
-            //               SizedBox(width: 10),
-            //               ClipRRect(
-            //                 borderRadius: BorderRadius.circular(8),
-            //                 child: Image.network(
-            //                   user.signatureUrl!,
-            //                   height: 30,
-            //                 ),
-            //               ),
-            //             ]
-            //           ],
-            //         )
-            //       : null,
-            // ),
-
-            // SizedBox(height: 20),
             Text(
               user.specializations.length > 1 ? "Specializations" : "Specialization",
               style: Theme.of(context).textTheme.titleMedium,
@@ -190,39 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.red),
               ),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text("Are you sure you want to sign out?"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("Cancel"),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              context.pop(context);
-                              try {
-                                await state.signOut();
-                                if (context.mounted) {
-                                  context.go(LoginScreen.routeName);
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  Utils.showSnackBar(context, Text(e.toString()));
-                                }
-                              }
-                            },
-                            child: Text("Sign Out"),
-                          ),
-                        ],
-                      );
-                    });
-              },
+              onPressed: _signout,
               child: Text("Sign Out"),
             ),
             SizedBox(height: 20),
@@ -235,5 +169,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // }
       }),
     );
+  }
+
+  Future<void> _signout() async {
+    final userProvider = context.read<UserProvider>();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Are you sure you want to sign out?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  context.pop(context);
+                  try {
+                    await userProvider.signOut();
+                    if (context.mounted) {
+                      context.go(LoginScreen.routeName);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      Utils.showSnackBar(context, Text(e.toString()));
+                    }
+                  }
+                },
+                child: Text("Sign Out"),
+              ),
+            ],
+          );
+        });
   }
 }
