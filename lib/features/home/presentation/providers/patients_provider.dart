@@ -1,7 +1,6 @@
-import 'package:opd_management/core/providers/loading_provider.dart';
-import 'package:opd_management/features/home/data/repository/patients_repository.dart';
-
+import '../../../../core/providers/loading_provider.dart';
 import '../../data/models/patient.dart';
+import '../../data/repository/patients_repository.dart';
 
 class PatientsProvider extends LoadingProvider {
   final PatientRepository _patientRepository;

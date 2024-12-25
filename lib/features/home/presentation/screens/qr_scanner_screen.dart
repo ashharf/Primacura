@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../cubit/prescription_cubit.dart';
+import '../providers/prescriptions_provider.dart';
 import 'select_patient_screen.dart';
 
 class QrScannerScreen extends StatefulWidget {
@@ -57,12 +57,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                 throw "Error";
               } else {
                 try {
-                  final prescriptionCubit = context.read<PrescriptionCubit>();
-                  await prescriptionCubit.getPrescriptions();
-                  final prescriptions = prescriptionCubit.state.prescriptions;
+                  final prescriptionProvider = context.read<PrescriptionsProvider>();
+                  await prescriptionProvider.getPrescriptions();
+                  final prescriptions = prescriptionProvider.prescriptions;
                   final prescription = prescriptions.firstWhere((element) => element.id == data);
                   // final patient = allPatients.firstWhere((element) => element.id == data);
-                  prescriptionCubit.onSelectPatient(prescription.patient);
+                  prescriptionProvider.onSelectPatient(prescription.patient);
                   if (context.mounted) {
                     context.pop();
                     context.goNamed(SelectPatientScreen.routeName);

@@ -6,10 +6,10 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/provider/user_provider.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/patient.dart';
-import '../cubit/prescription_cubit.dart';
 import '../providers/patients_provider.dart';
+import '../providers/prescriptions_provider.dart';
 import 'enter_vitals_screen.dart';
 
 class AddPatientScreen extends StatefulWidget {
@@ -101,7 +101,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 SizedBox(height: 50),
                 Consumer<PatientsProvider>(
                   builder: (context, patientsProvider, child) {
-                    bool patientSelected = context.read<PrescriptionCubit>().state.patient != null;
+                    bool patientSelected = context.read<PrescriptionsProvider>().patient != null;
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(),
                       onPressed: patientsProvider.isLoading

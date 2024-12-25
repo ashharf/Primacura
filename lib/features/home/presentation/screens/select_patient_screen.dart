@@ -1,21 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opd_management/core/utils/utils.dart';
-import 'package:opd_management/features/user/presentation/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/prescription_utils.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/patient.dart';
-import '../cubit/prescription_cubit.dart';
 import '../providers/patients_provider.dart';
+import '../providers/prescriptions_provider.dart';
 import '../widget/custom_autocomplete.dart';
 import '../widget/prescription_card.dart';
 import 'enter_vitals_screen.dart';
@@ -54,7 +52,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
-          context.read<PrescriptionCubit>().clearPatientAndPrescriptionDetails();
+          context.read<PrescriptionsProvider>().clearPatientAndPrescriptionDetails();
         }
       },
       child: Scaffold(
@@ -65,9 +63,9 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
           padding: AppConstants.defaultPading,
           child: Form(
             key: _formKey,
-            child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
-              builder: (context, state) {
-                final Patient? selectedPatient = state.patient;
+            child: Consumer<PrescriptionsProvider>(
+              builder: (context, prescriptionProvider, _) {
+                final Patient? selectedPatient = prescriptionProvider.patient;
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,14 +188,14 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
                           ],
                         ),
                       ),
-                      if (state.patientPrescriptions.isNotEmpty) ...[
+                      if (prescriptionProvider.patientPrescriptions.isNotEmpty) ...[
                         SizedBox(height: 20),
                         Divider(),
                         SizedBox(height: 10),
                       ],
-                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                        builder: (context, state) {
-                          final patientPrescriptions = state.patientPrescriptions;
+                      Consumer<PrescriptionsProvider>(
+                        builder: (context, prescriptionProvider, _) {
+                          final patientPrescriptions = prescriptionProvider.patientPrescriptions;
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -221,13 +219,13 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
         ),
         bottomNavigationBar: Padding(
           padding: EdgeInsets.all(20),
-          child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
-            builder: (context, state) {
-              bool isPatientSelected = state.patient != null;
+          child: Consumer<PrescriptionsProvider>(
+            builder: (context, prescriptionProvider, _) {
+              bool isPatientSelected = prescriptionProvider.patient != null;
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(),
-                onPressed: state.isLoading ? null : () => _next(isPatientSelected),
-                child: state.isLoading ? CircularProgressIndicator() : Text("Next"),
+                onPressed: prescriptionProvider.isLoading ? null : () => _next(isPatientSelected),
+                child: prescriptionProvider.isLoading ? CircularProgressIndicator() : Text("Next"),
               );
             },
           ),
@@ -276,7 +274,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
   }
 
   void _onPatientSelected(Patient item) {
-    context.read<PrescriptionCubit>().onSelectPatient(item);
+    context.read<PrescriptionsProvider>().onSelectPatient(item);
     _nameController.text = item.name ?? "";
     _phoneNumberController.text = item.phoneNumber ?? "";
     if (item.age != null) {
@@ -289,12 +287,13 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
     Future.delayed(Duration(milliseconds: 100), () {
       _searchController.clear();
     });
+    setState(() {});
   }
 
   void _onAddPatientSelected(String searchText) {
     final numericRegex = RegExp(r'^[0-9]+$');
     _newPatientEnteredAsNumber = numericRegex.hasMatch(searchText.trim());
-    context.read<PrescriptionCubit>().onDeleteSelectedPatient();
+    context.read<PrescriptionsProvider>().onDeleteSelectedPatient();
     if (_newPatientEnteredAsNumber) {
       _phoneNumberController.text = searchText.trim();
       FocusScope.of(context).unfocus();
@@ -376,7 +375,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
       gender: gender,
     );
 
-    context.read<PrescriptionCubit>().onSelectPatient(patient);
+    context.read<PrescriptionsProvider>().onSelectPatient(patient);
     await context.read<PatientsProvider>().addPatient(patient);
   }
 }

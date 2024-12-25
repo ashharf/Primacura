@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/user/presentation/provider/user_provider.dart';
+import '../../features/user/presentation/providers/user_provider.dart';
 import '../../features/user/presentation/screens/enter_user_details_screen.dart';
 import '../../features/user/presentation/screens/login_screen.dart';
 import '../../gen/assets.gen.dart';

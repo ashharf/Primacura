@@ -8,7 +8,7 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/screens/all_patients_screen.dart';
-import '../provider/user_provider.dart';
+import '../providers/user_provider.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 

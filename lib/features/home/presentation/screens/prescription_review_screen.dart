@@ -3,16 +3,16 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/prescription_utils.dart';
-import '../cubit/prescription_cubit.dart';
+import '../providers/prescriptions_provider.dart';
 import '../widget/custom_progress_indicator.dart';
 import 'pdf_view_screen.dart';
 
@@ -28,8 +28,8 @@ class PrescriptionReviewScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Prescription Review"),
       ),
-      body: BlocBuilder<PrescriptionCubit, PrescriptionState>(
-        builder: (context, state) {
+      body: Consumer<PrescriptionsProvider>(
+        builder: (context, prescriptionProvider, _) {
           return Column(
             children: [
               CustomProgressIndicator(
@@ -49,7 +49,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                           key: _qrRepaintBoundryKey,
                           child: QrImageView(
                             padding: EdgeInsets.zero,
-                            data: state.prescription!.id,
+                            data: prescriptionProvider.prescription!.id,
                             backgroundColor: Colors.white,
                             version: QrVersions.auto,
                             size: 50,
@@ -58,53 +58,59 @@ class PrescriptionReviewScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 20),
-                    if (state.prescription != null &&
-                        (state.prescription!.temperature != null && state.prescription!.temperature!.isNotEmpty ||
-                            state.prescription!.bloodPressure != null &&
-                                state.prescription!.bloodPressure!.isNotEmpty ||
-                            state.prescription!.spO2 != null && state.prescription!.spO2!.isNotEmpty ||
-                            state.prescription!.heartRate != null && state.prescription!.heartRate!.isNotEmpty)) ...[
+                    if (prescriptionProvider.prescription != null &&
+                        (prescriptionProvider.prescription!.temperature != null &&
+                                prescriptionProvider.prescription!.temperature!.isNotEmpty ||
+                            prescriptionProvider.prescription!.bloodPressure != null &&
+                                prescriptionProvider.prescription!.bloodPressure!.isNotEmpty ||
+                            prescriptionProvider.prescription!.spO2 != null &&
+                                prescriptionProvider.prescription!.spO2!.isNotEmpty ||
+                            prescriptionProvider.prescription!.heartRate != null &&
+                                prescriptionProvider.prescription!.heartRate!.isNotEmpty)) ...[
                       Text("Vitals", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10),
                       Row(
                         children: [
-                          if (state.prescription?.temperature != null) ...[
+                          if (prescriptionProvider.prescription?.temperature != null) ...[
                             Text(
-                                "Temperature - ${state.prescription?.temperature ?? ""} ${state.prescription?.temperature != null && state.prescription!.temperature!.isNotEmpty ? "°F" : ""} "),
+                                "Temperature - ${prescriptionProvider.prescription?.temperature ?? ""} ${prescriptionProvider.prescription?.temperature != null && prescriptionProvider.prescription!.temperature!.isNotEmpty ? "°F" : ""} "),
                           ],
-                          if (state.prescription?.bloodPressure != null) ...[
+                          if (prescriptionProvider.prescription?.bloodPressure != null) ...[
                             Spacer(),
-                            Text("BP - ${state.prescription?.bloodPressure ?? ""} mmHg"),
+                            Text("BP - ${prescriptionProvider.prescription?.bloodPressure ?? ""} mmHg"),
                           ]
                         ],
                       ),
                       SizedBox(height: 10),
                       Row(
                         children: [
-                          if (state.prescription?.spO2 != null) Text("SpO2 - ${state.prescription?.spO2 ?? ""}"),
-                          if (state.prescription?.heartRate != null) ...[
+                          if (prescriptionProvider.prescription?.spO2 != null)
+                            Text("SpO2 - ${prescriptionProvider.prescription?.spO2 ?? ""}"),
+                          if (prescriptionProvider.prescription?.heartRate != null) ...[
                             Spacer(),
-                            Text("Heart Rate - ${state.prescription?.heartRate ?? ""}"),
+                            Text("Heart Rate - ${prescriptionProvider.prescription?.heartRate ?? ""}"),
                           ]
                         ],
                       ),
                       SizedBox(height: 20),
                     ],
-                    if (state.prescription != null && state.prescription!.chiefComplaints.isNotEmpty) ...[
+                    if (prescriptionProvider.prescription != null &&
+                        prescriptionProvider.prescription!.chiefComplaints.isNotEmpty) ...[
                       Row(
                         children: [
                           Text("Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
                         ],
                       ),
                       SizedBox(height: 10),
-                      if (state.prescription != null && state.prescription!.chiefComplaints.isNotEmpty)
+                      if (prescriptionProvider.prescription != null &&
+                          prescriptionProvider.prescription!.chiefComplaints.isNotEmpty)
                         Wrap(
                           spacing: 5,
                           runSpacing: 5,
                           children: List.generate(
-                            state.prescription!.chiefComplaints.length,
+                            prescriptionProvider.prescription!.chiefComplaints.length,
                             (index) => Chip(
-                              label: Text(state.prescription!.chiefComplaints[index].name),
+                              label: Text(prescriptionProvider.prescription!.chiefComplaints[index].name),
                               backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
@@ -112,41 +118,45 @@ class PrescriptionReviewScreen extends StatelessWidget {
                       SizedBox(height: 20),
                       Text("Clinical Findings", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10),
-                      if (state.prescription != null && state.prescription!.clinicalFindings.isNotEmpty)
+                      if (prescriptionProvider.prescription != null &&
+                          prescriptionProvider.prescription!.clinicalFindings.isNotEmpty)
                         Wrap(
                           spacing: 5,
                           runSpacing: 5,
                           children: List.generate(
-                            state.prescription!.clinicalFindings.length,
+                            prescriptionProvider.prescription!.clinicalFindings.length,
                             (index) => Chip(
-                              label: Text(state.prescription!.clinicalFindings[index].name),
+                              label: Text(prescriptionProvider.prescription!.clinicalFindings[index].name),
                               backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
                       SizedBox(height: 20),
                     ],
-                    if (state.prescription != null && state.prescription!.investigations.isNotEmpty) ...[
+                    if (prescriptionProvider.prescription != null &&
+                        prescriptionProvider.prescription!.investigations.isNotEmpty) ...[
                       Text("Investigations", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10),
-                      if (state.prescription != null && state.prescription!.investigations.isNotEmpty)
+                      if (prescriptionProvider.prescription != null &&
+                          prescriptionProvider.prescription!.investigations.isNotEmpty)
                         Wrap(
                           spacing: 5,
                           runSpacing: 5,
                           children: List.generate(
-                            state.prescription!.investigations.length,
+                            prescriptionProvider.prescription!.investigations.length,
                             (index) => Chip(
-                              label: Text(state.prescription!.investigations[index].name),
+                              label: Text(prescriptionProvider.prescription!.investigations[index].name),
                               backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
                       SizedBox(height: 20),
                     ],
-                    if (state.prescription != null && state.prescription!.prescribedMedicines.isNotEmpty) ...[
+                    if (prescriptionProvider.prescription != null &&
+                        prescriptionProvider.prescription!.prescribedMedicines.isNotEmpty) ...[
                       Text("Medications", style: Theme.of(context).textTheme.titleMedium),
-                      ...List.generate(state.prescription!.prescribedMedicines.length, (index) {
-                        final prefMedicine = state.prescription!.prescribedMedicines[index];
+                      ...List.generate(prescriptionProvider.prescription!.prescribedMedicines.length, (index) {
+                        final prefMedicine = prescriptionProvider.prescription!.prescribedMedicines[index];
                         return ListTile(
                           leading: Text(
                             "${index + 1}.",
@@ -201,11 +211,11 @@ class PrescriptionReviewScreen extends StatelessWidget {
                       }),
                     ],
                     SizedBox(height: 20),
-                    if (state.prescription != null &&
-                        state.prescription!.notes != null &&
-                        state.prescription!.notes!.isNotEmpty) ...[
+                    if (prescriptionProvider.prescription != null &&
+                        prescriptionProvider.prescription!.notes != null &&
+                        prescriptionProvider.prescription!.notes!.isNotEmpty) ...[
                       Text("Special Notes", style: Theme.of(context).textTheme.titleMedium),
-                      Text(state.prescription!.notes!)
+                      Text(prescriptionProvider.prescription!.notes!)
                     ],
                   ],
                 ),
@@ -214,20 +224,18 @@ class PrescriptionReviewScreen extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: BlocConsumer<PrescriptionCubit, PrescriptionState>(
-        listener: (context, state) {},
-        builder: (context, state) {
+      bottomNavigationBar: Consumer<PrescriptionsProvider>(
+        builder: (context, reviewScreenProvider, _) {
           return Padding(
             padding: EdgeInsets.all(20),
             child: ElevatedButton(
-              onPressed: state.isLoading
+              onPressed: reviewScreenProvider.isLoading
                   ? null
                   : () async {
-                      final prescription = state.prescription;
+                      final prescription = reviewScreenProvider.prescription;
                       prescription!.dateTime = DateTime.now();
 
-                      final prescriptionCubit = context.read<PrescriptionCubit>();
-                      prescriptionCubit.addPrescriptionToRemoteDatabase();
+                      reviewScreenProvider.addPrescriptionToRemoteDatabase();
 
                       final capturedImage = await _makeQRImage();
                       prescription.qrData = capturedImage;
@@ -236,7 +244,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
                         context.pushNamed(PdfViewScreen.routeName, extra: [prescription, true]);
                       }
                     },
-              child: state.isLoading
+              child: reviewScreenProvider.isLoading
                   ? Center(
                       child: CircularProgressIndicator(),
                     )

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -10,11 +9,11 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/provider/user_provider.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/medicine.dart';
 import '../../data/models/prescription_medicine.dart';
 import '../../data/models/units.dart';
-import '../cubit/prescription_cubit.dart';
+import '../providers/prescriptions_provider.dart';
 import '../widget/custom_autocomplete.dart';
 import '../widget/custom_progress_indicator.dart';
 import '../widget/info_widget.dart';
@@ -49,12 +48,12 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
 
   @override
   void initState() {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
 
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timestamp) {
       try {
-        _selectedDosageUnit = prescriptionCubit.dosages.first;
-        _selectedDurationUnit = prescriptionCubit.durations.first;
+        _selectedDosageUnit = prescriptionProvider.dosages.first;
+        _selectedDurationUnit = prescriptionProvider.durations.first;
         setState(() {});
       } catch (e) {
         Utils.showSnackBar(
@@ -84,9 +83,8 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       appBar: AppBar(
         title: Text("Add Medicines"),
       ),
-      body: BlocBuilder<PrescriptionCubit, PrescriptionState>(
-        builder: (context, state) {
-          final prescriptionCubit = BlocProvider.of<PrescriptionCubit>(context);
+      body: Consumer<PrescriptionsProvider>(
+        builder: (context, prescriptionProvider, _) {
           return Consumer<UserProvider>(
             builder: (context, userProvider, _) {
               return Column(
@@ -116,7 +114,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                 displayText: (item) => item.brandName,
                                 textEditingController: _searchController,
                                 textCapitalization: TextCapitalization.words,
-                                items: prescriptionCubit.medicines,
+                                items: prescriptionProvider.medicines,
                                 showItemDeleteButton: (item) => item.userId == userProvider.user?.id,
                                 onItemSelected: (item) {
                                   setState(() {
@@ -125,7 +123,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                 },
                                 onAddSelected: _onAddSelected,
                                 onDelete: (item) {
-                                  prescriptionCubit.medicines.remove(item);
+                                  prescriptionProvider.medicines.remove(item);
                                   userProvider.deleteMedicineFromRemoteDatabase(item.id);
                                 },
                               ),
@@ -182,12 +180,12 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                             ),
                             SizedBox(height: 10),
                             Divider(),
-                            if (state.prescribedMedicines.isNotEmpty)
+                            if (prescriptionProvider.prescribedMedicines.isNotEmpty)
                               ReorderableListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
-                                  final prefMedicine = state.prescribedMedicines[index];
+                                  final prefMedicine = prescriptionProvider.prescribedMedicines[index];
 
                                   return ListTile(
                                     leading: Icon(Icons.drag_handle),
@@ -259,12 +257,12 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                                     ),
                                   );
                                 },
-                                itemCount: state.prescribedMedicines.length,
+                                itemCount: prescriptionProvider.prescribedMedicines.length,
                                 onReorder: (oldIndex, newIndex) {
                                   if (oldIndex < newIndex) {
                                     newIndex -= 1;
                                   }
-                                  prescriptionCubit.onPrescriptionMedicineReorder(oldIndex, newIndex);
+                                  prescriptionProvider.onPrescriptionMedicineReorder(oldIndex, newIndex);
                                 },
                               ),
                           ],
@@ -280,16 +278,16 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(20),
-        child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
-          builder: (context, state) {
+        child: Consumer<PrescriptionsProvider>(
+          builder: (context, state, _) {
             return ElevatedButton(
               onPressed: state.prescribedMedicines.isEmpty
                   ? null
                   : () {
                       final userProvider = context.read<UserProvider>();
-                      context.read<PrescriptionCubit>().onMakePrescription(
-                            user: userProvider.user,
-                          );
+                      state.onMakePrescription(
+                        user: userProvider.user,
+                      );
                       context.goNamed(PrescriptionReviewScreen.routeName);
                     },
               child: Text("Review Prescription"),
@@ -301,7 +299,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   Future<void> showDeleteMedicineDialog(PrescriptionMedicine prefMedicine) {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -314,7 +312,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           ),
           TextButton(
             onPressed: () {
-              prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
+              prescriptionProvider.onMedicineDeleteForPrescription(prefMedicine);
               Navigator.of(context).pop();
             },
             child: Text("Delete"),
@@ -325,7 +323,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   Future<void> showEditMedicineDialog(PrescriptionMedicine prefMedicine) {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -346,7 +344,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
               _isAfterFood = prefMedicine.isAfterFood;
               _isBeforeFood = prefMedicine.isBeforeFood;
               _isEmptyStomach = prefMedicine.isEmptyStomach;
-              prescriptionCubit.onMedicineDeleteForPrescription(prefMedicine);
+              prescriptionProvider.onMedicineDeleteForPrescription(prefMedicine);
               setState(() {});
               Navigator.of(context).pop();
             },
@@ -388,28 +386,28 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   void addToPrescription(BuildContext context) {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
-    context.read<PrescriptionCubit>().onMedicineAddForPrescription(
-          medicine: _selectedMedicine!,
-          prescribedDosage: PrescriptionDosage(
-            text: _dosageController.text,
-            dosageUnit: _selectedDosageUnit!,
-          ),
-          prescribedFrequency: _selectedFrequency == null
-              ? null
-              : PrescriptionFrequency(
-                  text: _frequencyController.text,
-                  frequencyUnit: _selectedFrequency!,
-                ),
-          prescribedDuration: PrescriptionDuration(
-            text: _durationController.text,
-            durationUnit: _selectedDurationUnit!,
-          ),
-          isAfterFood: _isAfterFood,
-          isBeforeFood: _isBeforeFood,
-          isEmptyStomach: _isEmptyStomach,
-          notes: _notesController.text,
-        );
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
+    prescriptionProvider.onMedicineAddForPrescription(
+      medicine: _selectedMedicine!,
+      prescribedDosage: PrescriptionDosage(
+        text: _dosageController.text,
+        dosageUnit: _selectedDosageUnit!,
+      ),
+      prescribedFrequency: _selectedFrequency == null
+          ? null
+          : PrescriptionFrequency(
+              text: _frequencyController.text,
+              frequencyUnit: _selectedFrequency!,
+            ),
+      prescribedDuration: PrescriptionDuration(
+        text: _durationController.text,
+        durationUnit: _selectedDurationUnit!,
+      ),
+      isAfterFood: _isAfterFood,
+      isBeforeFood: _isBeforeFood,
+      isEmptyStomach: _isEmptyStomach,
+      notes: _notesController.text,
+    );
     _searchController.clear();
     _dosageController.clear();
     _frequencyController.clear();
@@ -420,16 +418,16 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       _isBeforeFood = false;
       _isEmptyStomach = false;
       _isAfterFood = false;
-      _selectedDosageUnit = prescriptionCubit.dosages.first;
+      _selectedDosageUnit = prescriptionProvider.dosages.first;
       // selectedFrequency = prescriptionCubit.frequencies.first;
       _selectedFrequency = null;
-      _selectedDurationUnit = prescriptionCubit.durations.first;
+      _selectedDurationUnit = prescriptionProvider.durations.first;
     });
     FocusScope.of(context).unfocus();
   }
 
   Widget _buildDosageWidget() {
-    final PrescriptionCubit prescriptionCubit = BlocProvider.of<PrescriptionCubit>(context);
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Row(
       children: [
         SizedBox(
@@ -450,8 +448,8 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           // alignment: Alignment.center,
           value: _selectedDosageUnit,
           hint: Text("Select Dosage Unit"),
-          items: List.generate(prescriptionCubit.dosages.length, (index) {
-            final dosage = prescriptionCubit.dosages[index];
+          items: List.generate(prescriptionProvider.dosages.length, (index) {
+            final dosage = prescriptionProvider.dosages[index];
             return DropdownMenuItem(
               value: dosage,
               child: Text(dosage.name),
@@ -475,7 +473,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   Widget _buildFrequencyWidget() {
-    final prescriptionCubit = BlocProvider.of<PrescriptionCubit>(context);
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Row(
       children: [
         // SizedBox(width: 13),
@@ -495,14 +493,14 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           underline: SizedBox.shrink(),
           value: _selectedFrequency,
           hint: Text("Select Frequency"),
-          items: List.generate(prescriptionCubit.frequencies.length + 1, (index) {
-            if (index == prescriptionCubit.frequencies.length) {
+          items: List.generate(prescriptionProvider.frequencies.length + 1, (index) {
+            if (index == prescriptionProvider.frequencies.length) {
               return DropdownMenuItem(
                 value: null,
                 child: Text("Select Frequency"),
               );
             }
-            final frequency = prescriptionCubit.frequencies[index];
+            final frequency = prescriptionProvider.frequencies[index];
             return DropdownMenuItem(
               value: frequency,
               child: Text(frequency.name),
@@ -525,7 +523,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   Widget _buildDurationWidget() {
-    final prescriptionCubit = BlocProvider.of<PrescriptionCubit>(context);
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Row(
       children: [
         SizedBox(
@@ -546,8 +544,8 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           underline: SizedBox.shrink(),
           value: _selectedDurationUnit,
           hint: Text("Select Duration Unit"),
-          items: List.generate(prescriptionCubit.durations.length, (index) {
-            final duration = prescriptionCubit.durations[index];
+          items: List.generate(prescriptionProvider.durations.length, (index) {
+            final duration = prescriptionProvider.durations[index];
             return DropdownMenuItem(
               value: duration,
               child: Text(duration.name),
@@ -600,7 +598,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   }
 
   void _onAddSelected(String searchText) {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     final userProvider = context.read<UserProvider>();
     final Medicine medicine = Medicine(
       id: Uuid().v4(),
@@ -608,7 +606,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       userId: userProvider.user?.id,
     );
     userProvider.addMedicineToRemoteDatabase(medicine);
-    prescriptionCubit.medicines.add(medicine);
+    prescriptionProvider.medicines.add(medicine);
     setState(() {
       _selectedMedicine = medicine;
     });

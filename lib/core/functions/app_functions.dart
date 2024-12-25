@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../features/home/data/models/units.dart';
-import '../../features/home/presentation/cubit/prescription_cubit.dart';
 import '../../features/home/presentation/providers/patients_provider.dart';
+import '../../features/home/presentation/providers/prescriptions_provider.dart';
 
 class AppFunctions {
   static Future<bool?> showPatientWithSameNumberDialog(BuildContext context) {
@@ -26,7 +26,7 @@ class AppFunctions {
                     final patient = patientsWithSamePhoneNumber.elementAt(index);
                     return ListTile(
                       onTap: () {
-                        context.read<PrescriptionCubit>().onSelectPatient(patient);
+                        context.read<PrescriptionsProvider>().onSelectPatient(patient);
                         Navigator.pop(context, false);
                         FocusScope.of(context).unfocus();
                       },

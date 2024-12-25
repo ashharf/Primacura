@@ -1,9 +1,7 @@
-import '../models/prescription.dart';
-
-import '../models/medicine.dart';
-
 import '../data_source/prescription_local_data_source.dart';
 import '../data_source/prescription_remote_data_source.dart';
+import '../models/medicine.dart';
+import '../models/prescription.dart';
 import '../models/units.dart';
 
 abstract class PrescriptionRepository {

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,7 @@ import '../../home/data/data_source/prescription_local_data_source.dart';
 import '../../home/data/data_source/prescription_remote_data_source.dart';
 import '../../home/data/models/prescription.dart';
 import '../../home/data/repository/prescription_repository.dart';
-import '../../home/presentation/cubit/prescription_cubit.dart';
+import '../../home/presentation/providers/prescriptions_provider.dart';
 
 class PrimacuraAdminPanel extends StatelessWidget {
   final Box prescriptionBox;
@@ -38,8 +37,8 @@ class PrimacuraAdminPanel extends StatelessWidget {
     return MaterialApp(
       home: MultiProvider(
         providers: [
-          BlocProvider(
-            create: (context) => PrescriptionCubit(
+          ChangeNotifierProvider(
+            create: (context) => PrescriptionsProvider(
               prescriptionRepository: PrescriptionRepositoryImpl(
                 prescriptionRemoteDataSource: PrescriptionRemoteDataSource(
                   firebaseFirestore: FirebaseFirestore.instance,

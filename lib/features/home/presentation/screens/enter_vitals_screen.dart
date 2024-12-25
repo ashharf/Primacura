@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -10,13 +9,12 @@ import '../../../../core/config/blood_pressure_input_parameters.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
-import '../../../user/presentation/provider/user_provider.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/clinical_findings.dart';
 import '../../data/models/investigation.dart';
 import '../../data/models/patient.dart';
 import '../../data/models/symptomps.dart';
-import '../cubit/prescription_cubit.dart';
+import '../providers/prescriptions_provider.dart';
 import '../widget/custom_autocomplete.dart';
 import '../widget/custom_progress_indicator.dart';
 import 'add_medicines_screen.dart';
@@ -42,12 +40,12 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
 
   @override
   void initState() {
-    final PrescriptionCubit prescriptionCubit = context.read<PrescriptionCubit>();
-    final temperature = prescriptionCubit.state.temperature;
-    final bloodPressure = prescriptionCubit.state.bloodPressure;
-    final spO2 = prescriptionCubit.state.spO2;
-    final heartRate = prescriptionCubit.state.heartRate;
-    final specialNotes = prescriptionCubit.state.specialNote;
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
+    final temperature = prescriptionProvider.temperature;
+    final bloodPressure = prescriptionProvider.bloodPressure;
+    final spO2 = prescriptionProvider.spO2;
+    final heartRate = prescriptionProvider.heartRate;
+    final specialNotes = prescriptionProvider.specialNote;
     _temperatureController.text = temperature ?? "";
     _bloodPressureController.text = bloodPressure ?? "";
     _spO2Controller.text = spO2 ?? "";
@@ -76,15 +74,9 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
         title: Text("Enter Vitals"),
       ),
       body: SafeArea(
-        child: BlocConsumer<PrescriptionCubit, PrescriptionState>(
-          listener: (context, state) {
-            if (state.message != null) {
-              Utils.showSnackBar(context, Text(state.message ?? "Something went wrong"));
-            }
-          },
-          builder: (context, prescriptionState) {
-            final prescriptionCubit = context.read<PrescriptionCubit>();
-            final Patient selectedPatient = prescriptionState.patient!;
+        child: Consumer<PrescriptionsProvider>(
+          builder: (context, prescriptionProvider, _) {
+            final Patient selectedPatient = prescriptionProvider.patient!;
 
             return Column(
               children: [
@@ -139,20 +131,18 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                       Text("Add Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10.h),
                       _buildCheifComplaintDropDown(),
-                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                        builder: (context, state) {
+                      Consumer<PrescriptionsProvider>(
+                        builder: (context, prescriptionProvider, _) {
                           return Wrap(
                             spacing: 5,
                             runSpacing: 5,
                             children: List.generate(
-                              // prescriptionCubit.selectedSymptoms.length,
-                              state.chiefComplaints.length,
+                              prescriptionProvider.chiefComplaints.length,
                               (index) => Chip(
-                                label: Text(state.chiefComplaints[index].name),
+                                label: Text(prescriptionProvider.chiefComplaints[index].name),
                                 onDeleted: () {
-                                  context
-                                      .read<PrescriptionCubit>()
-                                      .onChiefComplaintDeleted(state.chiefComplaints[index]);
+                                  prescriptionProvider
+                                      .onChiefComplaintDeleted(prescriptionProvider.chiefComplaints[index]);
                                 },
                                 backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
@@ -167,19 +157,18 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                       Text("Clinical Findings", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10.h),
                       _buildClinicalFindingDrodown(),
-                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                        builder: (context, state) {
+                      Consumer<PrescriptionsProvider>(
+                        builder: (context, prescriptionProvider, _) {
                           return Wrap(
                             spacing: 5,
                             runSpacing: 5,
                             children: List.generate(
-                              state.clinicalFindings.length,
+                              prescriptionProvider.clinicalFindings.length,
                               (index) => Chip(
-                                label: Text(state.clinicalFindings[index].name),
+                                label: Text(prescriptionProvider.clinicalFindings[index].name),
                                 onDeleted: () {
-                                  context
-                                      .read<PrescriptionCubit>()
-                                      .onClinicalFindingDeleted(state.clinicalFindings[index]);
+                                  prescriptionProvider
+                                      .onClinicalFindingDeleted(prescriptionProvider.clinicalFindings[index]);
                                 },
                                 backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
@@ -191,17 +180,18 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                       Text("Investigations", style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10.h),
                       _buildInvestigationsDropdown(),
-                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                        builder: (context, state) {
+                      Consumer<PrescriptionsProvider>(
+                        builder: (context, prescriptionProvider, _) {
                           return Wrap(
                             spacing: 5,
                             runSpacing: 5,
                             children: List.generate(
-                              state.investigations.length,
+                              prescriptionProvider.investigations.length,
                               (index) => Chip(
-                                label: Text(state.investigations[index].name),
+                                label: Text(prescriptionProvider.investigations[index].name),
                                 onDeleted: () {
-                                  context.read<PrescriptionCubit>().onInvestigationDeleted(state.investigations[index]);
+                                  prescriptionProvider
+                                      .onInvestigationDeleted(prescriptionProvider.investigations[index]);
                                 },
                                 backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
                               ),
@@ -222,19 +212,19 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                         ),
                       ),
                       SizedBox(height: 30.h),
-                      BlocBuilder<PrescriptionCubit, PrescriptionState>(
-                        builder: (context, state) {
+                      Consumer<PrescriptionsProvider>(
+                        builder: (context, prescriptionProvider, _) {
                           return ElevatedButton.icon(
                             onPressed: () {
-                              if (state.patient == null) {
+                              if (prescriptionProvider.patient == null) {
                                 Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
                                 return;
                               }
-                              prescriptionCubit.addTemperature(_temperatureController.text.trim());
-                              prescriptionCubit.addBloodPressure(_bloodPressureController.text.trim());
-                              prescriptionCubit.addSpO2(_spO2Controller.text.trim());
-                              prescriptionCubit.addHeartRate(_heartRateController.text.trim());
-                              prescriptionCubit.addSpecialNote(_specialNotesController.text.trim());
+                              prescriptionProvider.addTemperature(_temperatureController.text.trim());
+                              prescriptionProvider.addBloodPressure(_bloodPressureController.text.trim());
+                              prescriptionProvider.addSpO2(_spO2Controller.text.trim());
+                              prescriptionProvider.addHeartRate(_heartRateController.text.trim());
+                              prescriptionProvider.addSpecialNote(_specialNotesController.text.trim());
 
                               context.goNamed(AddMedicinesScreen.routeName);
                             },
@@ -259,7 +249,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
   }
 
   Widget _buildInvestigationsDropdown() {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Consumer<UserProvider>(
       builder: (context, userProvider, _) {
         return CustomSearchableDropdown<Investigation>(
@@ -291,7 +281,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
-            context.read<PrescriptionCubit>().onInvestigationSelected(item);
+            prescriptionProvider.onInvestigationSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
               _investigationSearchController.clear();
             });
@@ -303,7 +293,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             );
 
             userProvider.addInvestigation(investigation);
-            prescriptionCubit.onInvestigationSelected(investigation);
+            prescriptionProvider.onInvestigationSelected(investigation);
 
             Future.delayed(Duration(milliseconds: 1), () {
               _investigationSearchController.clear();
@@ -322,7 +312,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
   }
 
   Widget _buildClinicalFindingDrodown() {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Consumer<UserProvider>(
       builder: (context, userProvider, _) {
         return CustomSearchableDropdown<ClinicalFinding>(
@@ -354,7 +344,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           showItemDeleteButton: (item) => true,
           shouldUnFocusOnSelect: false,
           onItemSelected: (item) {
-            context.read<PrescriptionCubit>().onClinicalFindingSelected(item);
+            prescriptionProvider.onClinicalFindingSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
               _clinicalFindingsSearchController.clear();
             });
@@ -366,7 +356,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             );
 
             userProvider.addClinicalFinding(chiefComplaint);
-            prescriptionCubit.onClinicalFindingSelected(chiefComplaint);
+            prescriptionProvider.onClinicalFindingSelected(chiefComplaint);
 
             Future.delayed(Duration(milliseconds: 1), () {
               _clinicalFindingsSearchController.clear();
@@ -387,8 +377,8 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
   Column _buildVitals() {
     return Column(
       children: [
-        BlocBuilder<PrescriptionCubit, PrescriptionState>(
-          builder: (context, state) {
+        Consumer<PrescriptionsProvider>(
+          builder: (context, prescriptionProvider, _) {
             return Row(
               children: [
                 Expanded(
@@ -462,7 +452,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
   }
 
   Widget _buildCheifComplaintDropDown() {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     return Consumer<UserProvider>(
       builder: (context, state, _) {
         return CustomSearchableDropdown<ChiefComplaint>(
@@ -494,7 +484,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           shouldUnFocusOnSelect: false,
           showItemDeleteButton: (item) => true,
           onItemSelected: (item) {
-            context.read<PrescriptionCubit>().onCheifComplaintSelected(item);
+            prescriptionProvider.onCheifComplaintSelected(item);
             Future.delayed(Duration(milliseconds: 1), () {
               _chiefComplaintSearchController.clear();
             });
@@ -509,7 +499,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             });
 
             state.addChiefComplaint(chiefComplaint);
-            prescriptionCubit.onCheifComplaintSelected(chiefComplaint);
+            prescriptionProvider.onCheifComplaintSelected(chiefComplaint);
 
             setState(() {});
           },

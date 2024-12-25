@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 class DosageUnit {
   final String id;
   final String name;
@@ -19,20 +17,6 @@ class DosageUnit {
       name: map['name'] as String,
     );
   }
-
-  // static List<Dosage> dosages = [
-  //   Dosage(id: Uuid().v1(), name: "mg"),
-  //   Dosage(id: Uuid().v1(), name: "g"),
-  //   Dosage(id: Uuid().v1(), name: "µg"),
-  //   Dosage(id: Uuid().v1(), name: "IU"),
-  //   Dosage(id: Uuid().v1(), name: "%"),
-  //   Dosage(id: Uuid().v1(), name: "Drops"),
-  //   Dosage(id: Uuid().v1(), name: "Puffs"),
-  //   Dosage(id: Uuid().v1(), name: "Tablets"),
-  //   Dosage(id: Uuid().v1(), name: "Capsules"),
-  //   Dosage(id: Uuid().v1(), name: "Teaspoon"),
-  //   Dosage(id: Uuid().v1(), name: "Tablespoon"),
-  // ];
 
   @override
   bool operator ==(covariant DosageUnit other) {

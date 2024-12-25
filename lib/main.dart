@@ -5,12 +5,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:opd_management/features/user/presentation/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/scroll_pyhsics.dart';
@@ -21,13 +19,13 @@ import 'features/home/data/data_source/prescription_local_data_source.dart';
 import 'features/home/data/data_source/prescription_remote_data_source.dart';
 import 'features/home/data/repository/patients_repository.dart';
 import 'features/home/data/repository/prescription_repository.dart';
-import 'features/home/presentation/cubit/prescription_cubit.dart';
 import 'features/home/presentation/providers/patients_provider.dart';
+import 'features/home/presentation/providers/prescriptions_provider.dart';
 import 'features/theme/provider/theme_provider.dart';
 import 'features/user/data/data_source/user_local_data_source.dart';
 import 'features/user/data/data_source/user_remote_data_source.dart';
 import 'features/user/data/repository/user_repository.dart';
-import 'features/user/presentation/cubit/user_cubit.dart';
+import 'features/user/presentation/providers/user_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -62,9 +60,9 @@ void main() async {
 
     runApp(
       Primacura(
-        patientBox: hivePatientBox,
+        hivePatientBox: hivePatientBox,
         hiveMedicinesBox: hiveMedicinesBox,
-        prescriptionsBox: hivePrescriptionsBox,
+        hivePrescriptionsBox: hivePrescriptionsBox,
         hiveDosageBox: hiveDosageBox,
         hiveFrequencyBox: hiveFrequencyBox,
         hiveDurationBox: hiveDurationBox,
@@ -89,9 +87,9 @@ void main() async {
     FlutterNativeSplash.remove();
     runApp(
       Primacura(
-        patientBox: hivePatientBox,
+        hivePatientBox: hivePatientBox,
         hiveMedicinesBox: hiveMedicinesBox,
-        prescriptionsBox: hivePrescriptionsBox,
+        hivePrescriptionsBox: hivePrescriptionsBox,
         hiveDosageBox: hiveDosageBox,
         hiveFrequencyBox: hiveFrequencyBox,
         hiveDurationBox: hiveDurationBox,
@@ -103,9 +101,9 @@ void main() async {
 
 class Primacura extends StatelessWidget {
   static final router = AppRoutes.getRouter();
-  final Box patientBox;
+  final Box hivePatientBox;
   final Box hiveMedicinesBox;
-  final Box prescriptionsBox;
+  final Box hivePrescriptionsBox;
   final Box hiveDosageBox;
   final Box hiveFrequencyBox;
   final Box hiveDurationBox;
@@ -113,9 +111,9 @@ class Primacura extends StatelessWidget {
 
   const Primacura({
     super.key,
-    required this.patientBox,
+    required this.hivePatientBox,
     required this.hiveMedicinesBox,
-    required this.prescriptionsBox,
+    required this.hivePrescriptionsBox,
     required this.hiveDosageBox,
     required this.hiveFrequencyBox,
     required this.hiveDurationBox,
@@ -150,71 +148,41 @@ class Primacura extends StatelessWidget {
             create: (context) => PatientsProvider(
               patientRepository: PatientRepositoryWithLocalDatabaseImpl(
                 patientLocalDataSource: PatientLocalDataSource(
-                  hivePatientBox: patientBox,
+                  hivePatientBox: hivePatientBox,
                 ),
               ),
             ),
-          )
+          ),
+          ChangeNotifierProvider(
+            create: (context) => PrescriptionsProvider(
+              prescriptionRepository: PrescriptionRepositoryImpl(
+                prescriptionRemoteDataSource: PrescriptionRemoteDataSource(
+                  firebaseFirestore: FirebaseFirestore.instance,
+                ),
+                prescriptionLocalDataSource: PrescriptionLocalDataSource(
+                  hivePrescriptionBox: hivePrescriptionsBox,
+                  hiveMedicineBox: hiveMedicinesBox,
+                  hiveDosageBox: hiveDosageBox,
+                  hiveFrequencyBox: hiveFrequencyBox,
+                  hiveDurationBox: hiveDurationBox,
+                  hiveAccessTokenBox: hiveAccessTokenBox,
+                ),
+              ),
+            ),
+          ),
         ],
-        child: MultiBlocProvider(
-          providers: [
-            // BlocProvider(
-            //   create: (context) => UserCubit(
-            //     authRepository: UserRepositoryImpl(
-            //       userRemoteDataSource: UserRemoteDataSource(
-            //         googleSignIn: GoogleSignIn(),
-            //         firebaseAuth: FirebaseAuth.instance,
-            //         firebaseFirestore: FirebaseFirestore.instance,
-            //       ),
-            //       userLocalDataSource: UserLocalDataSource(
-            //         hiveMedicinesBox: hiveMedicinesBox,
-            //         hiveAccessTokenBox: hiveAccessTokenBox,
-            //       ),
-            //     ),
-            //   )
-            //   // ..checkAuthState()
-            //   ,
-            // ),
-            // BlocProvider(
-            //   create: (context) => PatientCubit(
-            //     patientRepository: PatientRepositoryWithLocalDatabaseImpl(
-            //       patientLocalDataSource: PatientLocalDataSource(
-            //         hivePatientBox: patientBox,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            BlocProvider(
-              create: (context) => PrescriptionCubit(
-                prescriptionRepository: PrescriptionRepositoryImpl(
-                  prescriptionRemoteDataSource: PrescriptionRemoteDataSource(
-                    firebaseFirestore: FirebaseFirestore.instance,
-                  ),
-                  prescriptionLocalDataSource: PrescriptionLocalDataSource(
-                    hivePrescriptionBox: prescriptionsBox,
-                    hiveMedicineBox: hiveMedicinesBox,
-                    hiveDosageBox: hiveDosageBox,
-                    hiveFrequencyBox: hiveFrequencyBox,
-                    hiveDurationBox: hiveDurationBox,
-                    hiveAccessTokenBox: hiveAccessTokenBox,
-                  ),
-                ),
-              ),
-            ),
-          ],
-          child: Builder(builder: (context) {
-            return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
-              bool isLightTheme = themeProvider.currentThemeBrightness == Brightness.light;
-              return MaterialApp.router(
-                scrollBehavior: BouncyScrollBehavior(),
-                title: 'Primacura',
-                debugShowCheckedModeBanner: true,
-                theme: isLightTheme ? AppTheme.lightThemeData : AppTheme.darkThemeData,
-                routerConfig: router,
-              );
-            });
-          }),
-        ),
+        child: Builder(builder: (context) {
+          return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+            bool isLightTheme = themeProvider.currentThemeBrightness == Brightness.light;
+            return MaterialApp.router(
+              scrollBehavior: BouncyScrollBehavior(),
+              title: 'Primacura',
+              debugShowCheckedModeBanner: false,
+              theme: isLightTheme ? AppTheme.lightThemeData : AppTheme.darkThemeData,
+              routerConfig: router,
+            );
+          });
+        }),
       ),
     );
   }

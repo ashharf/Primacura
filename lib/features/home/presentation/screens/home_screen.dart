@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -8,13 +7,12 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/utils.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../theme/provider/theme_provider.dart';
-import '../../../user/presentation/provider/user_provider.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../../user/presentation/screens/profile_screen.dart';
-import '../cubit/prescription_cubit.dart';
 import '../providers/patients_provider.dart';
+import '../providers/prescriptions_provider.dart';
 import '../widget/prescription_card.dart';
 import 'qr_scanner_screen.dart';
 import 'select_patient_screen.dart';
@@ -35,13 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final prescriptionCubit = context.read<PrescriptionCubit>();
+      final prescriptionProvider = context.read<PrescriptionsProvider>();
       final patientsProvider = context.read<PatientsProvider>();
 
       patientsProvider.getPatients();
-      prescriptionCubit.getMedicinesFromRemoteDataSource();
-      prescriptionCubit.getUnits();
-      prescriptionCubit.getPrescriptions();
+      prescriptionProvider.getMedicinesFromRemoteDataSource();
+      prescriptionProvider.getUnits();
+      prescriptionProvider.getPrescriptions();
     });
 
     super.initState();
@@ -120,62 +118,56 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: AppConstants.defaultPading,
-              height: 300,
-              child: SfDateRangePicker(
-                headerStyle: DateRangePickerHeaderStyle(
-                  backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
-                      ? Colors.white
-                      : Colors.grey.shade900,
+        child: Consumer<PrescriptionsProvider>(
+          builder: (context, prescriptionProvider, _) {
+            return Column(
+              children: [
+                Container(
+                  padding: AppConstants.defaultPading,
+                  height: 300,
+                  child: SfDateRangePicker(
+                    headerStyle: DateRangePickerHeaderStyle(
+                      backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
+                          ? Colors.white
+                          : Colors.grey.shade900,
+                    ),
+                    showNavigationArrow: true,
+                    controller: _controller,
+                    view: DateRangePickerView.month,
+                    monthViewSettings: DateRangePickerMonthViewSettings(
+                      showTrailingAndLeadingDates: true,
+                      firstDayOfWeek: 1,
+                    ),
+                    initialSelectedDate: DateTime.now(),
+                    selectionColor: AppTheme.primaryColor,
+                    todayHighlightColor: AppTheme.tertiaryColor,
+                    backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
+                        ? AppTheme.lightBackgroundColor
+                        : AppTheme.darkBackgroundColor,
+                    onSelectionChanged: (DateRangePickerSelectionChangedArgs dateRangePickerSelectionChangedArgs) {
+                      prescriptionProvider.onDateSelected(dateRangePickerSelectionChangedArgs.value);
+                      prescriptionProvider.getPrescriptions();
+                    },
+                  ),
                 ),
-                showNavigationArrow: true,
-                controller: _controller,
-                view: DateRangePickerView.month,
-                monthViewSettings: DateRangePickerMonthViewSettings(
-                  showTrailingAndLeadingDates: true,
-                  firstDayOfWeek: 1,
-                ),
-                initialSelectedDate: DateTime.now(),
-                selectionColor: AppTheme.primaryColor,
-                todayHighlightColor: AppTheme.tertiaryColor,
-                backgroundColor: context.read<ThemeProvider>().currentThemeBrightness == Brightness.light
-                    ? AppTheme.lightBackgroundColor
-                    : AppTheme.darkBackgroundColor,
-                onSelectionChanged: (DateRangePickerSelectionChangedArgs dateRangePickerSelectionChangedArgs) {
-                  context.read<PrescriptionCubit>().selectedDateToShowPrescriptions =
-                      dateRangePickerSelectionChangedArgs.value;
-                  context.read<PrescriptionCubit>().getPrescriptions();
-                },
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Text("Your Appointments", style: Theme.of(context).textTheme.titleMedium),
-            SizedBox(height: 5.h),
-            Padding(
-              padding: AppConstants.defaultPading,
-              child: BlocConsumer<PrescriptionCubit, PrescriptionState>(
-                listener: (context, state) {
-                  if (state.message != null) {
-                    Utils.showSnackBar(context, Text(state.message ?? "Something went wrong"));
-                  }
-                },
-                builder: (context, state) {
-                  return Column(
+                SizedBox(height: 10.h),
+                Text("Your Appointments", style: Theme.of(context).textTheme.titleMedium),
+                SizedBox(height: 5.h),
+                Padding(
+                  padding: AppConstants.defaultPading,
+                  child: Column(
                     children: List.generate(
-                      state.filteredPrescriptions.length,
+                      prescriptionProvider.filteredPrescriptions.length,
                       (index) {
-                        final prescription = state.filteredPrescriptions[index];
+                        final prescription = prescriptionProvider.filteredPrescriptions[index];
                         return PrescriptionCard(prescription: prescription);
                       },
                     ),
-                  );
-                },
-              ),
-            )
-          ],
+                  ),
+                )
+              ],
+            );
+          },
         ),
       ),
       bottomNavigationBar: SafeArea(

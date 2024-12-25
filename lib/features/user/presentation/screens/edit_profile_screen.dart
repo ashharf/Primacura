@@ -9,8 +9,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
-import '../provider/logo_and_signature_provider.dart';
-import '../provider/user_provider.dart';
+import '../providers/logo_and_signature_provider.dart';
+import '../providers/user_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});

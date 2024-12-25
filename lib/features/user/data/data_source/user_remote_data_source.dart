@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../../../core/constants/constants.dart';
 import '../../../../core/services/http_service.dart';
 import '../../../home/data/models/clinical_findings.dart';
-import 'package:uuid/uuid.dart';
-import '../../../../core/constants/constants.dart';
 import '../../../home/data/models/investigation.dart';
 import '../../../home/data/models/medicine.dart';
 import '../../../home/data/models/symptomps.dart';
-
 import '../models/specialization.dart';
 import '../models/user.dart' as app;
 

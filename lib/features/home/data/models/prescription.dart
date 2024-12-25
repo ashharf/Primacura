@@ -1,13 +1,11 @@
 import 'dart:typed_data';
 
+import '../../../user/data/models/user.dart';
 import 'clinical_findings.dart';
 import 'investigation.dart';
 import 'patient.dart';
-
-import 'symptomps.dart';
-
-import '../../../user/data/models/user.dart';
 import 'prescription_medicine.dart';
+import 'symptomps.dart';
 
 class Prescription {
   final String id;

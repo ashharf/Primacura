@@ -16,7 +16,7 @@ import '../../../../core/utils/utils.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../theme/provider/theme_provider.dart';
 import '../../data/models/prescription.dart';
-import '../cubit/prescription_cubit.dart';
+import '../providers/prescriptions_provider.dart';
 import 'enter_vitals_screen.dart';
 import 'home_screen.dart';
 import 'select_patient_screen.dart';
@@ -515,15 +515,15 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
   }
 
   void onDone() async {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
 
     try {
-      await prescriptionCubit.addPrescriptionToLocalStorage();
+      await prescriptionProvider.addPrescriptionToLocalStorage();
       if (mounted) {
         context.go(HomeScreen.routeName);
       }
 
-      prescriptionCubit.clearPatientAndPrescriptionDetails();
+      prescriptionProvider.clearPatientAndPrescriptionDetails();
     } catch (e) {
       if (mounted) {
         Utils.showSnackBar(
@@ -532,28 +532,28 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
         );
       }
     }
-    prescriptionCubit.getPrescriptions();
+    prescriptionProvider.getPrescriptions();
   }
 
   void onEdit() {
-    final prescriptionCubit = context.read<PrescriptionCubit>();
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
     final prescription = widget.prescription;
-    prescriptionCubit.clearPatientAndPrescriptionDetails();
-    prescriptionCubit.onSelectPatient(prescription.patient);
+    prescriptionProvider.clearPatientAndPrescriptionDetails();
+    prescriptionProvider.onSelectPatient(prescription.patient);
     for (var chiefComplaint in prescription.chiefComplaints) {
-      prescriptionCubit.onCheifComplaintSelected(chiefComplaint);
+      prescriptionProvider.onCheifComplaintSelected(chiefComplaint);
     }
     for (var clinicalFinding in prescription.clinicalFindings) {
-      prescriptionCubit.onClinicalFindingSelected(clinicalFinding);
+      prescriptionProvider.onClinicalFindingSelected(clinicalFinding);
     }
     for (var investigation in prescription.investigations) {
-      prescriptionCubit.onInvestigationSelected(investigation);
+      prescriptionProvider.onInvestigationSelected(investigation);
     }
     if (prescription.notes != null) {
-      prescriptionCubit.addSpecialNote(prescription.notes!);
+      prescriptionProvider.addSpecialNote(prescription.notes!);
     }
     for (var prescriptionMedicine in prescription.prescribedMedicines) {
-      prescriptionCubit.onMedicineAddForPrescription(
+      prescriptionProvider.onMedicineAddForPrescription(
         medicine: prescriptionMedicine.medicine,
         prescribedDosage: prescriptionMedicine.dosage,
         prescribedFrequency: prescriptionMedicine.frequency,

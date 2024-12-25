@@ -10,7 +10,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../home/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
-import '../provider/user_provider.dart';
+import '../providers/user_provider.dart';
 
 class EnterUserDetailsScreen extends StatefulWidget {
   const EnterUserDetailsScreen({super.key});
