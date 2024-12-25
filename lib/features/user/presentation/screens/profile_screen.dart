@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../prescriptions/presentation/screens/all_patients_screen.dart';
+import '../../../patients/presentation/screens/all_patients_screen.dart';
 import '../providers/user_provider.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';

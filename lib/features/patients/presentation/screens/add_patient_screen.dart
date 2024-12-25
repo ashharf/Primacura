@@ -7,10 +7,10 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../user/presentation/providers/user_provider.dart';
-import '../../../patients/data/models/patient.dart';
-import '../../../patients/presentation/providers/patients_provider.dart';
-import '../providers/prescriptions_provider.dart';
-import '../../../patients/presentation/screens/enter_vitals_screen.dart';
+import '../../data/models/patient.dart';
+import '../providers/patients_provider.dart';
+import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
+import '../../../prescriptions/presentation/screens/enter_vitals_screen.dart';
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({super.key});

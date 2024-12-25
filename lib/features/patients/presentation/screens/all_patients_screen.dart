@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../../../patients/data/models/patient.dart';
-import '../../../patients/presentation/providers/patients_provider.dart';
+import '../../data/models/patient.dart';
+import '../providers/patients_provider.dart';
 import 'add_patient_screen.dart';
 import 'edit_patient_screen.dart';
 

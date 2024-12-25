@@ -12,8 +12,8 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/prescription_utils.dart';
-import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
-import '../widget/custom_progress_indicator.dart';
+import '../providers/prescriptions_provider.dart';
+import '../../../patients/presentation/widget/custom_progress_indicator.dart';
 import 'pdf_view_screen.dart';
 
 class PrescriptionReviewScreen extends StatelessWidget {

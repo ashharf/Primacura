@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../prescriptions/data/models/prescription.dart';
-import '../screens/pdf_view_screen.dart';
+import '../../../prescriptions/presentation/screens/pdf_view_screen.dart';
 
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/patients/presentation/screens/home_screen.dart';
+import '../../features/prescriptions/presentation/screens/home_screen.dart';
 import '../../features/user/presentation/providers/user_provider.dart';
 import '../../features/user/presentation/screens/enter_user_details_screen.dart';
 import '../../features/user/presentation/screens/login_screen.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/patients/presentation/screens/home_screen.dart';
+import 'package:opd_management/features/prescriptions/presentation/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 

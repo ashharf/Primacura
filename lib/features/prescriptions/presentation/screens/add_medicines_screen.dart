@@ -10,13 +10,14 @@ import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../user/presentation/providers/user_provider.dart';
-import '../../../prescriptions/data/models/medicine.dart';
-import '../../../prescriptions/data/models/prescription_medicine.dart';
-import '../../../prescriptions/data/models/units.dart';
-import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
-import '../widget/custom_autocomplete.dart';
-import '../widget/custom_progress_indicator.dart';
-import '../widget/info_widget.dart';
+
+import '../../../patients/presentation/widget/custom_autocomplete.dart';
+import '../../../patients/presentation/widget/custom_progress_indicator.dart';
+import '../../../patients/presentation/widget/info_widget.dart';
+import '../../data/models/medicine.dart';
+import '../../data/models/prescription_medicine.dart';
+import '../../data/models/units.dart';
+import '../providers/prescriptions_provider.dart';
 import 'prescription_review_screen.dart';
 
 class AddMedicinesScreen extends StatefulWidget {

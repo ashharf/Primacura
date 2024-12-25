@@ -11,11 +11,11 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/utils/prescription_utils.dart';
 import '../../../user/presentation/providers/user_provider.dart';
-import '../../data/models/patient.dart';
-import '../providers/patients_provider.dart';
-import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
-import '../widget/custom_autocomplete.dart';
-import '../widget/prescription_card.dart';
+import '../../../patients/data/models/patient.dart';
+import '../../../patients/presentation/providers/patients_provider.dart';
+import '../providers/prescriptions_provider.dart';
+import '../../../patients/presentation/widget/custom_autocomplete.dart';
+import '../../../patients/presentation/widget/prescription_card.dart';
 import 'enter_vitals_screen.dart';
 
 class SelectPatientScreen extends StatefulWidget {
