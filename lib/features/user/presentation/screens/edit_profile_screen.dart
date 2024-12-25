@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../home/presentation/widget/custom_autocomplete.dart';
+import '../../../patients/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
 import '../providers/logo_and_signature_provider.dart';
 import '../providers/user_provider.dart';

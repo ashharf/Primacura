@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import '../../../home/data/models/clinical_findings.dart';
-import '../../../home/data/models/investigation.dart';
-import '../../../home/data/models/medicine.dart';
-import '../../../home/data/models/symptomps.dart';
+import '../../../prescriptions/data/models/clinical_findings.dart';
+import '../../../prescriptions/data/models/investigation.dart';
+import '../../../prescriptions/data/models/medicine.dart';
+import '../../../prescriptions/data/models/symptomps.dart';
 import 'specialization.dart';
 
 class User {

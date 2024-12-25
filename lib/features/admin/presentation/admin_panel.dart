@@ -8,11 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
-import '../../home/data/data_source/prescription_local_data_source.dart';
-import '../../home/data/data_source/prescription_remote_data_source.dart';
-import '../../home/data/models/prescription.dart';
-import '../../home/data/repository/prescription_repository.dart';
-import '../../home/presentation/providers/prescriptions_provider.dart';
+import '../../prescriptions/data/data_source/prescription_local_data_source.dart';
+import '../../prescriptions/data/data_source/prescription_remote_data_source.dart';
+import '../../prescriptions/data/models/prescription.dart';
+import '../../prescriptions/data/repository/prescription_repository.dart';
+import '../../prescriptions/presentation/providers/prescriptions_provider.dart';
 
 class PrimacuraAdminPanel extends StatelessWidget {
   final Box prescriptionBox;

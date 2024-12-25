@@ -1,7 +1,7 @@
-import '../../../home/data/models/clinical_findings.dart';
-import '../../../home/data/models/investigation.dart';
-import '../../../home/data/models/medicine.dart';
-import '../../../home/data/models/symptomps.dart';
+import '../../../prescriptions/data/models/clinical_findings.dart';
+import '../../../prescriptions/data/models/investigation.dart';
+import '../../../prescriptions/data/models/medicine.dart';
+import '../../../prescriptions/data/models/symptomps.dart';
 import '../data_source/user_local_data_source.dart';
 import '../data_source/user_remote_data_source.dart';
 import '../models/specialization.dart';

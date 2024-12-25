@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../features/home/data/models/units.dart';
-import '../../features/home/presentation/providers/patients_provider.dart';
-import '../../features/home/presentation/providers/prescriptions_provider.dart';
+import '../../features/prescriptions/data/models/units.dart';
+import '../../features/patients/presentation/providers/patients_provider.dart';
+import '../../features/prescriptions/presentation/providers/prescriptions_provider.dart';
 
 class AppFunctions {
   static Future<bool?> showPatientWithSameNumberDialog(BuildContext context) {

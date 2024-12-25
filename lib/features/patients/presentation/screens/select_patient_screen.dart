@@ -13,7 +13,7 @@ import '../../../../core/utils/prescription_utils.dart';
 import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/patient.dart';
 import '../providers/patients_provider.dart';
-import '../providers/prescriptions_provider.dart';
+import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
 import '../widget/custom_autocomplete.dart';
 import '../widget/prescription_card.dart';
 import 'enter_vitals_screen.dart';

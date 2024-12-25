@@ -7,7 +7,7 @@ import '../../../user/data/models/user.dart';
 import '../../data/models/clinical_findings.dart';
 import '../../data/models/investigation.dart';
 import '../../data/models/medicine.dart';
-import '../../data/models/patient.dart';
+import '../../../patients/data/models/patient.dart';
 import '../../data/models/prescription.dart';
 import '../../data/models/prescription_medicine.dart';
 import '../../data/models/symptomps.dart';

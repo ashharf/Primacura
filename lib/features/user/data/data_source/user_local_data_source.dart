@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '../../../home/data/models/medicine.dart';
+import '../../../prescriptions/data/models/medicine.dart';
 
 class UserLocalDataSource {
   final Box<dynamic> hiveMedicinesBox;

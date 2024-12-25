@@ -1,5 +1,5 @@
-import '../../features/home/data/models/patient.dart';
-import '../../features/home/data/models/units.dart';
+import '../../features/patients/data/models/patient.dart';
+import '../../features/prescriptions/data/models/units.dart';
 
 class PrescriptionUtils {
   PrescriptionUtils._();

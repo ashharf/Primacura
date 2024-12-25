@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../data/models/prescription.dart';
+import '../../../prescriptions/data/models/prescription.dart';
 import '../screens/pdf_view_screen.dart';
 
 class PrescriptionCard extends StatelessWidget {

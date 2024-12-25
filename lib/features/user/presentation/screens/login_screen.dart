@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../home/presentation/screens/home_screen.dart';
+import '../../../patients/presentation/screens/home_screen.dart';
 import '../providers/user_provider.dart';
 import 'enter_user_details_screen.dart';
 

@@ -1,9 +1,9 @@
 import '../../../../core/providers/loading_provider.dart';
 import '../../../../core/services/exception.dart';
-import '../../../home/data/models/clinical_findings.dart';
-import '../../../home/data/models/investigation.dart';
-import '../../../home/data/models/medicine.dart';
-import '../../../home/data/models/symptomps.dart';
+import '../../../prescriptions/data/models/clinical_findings.dart';
+import '../../../prescriptions/data/models/investigation.dart';
+import '../../../prescriptions/data/models/medicine.dart';
+import '../../../prescriptions/data/models/symptomps.dart';
 import '../../data/models/specialization.dart';
 import '../../data/models/user.dart';
 import '../../data/repository/user_repository.dart';

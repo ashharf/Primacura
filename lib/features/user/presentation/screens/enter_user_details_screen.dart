@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opd_management/features/home/presentation/screens/home_screen.dart';
+import 'package:opd_management/features/patients/presentation/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../home/presentation/widget/custom_autocomplete.dart';
+import '../../../patients/presentation/widget/custom_autocomplete.dart';
 import '../../data/models/specialization.dart';
 import '../providers/user_provider.dart';
 

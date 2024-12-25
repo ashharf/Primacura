@@ -8,14 +8,14 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../patients/presentation/providers/patients_provider.dart';
-import '../../../patients/presentation/screens/qr_scanner_screen.dart';
-import '../../../patients/presentation/screens/select_patient_screen.dart';
-import '../../../patients/presentation/widget/prescription_card.dart';
-import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
 import '../../../theme/provider/theme_provider.dart';
 import '../../../user/presentation/providers/user_provider.dart';
 import '../../../user/presentation/screens/profile_screen.dart';
+import '../providers/patients_provider.dart';
+import '../../../prescriptions/presentation/providers/prescriptions_provider.dart';
+import '../widget/prescription_card.dart';
+import 'qr_scanner_screen.dart';
+import 'select_patient_screen.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
