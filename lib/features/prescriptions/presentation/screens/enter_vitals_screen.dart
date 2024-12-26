@@ -85,157 +85,33 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                   totalSteps: 3,
                 ),
                 SizedBox(height: 10.h),
-                Container(
-                  margin: AppConstants.defaultPading,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        selectedPatient.name ?? "-",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'Gender: ${selectedPatient.gender?.substring(0, 1).toUpperCase()}${selectedPatient.gender?.substring(1).toLowerCase()}',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                          // Spacer(),
-                          Text(
-                            "Age: ${selectedPatient.age.toString()}",
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                _buildPatientInfoCard(selectedPatient),
                 Expanded(
                   child: ListView(
                     padding: AppConstants.defaultPading,
                     children: [
                       SizedBox(height: 30.h),
-                      Text("Add Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
+                      _buildSectionTitle("Add Chief Complaints"),
                       SizedBox(height: 10.h),
                       _buildCheifComplaintDropDown(),
-                      Consumer<PrescriptionsProvider>(
-                        builder: (context, prescriptionProvider, _) {
-                          return Wrap(
-                            spacing: 5,
-                            runSpacing: 5,
-                            children: List.generate(
-                              prescriptionProvider.chiefComplaints.length,
-                              (index) => Chip(
-                                label: Text(prescriptionProvider.chiefComplaints[index].name),
-                                onDeleted: () {
-                                  prescriptionProvider
-                                      .onChiefComplaintDeleted(prescriptionProvider.chiefComplaints[index]);
-                                },
-                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      _buildChiefComplaintsChips(),
                       SizedBox(height: 30.h),
-                      Text("Vitals", style: Theme.of(context).textTheme.titleMedium),
+                      _buildSectionTitle("Vitals"),
                       _buildVitals(),
                       SizedBox(height: 30.h),
-                      Text("Clinical Findings", style: Theme.of(context).textTheme.titleMedium),
+                      _buildSectionTitle("Clinical Findings"),
                       SizedBox(height: 10.h),
                       _buildClinicalFindingDrodown(),
-                      Consumer<PrescriptionsProvider>(
-                        builder: (context, prescriptionProvider, _) {
-                          return Wrap(
-                            spacing: 5,
-                            runSpacing: 5,
-                            children: List.generate(
-                              prescriptionProvider.clinicalFindings.length,
-                              (index) => Chip(
-                                label: Text(prescriptionProvider.clinicalFindings[index].name),
-                                onDeleted: () {
-                                  prescriptionProvider
-                                      .onClinicalFindingDeleted(prescriptionProvider.clinicalFindings[index]);
-                                },
-                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      _buildClinicalFindingsChips(),
                       SizedBox(height: 30.h),
-                      Text("Investigations", style: Theme.of(context).textTheme.titleMedium),
+                      _buildSectionTitle("Investigations"),
                       SizedBox(height: 10.h),
                       _buildInvestigationsDropdown(),
-                      Consumer<PrescriptionsProvider>(
-                        builder: (context, prescriptionProvider, _) {
-                          return Wrap(
-                            spacing: 5,
-                            runSpacing: 5,
-                            children: List.generate(
-                              prescriptionProvider.investigations.length,
-                              (index) => Chip(
-                                label: Text(prescriptionProvider.investigations[index].name),
-                                onDeleted: () {
-                                  prescriptionProvider
-                                      .onInvestigationDeleted(prescriptionProvider.investigations[index]);
-                                },
-                                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.6),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      _buildInvestigationsChips(),
                       SizedBox(height: 30.h),
-                      TextField(
-                        controller: _specialNotesController,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: const InputDecoration(
-                          labelText: 'Add Special Notes',
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.notesMedical,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+                      _buildSpecialNotesField(),
                       SizedBox(height: 30.h),
-                      Consumer<PrescriptionsProvider>(
-                        builder: (context, prescriptionProvider, _) {
-                          return ElevatedButton.icon(
-                            onPressed: () {
-                              if (prescriptionProvider.patient == null) {
-                                Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
-                                return;
-                              }
-                              prescriptionProvider.addTemperature(_temperatureController.text.trim());
-                              prescriptionProvider.addBloodPressure(_bloodPressureController.text.trim());
-                              prescriptionProvider.addSpO2(_spO2Controller.text.trim());
-                              prescriptionProvider.addHeartRate(_heartRateController.text.trim());
-                              prescriptionProvider.addSpecialNote(_specialNotesController.text.trim());
-
-                              context.goNamed(AddMedicinesScreen.routeName);
-                            },
-                            label: Icon(
-                              Icons.arrow_forward_outlined,
-                              color: Colors.white,
-                            ),
-                            icon: Text("Add Medicines"),
-                          );
-                        },
-                      ),
+                      _buildAddMedicinesButton(),
                       SizedBox(height: 10.h),
                     ],
                   ),
@@ -245,6 +121,154 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildPatientInfoCard(Patient selectedPatient) {
+    return Container(
+      margin: AppConstants.defaultPading,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text(
+            selectedPatient.name ?? "-",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'Gender: ${selectedPatient.gender?.substring(0, 1).toUpperCase()}${selectedPatient.gender?.substring(1).toLowerCase()}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Age: ${selectedPatient.age.toString()}",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(title, style: Theme.of(context).textTheme.titleMedium);
+  }
+
+  Widget _buildChiefComplaintsChips() {
+    return Consumer<PrescriptionsProvider>(
+      builder: (context, prescriptionProvider, _) {
+        return Wrap(
+          spacing: 5,
+          runSpacing: 5,
+          children: List.generate(
+            prescriptionProvider.chiefComplaints.length,
+            (index) => Chip(
+              label: Text(prescriptionProvider.chiefComplaints[index].name),
+              onDeleted: () {
+                prescriptionProvider.onChiefComplaintDeleted(prescriptionProvider.chiefComplaints[index]);
+              },
+              backgroundColor: AppTheme.primaryColor.withAlpha(150),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildClinicalFindingsChips() {
+    return Consumer<PrescriptionsProvider>(
+      builder: (context, prescriptionProvider, _) {
+        return Wrap(
+          spacing: 5,
+          runSpacing: 5,
+          children: List.generate(
+            prescriptionProvider.clinicalFindings.length,
+            (index) => Chip(
+              label: Text(prescriptionProvider.clinicalFindings[index].name),
+              onDeleted: () {
+                prescriptionProvider.onClinicalFindingDeleted(prescriptionProvider.clinicalFindings[index]);
+              },
+              backgroundColor: AppTheme.primaryColor.withAlpha(150),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInvestigationsChips() {
+    return Consumer<PrescriptionsProvider>(
+      builder: (context, prescriptionProvider, _) {
+        return Wrap(
+          spacing: 5,
+          runSpacing: 5,
+          children: List.generate(
+            prescriptionProvider.investigations.length,
+            (index) => Chip(
+              label: Text(prescriptionProvider.investigations[index].name),
+              onDeleted: () {
+                prescriptionProvider.onInvestigationDeleted(prescriptionProvider.investigations[index]);
+              },
+              backgroundColor: AppTheme.primaryColor.withAlpha(150),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSpecialNotesField() {
+    return TextField(
+      controller: _specialNotesController,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: const InputDecoration(
+        labelText: 'Add Special Notes',
+        prefixIcon: Icon(
+          FontAwesomeIcons.notesMedical,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddMedicinesButton() {
+    return Consumer<PrescriptionsProvider>(
+      builder: (context, prescriptionProvider, _) {
+        return ElevatedButton.icon(
+          onPressed: () {
+            if (prescriptionProvider.patient == null) {
+              Utils.showSnackBar(context, Text("Something went wrong. Please select patient"));
+              return;
+            }
+            prescriptionProvider.addTemperature(_temperatureController.text.trim());
+            prescriptionProvider.addBloodPressure(_bloodPressureController.text.trim());
+            prescriptionProvider.addSpO2(_spO2Controller.text.trim());
+            prescriptionProvider.addHeartRate(_heartRateController.text.trim());
+            prescriptionProvider.addSpecialNote(_specialNotesController.text.trim());
+
+            context.goNamed(AddMedicinesScreen.routeName);
+          },
+          label: Icon(
+            Icons.arrow_forward_outlined,
+            color: Colors.white,
+          ),
+          icon: Text("Add Medicines"),
+        );
+      },
     );
   }
 
@@ -258,23 +282,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             size: 20,
           ),
           hintText: "Search Investigations",
-          searchLogic: (searchQuery, items) {
-            final normalizedQuery = searchQuery.trim().toLowerCase();
-
-            // Separate exact matches and partial matches
-            final exactMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName == normalizedQuery;
-            }).toList();
-
-            final partialMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
-            }).toList();
-
-            // Combine exact matches at the top, followed by partial matches
-            return [...exactMatches, ...partialMatches];
-          },
+          searchLogic: _searchLogic,
           displayText: (item) => item.name,
           textEditingController: _investigationSearchController,
           items: userProvider.user!.investigations,
@@ -321,23 +329,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             size: 20,
           ),
           hintText: "Search Clinical Findings",
-          searchLogic: (searchQuery, items) {
-            final normalizedQuery = searchQuery.trim().toLowerCase();
-
-            // Separate exact matches and partial matches
-            final exactMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName == normalizedQuery;
-            }).toList();
-
-            final partialMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
-            }).toList();
-
-            // Combine exact matches at the top, followed by partial matches
-            return [...exactMatches, ...partialMatches];
-          },
+          searchLogic: _searchLogic,
           displayText: (item) => item.name,
           textEditingController: _clinicalFindingsSearchController,
           items: userProvider.user!.clinicalFindings,
@@ -361,8 +353,6 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             Future.delayed(Duration(milliseconds: 1), () {
               _clinicalFindingsSearchController.clear();
             });
-
-            // setState(() {});
           },
           onDelete: (item) {
             userProvider.deleteClinicalFinding(item);
@@ -461,23 +451,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
             size: 20,
           ),
           hintText: "Search Chief Complaint",
-          searchLogic: (searchQuery, items) {
-            final normalizedQuery = searchQuery.trim().toLowerCase();
-
-            // Separate exact matches and partial matches
-            final exactMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName == normalizedQuery;
-            }).toList();
-
-            final partialMatches = items.where((element) {
-              final normalizedBrandName = (element.name).trim().toLowerCase();
-              return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
-            }).toList();
-
-            // Combine exact matches at the top, followed by partial matches
-            return [...exactMatches, ...partialMatches];
-          },
+          searchLogic: _searchLogic,
           displayText: (item) => item.name,
           textEditingController: _chiefComplaintSearchController,
           items: state.user!.chiefComplaints,
@@ -511,5 +485,21 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
         );
       },
     );
+  }
+
+  Iterable<T> _searchLogic<T>(String searchQuery, Iterable<T> items) {
+    final normalizedQuery = searchQuery.trim().toLowerCase();
+
+    final exactMatches = items.where((element) {
+      final normalizedBrandName = (element as dynamic).name.trim().toLowerCase();
+      return normalizedBrandName == normalizedQuery;
+    }).toList();
+
+    final partialMatches = items.where((element) {
+      final normalizedBrandName = (element as dynamic).name.trim().toLowerCase();
+      return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
+    }).toList();
+
+    return [...exactMatches, ...partialMatches];
   }
 }

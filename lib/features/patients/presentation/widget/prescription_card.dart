@@ -61,10 +61,12 @@ class PrescriptionCard extends StatelessWidget {
                   color: Colors.white,
                 ),
               )
-            : Text("-",
+            : Text(
+                "-",
                 style: TextStyle(
                   color: Colors.white,
-                )),
+                ),
+              ),
       ),
     );
   }

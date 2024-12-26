@@ -9,11 +9,10 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/functions/app_functions.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../user/presentation/providers/user_provider.dart';
-
 import '../../../patients/presentation/widget/custom_autocomplete.dart';
 import '../../../patients/presentation/widget/custom_progress_indicator.dart';
 import '../../../patients/presentation/widget/info_widget.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../../data/models/medicine.dart';
 import '../../data/models/prescription_medicine.dart';
 import '../../data/models/units.dart';
@@ -136,136 +135,29 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                             SizedBox(height: 10),
                             _buildDurationWidget(),
                             SizedBox(height: 10),
-                            SwitchListTile(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: AppTheme.primaryColor,
+                            _buildSwitchListTile(
+                              title: "Empty Stomach",
                               value: _isEmptyStomach,
-                              onChanged: (value) => onIsEmptyStomachChanged(value),
-                              title: Text("Empty Stomach"),
+                              onChanged: onIsEmptyStomachChanged,
                             ),
-                            SwitchListTile(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: AppTheme.primaryColor,
+                            _buildSwitchListTile(
+                              title: "Before Food",
                               value: _isBeforeFood,
-                              onChanged: (value) => onIsBeforeFoodChanged(value),
-                              title: Text("Before Food"),
+                              onChanged: onIsBeforeFoodChanged,
                             ),
-                            SwitchListTile(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: AppTheme.primaryColor,
+                            _buildSwitchListTile(
+                              title: "After Food",
                               value: _isAfterFood,
-                              onChanged: (value) => onIsAfterFoodChanged(value),
-                              title: Text("After Food"),
+                              onChanged: onIsAfterFoodChanged,
                             ),
                             SizedBox(height: 10),
-                            TextField(
-                              controller: _notesController,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: InputDecoration(
-                                hintText: "Notes",
-                                prefixIcon: Icon(FontAwesomeIcons.notesMedical),
-                              ),
-                            ),
+                            _buildNotesField(),
                             SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: _selectedMedicine == null
-                                  ? null
-                                  : () {
-                                      if (_dosageController.text.isNotEmpty && _selectedFrequency == null) {
-                                        showFrequencyNotEnteredDialog(context);
-                                      } else {
-                                        addToPrescription(context);
-                                      }
-                                    },
-                              child: Text("Add to Prescription"),
-                            ),
+                            _buildAddToPrescriptionButton(),
                             SizedBox(height: 10),
                             Divider(),
                             if (prescriptionProvider.prescribedMedicines.isNotEmpty)
-                              ReorderableListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  final prefMedicine = prescriptionProvider.prescribedMedicines[index];
-
-                                  return ListTile(
-                                    leading: Icon(Icons.drag_handle),
-                                    // shape: RoundedRectangleBorder(
-                                    //   borderRadius: BorderRadius.circular(8),
-                                    // ),
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                                    key: ValueKey(prefMedicine.hashCode),
-                                    title: Text(
-                                      AppFunctions.getDosageString(
-                                        medicineName: prefMedicine.medicine.brandName,
-                                        dosageString: prefMedicine.dosage?.text,
-                                        dosageUnit: prefMedicine.dosage?.dosageUnit,
-                                      ),
-                                    ),
-                                    subtitle: AppFunctions.getFrequencyAndDurationString(
-                                                  frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                                                  duration: prefMedicine.duration?.text,
-                                                  durationUnit: prefMedicine.duration?.durationUnit,
-                                                  isAfterFood: prefMedicine.isAfterFood,
-                                                  isBeforeFood: prefMedicine.isBeforeFood,
-                                                  isEmptyStomach: prefMedicine.isEmptyStomach,
-                                                ) ==
-                                                " " &&
-                                            (prefMedicine.notes == null || prefMedicine.notes!.isEmpty)
-                                        ? null
-                                        : Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                AppFunctions.getFrequencyAndDurationString(
-                                                  frequencyUnit: prefMedicine.frequency?.frequencyUnit,
-                                                  duration: prefMedicine.duration?.text,
-                                                  durationUnit: prefMedicine.duration?.durationUnit,
-                                                  isAfterFood: prefMedicine.isAfterFood,
-                                                  isBeforeFood: prefMedicine.isBeforeFood,
-                                                  isEmptyStomach: prefMedicine.isEmptyStomach,
-                                                ),
-                                              ),
-                                              if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty)
-                                                Text(prefMedicine.notes!),
-                                            ],
-                                          ),
-                                    trailing: SizedBox(
-                                      width: 90,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              showEditMedicineDialog(prefMedicine);
-                                            },
-                                            icon: Icon(Icons.edit),
-                                          ),
-                                          IconButton(
-                                            // padding: EdgeInsets.zero,
-                                            style: IconButton.styleFrom(
-                                              // padding: EdgeInsets.zero,
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              // backgroundColor: Colors.amber,
-                                            ),
-                                            onPressed: () {
-                                              showDeleteMedicineDialog(prefMedicine);
-                                            },
-                                            icon: Icon(Icons.delete),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                itemCount: prescriptionProvider.prescribedMedicines.length,
-                                onReorder: (oldIndex, newIndex) {
-                                  if (oldIndex < newIndex) {
-                                    newIndex -= 1;
-                                  }
-                                  prescriptionProvider.onPrescriptionMedicineReorder(oldIndex, newIndex);
-                                },
-                              ),
+                              _buildPrescribedMedicinesList(prescriptionProvider),
                           ],
                         ),
                       ],
@@ -296,6 +188,243 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildDosageWidget() {
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
+    return Row(
+      children: [
+        SizedBox(
+          width: 140,
+          child: TextField(
+            controller: _dosageController,
+            keyboardType: TextInputType.datetime,
+            decoration: const InputDecoration(
+              labelText: 'Dosage',
+            ),
+          ),
+        ),
+        DropdownButton<DosageUnit>(
+          underline: SizedBox.shrink(),
+          value: _selectedDosageUnit,
+          hint: Text("Select Dosage Unit"),
+          items: List.generate(prescriptionProvider.dosages.length, (index) {
+            final dosage = prescriptionProvider.dosages[index];
+            return DropdownMenuItem(
+              value: dosage,
+              child: Text(dosage.name),
+            );
+          }),
+          onChanged: (value) {
+            setState(() {
+              _selectedDosageUnit = value;
+            });
+          },
+        ),
+        Spacer(),
+        InfoWidget(
+          infoText:
+              "Select Tablets, Capsules, or ml (for Syrup) etc from the dropdown and enter the quantity to be taken per dose.",
+          iconData: Icons.info_outline,
+          iconColor: AppTheme.primaryColor,
+        )
+      ],
+    );
+  }
+
+  Widget _buildFrequencyWidget() {
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
+    return Row(
+      children: [
+        if (_selectedFrequency?.name == "Custom")
+          SizedBox(
+            width: 100,
+            child: TextField(
+              controller: _frequencyController,
+              decoration: const InputDecoration(
+                labelText: 'Frequency',
+              ),
+            ),
+          ),
+        DropdownButton<FrequencyUnit>(
+          underline: SizedBox.shrink(),
+          value: _selectedFrequency,
+          hint: Text("Select Frequency"),
+          items: List.generate(prescriptionProvider.frequencies.length + 1, (index) {
+            if (index == prescriptionProvider.frequencies.length) {
+              return DropdownMenuItem(
+                value: null,
+                child: Text("Select Frequency"),
+              );
+            }
+            final frequency = prescriptionProvider.frequencies[index];
+            return DropdownMenuItem(
+              value: frequency,
+              child: Text(frequency.name),
+            );
+          }),
+          onChanged: (value) {
+            setState(() {
+              _selectedFrequency = value;
+            });
+          },
+        ),
+        Spacer(),
+        InfoWidget(
+          infoText: "Select the frequency of the medicine from the dropdown.",
+          iconData: Icons.info_outline,
+          iconColor: AppTheme.primaryColor,
+        )
+      ],
+    );
+  }
+
+  Widget _buildDurationWidget() {
+    final prescriptionProvider = context.read<PrescriptionsProvider>();
+    return Row(
+      children: [
+        SizedBox(
+          width: 140,
+          child: TextField(
+            controller: _durationController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Duration',
+            ),
+          ),
+        ),
+        DropdownButton<DurationUnit>(
+          underline: SizedBox.shrink(),
+          value: _selectedDurationUnit,
+          hint: Text("Select Duration Unit"),
+          items: List.generate(prescriptionProvider.durations.length, (index) {
+            final duration = prescriptionProvider.durations[index];
+            return DropdownMenuItem(
+              value: duration,
+              child: Text(duration.name),
+            );
+          }),
+          onChanged: (value) {
+            setState(() {
+              _selectedDurationUnit = value;
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  Widget _buildSwitchListTile({required String title, required bool value, required Function(bool) onChanged}) {
+    return SwitchListTile(
+      contentPadding: EdgeInsets.zero,
+      activeColor: AppTheme.primaryColor,
+      value: value,
+      onChanged: onChanged,
+      title: Text(title),
+    );
+  }
+
+  Widget _buildNotesField() {
+    return TextField(
+      controller: _notesController,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+        hintText: "Notes",
+        prefixIcon: Icon(FontAwesomeIcons.notesMedical),
+      ),
+    );
+  }
+
+  Widget _buildAddToPrescriptionButton() {
+    return ElevatedButton(
+      onPressed: _selectedMedicine == null
+          ? null
+          : () {
+              if (_dosageController.text.isNotEmpty && _selectedFrequency == null) {
+                showFrequencyNotEnteredDialog(context);
+              } else {
+                addToPrescription(context);
+              }
+            },
+      child: Text("Add to Prescription"),
+    );
+  }
+
+  Widget _buildPrescribedMedicinesList(PrescriptionsProvider prescriptionProvider) {
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final prefMedicine = prescriptionProvider.prescribedMedicines[index];
+
+        return ListTile(
+          leading: Icon(Icons.drag_handle),
+          contentPadding: EdgeInsets.symmetric(horizontal: 8),
+          key: ValueKey(prefMedicine.hashCode),
+          title: Text(
+            AppFunctions.getDosageString(
+              medicineName: prefMedicine.medicine.brandName,
+              dosageString: prefMedicine.dosage?.text,
+              dosageUnit: prefMedicine.dosage?.dosageUnit,
+            ),
+          ),
+          subtitle: AppFunctions.getFrequencyAndDurationString(
+                        frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                        duration: prefMedicine.duration?.text,
+                        durationUnit: prefMedicine.duration?.durationUnit,
+                        isAfterFood: prefMedicine.isAfterFood,
+                        isBeforeFood: prefMedicine.isBeforeFood,
+                        isEmptyStomach: prefMedicine.isEmptyStomach,
+                      ) ==
+                      " " &&
+                  (prefMedicine.notes == null || prefMedicine.notes!.isEmpty)
+              ? null
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppFunctions.getFrequencyAndDurationString(
+                        frequencyUnit: prefMedicine.frequency?.frequencyUnit,
+                        duration: prefMedicine.duration?.text,
+                        durationUnit: prefMedicine.duration?.durationUnit,
+                        isAfterFood: prefMedicine.isAfterFood,
+                        isBeforeFood: prefMedicine.isBeforeFood,
+                        isEmptyStomach: prefMedicine.isEmptyStomach,
+                      ),
+                    ),
+                    if (prefMedicine.notes != null && prefMedicine.notes!.isNotEmpty) Text(prefMedicine.notes!),
+                  ],
+                ),
+          trailing: SizedBox(
+            width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    showEditMedicineDialog(prefMedicine);
+                  },
+                  icon: Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: () {
+                    showDeleteMedicineDialog(prefMedicine);
+                  },
+                  icon: Icon(Icons.delete),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      itemCount: prescriptionProvider.prescribedMedicines.length,
+      onReorder: (oldIndex, newIndex) {
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        prescriptionProvider.onPrescriptionMedicineReorder(oldIndex, newIndex);
+      },
     );
   }
 
@@ -420,146 +549,10 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       _isEmptyStomach = false;
       _isAfterFood = false;
       _selectedDosageUnit = prescriptionProvider.dosages.first;
-      // selectedFrequency = prescriptionCubit.frequencies.first;
       _selectedFrequency = null;
       _selectedDurationUnit = prescriptionProvider.durations.first;
     });
     FocusScope.of(context).unfocus();
-  }
-
-  Widget _buildDosageWidget() {
-    final prescriptionProvider = context.read<PrescriptionsProvider>();
-    return Row(
-      children: [
-        SizedBox(
-          width: 140,
-          child: TextField(
-            controller: _dosageController,
-            keyboardType: TextInputType.datetime,
-            decoration: const InputDecoration(
-              labelText: 'Dosage',
-              // prefixIcon: Icon(
-              //   Icons.vaccines,
-              // ),
-            ),
-          ),
-        ),
-        DropdownButton<DosageUnit>(
-          underline: SizedBox.shrink(),
-          // alignment: Alignment.center,
-          value: _selectedDosageUnit,
-          hint: Text("Select Dosage Unit"),
-          items: List.generate(prescriptionProvider.dosages.length, (index) {
-            final dosage = prescriptionProvider.dosages[index];
-            return DropdownMenuItem(
-              value: dosage,
-              child: Text(dosage.name),
-            );
-          }),
-          onChanged: (value) {
-            setState(() {
-              _selectedDosageUnit = value;
-            });
-          },
-        ),
-        Spacer(),
-        InfoWidget(
-          infoText:
-              "Select Tablets, Capsules, or ml (for Syrup) etc from the dropdown and enter the quantity to be taken per dose.",
-          iconData: Icons.info_outline,
-          iconColor: AppTheme.primaryColor,
-        )
-      ],
-    );
-  }
-
-  Widget _buildFrequencyWidget() {
-    final prescriptionProvider = context.read<PrescriptionsProvider>();
-    return Row(
-      children: [
-        // SizedBox(width: 13),
-        // Icon(FontAwesomeIcons.repeat, size: 20),
-        // SizedBox(width: 15),
-        if (_selectedFrequency?.name == "Custom")
-          SizedBox(
-            width: 100,
-            child: TextField(
-              controller: _frequencyController,
-              decoration: const InputDecoration(
-                labelText: 'Frequency',
-              ),
-            ),
-          ),
-        DropdownButton<FrequencyUnit>(
-          underline: SizedBox.shrink(),
-          value: _selectedFrequency,
-          hint: Text("Select Frequency"),
-          items: List.generate(prescriptionProvider.frequencies.length + 1, (index) {
-            if (index == prescriptionProvider.frequencies.length) {
-              return DropdownMenuItem(
-                value: null,
-                child: Text("Select Frequency"),
-              );
-            }
-            final frequency = prescriptionProvider.frequencies[index];
-            return DropdownMenuItem(
-              value: frequency,
-              child: Text(frequency.name),
-            );
-          }),
-          onChanged: (value) {
-            setState(() {
-              _selectedFrequency = value;
-            });
-          },
-        ),
-        Spacer(),
-        InfoWidget(
-          infoText: "Select the frequency of the medicine from the dropdown.",
-          iconData: Icons.info_outline,
-          iconColor: AppTheme.primaryColor,
-        )
-      ],
-    );
-  }
-
-  Widget _buildDurationWidget() {
-    final prescriptionProvider = context.read<PrescriptionsProvider>();
-    return Row(
-      children: [
-        SizedBox(
-          width: 140,
-          child: TextField(
-            controller: _durationController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Duration',
-              // prefixIcon: Icon(
-              //   FontAwesomeIcons.calendarDays,
-              //   size: 20,
-              // ),
-            ),
-          ),
-        ),
-        DropdownButton<DurationUnit>(
-          underline: SizedBox.shrink(),
-          value: _selectedDurationUnit,
-          hint: Text("Select Duration Unit"),
-          items: List.generate(prescriptionProvider.durations.length, (index) {
-            final duration = prescriptionProvider.durations[index];
-            return DropdownMenuItem(
-              value: duration,
-              child: Text(duration.name),
-            );
-          }),
-          onChanged: (value) {
-            setState(() {
-              _selectedDurationUnit = value;
-            });
-          },
-        )
-      ],
-    );
   }
 
   void onIsAfterFoodChanged(bool value) {
@@ -583,7 +576,6 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
   Iterable<Medicine> _searchLogic(String searchQuery, Iterable<Medicine> items) {
     final normalizedQuery = searchQuery.trim().toLowerCase();
 
-    // Separate exact matches and partial matches
     final exactMatches = items.where((element) {
       final normalizedBrandName = (element.brandName).trim().toLowerCase();
       return normalizedBrandName == normalizedQuery;
@@ -594,7 +586,6 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
       return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
     }).toList();
 
-    // Combine exact matches at the top, followed by partial matches
     return [...exactMatches, ...partialMatches];
   }
 

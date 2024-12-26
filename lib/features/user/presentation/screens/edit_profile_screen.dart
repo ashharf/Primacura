@@ -72,177 +72,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 builder: (context, state, child) {
                   return Column(
                     children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.stethoscope,
-                            size: 20,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your Name';
-                          }
-                          return null;
-                        },
-                      ),
+                      _buildNameField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _degreeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Degree',
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.graduationCap,
-                            size: 20,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your degree. It will appear on Prescriptions';
-                          }
-                          return null;
-                        },
-                      ),
+                      _buildDegreeField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _licenseNumberController,
-                        decoration: const InputDecoration(
-                          label: Text('License Number'),
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.idCard,
-                            size: 20,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your license number. It will appear on Prescriptions';
-                          }
-                          return null;
-                        },
-                      ),
+                      _buildLicenseNumberField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _clinicNameController,
-                        decoration: const InputDecoration(
-                          label: Text('Clinic Name'),
-                          prefixIcon: Icon(
-                            Icons.local_hospital,
-                          ),
-                        ),
-                      ),
+                      _buildClinicNameField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _clinicAddressController,
-                        keyboardType: TextInputType.streetAddress,
-                        decoration: const InputDecoration(
-                          label: Text('Clinic Address'),
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.houseChimneyMedical,
-                            size: 20,
-                          ),
-                        ),
-                        maxLines: 2,
-                      ),
+                      _buildClinicAddressField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _clinincTimingController,
-                        decoration: const InputDecoration(
-                          label: Text('Clinic Timings'),
-                          prefixIcon: Icon(
-                            FontAwesomeIcons.solidClock,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+                      _buildClinicTimeField(),
                       SizedBox(height: 20),
-                      TextFormField(
-                        controller: _phoneNumberController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          label: Text('Phone Number'),
-                          prefixIcon: Icon(
-                            Icons.phone,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your phone number';
-                          }
-                          return null;
-                        },
-                      ),
+                      _buildPhoneNumberField(),
                       SizedBox(height: 20),
-                      CustomSearchableDropdown<Specialization>(
-                        prefixIcon: Icon(
-                          FontAwesomeIcons.userDoctor,
-                          size: 20,
-                        ),
-                        hintText: "Search Specialization",
-                        searchLogic: (searchQuery, items) {
-                          final normalizedQuery = searchQuery.trim().toLowerCase();
-
-                          // Separate exact matches and partial matches
-                          final exactMatches = items.where((element) {
-                            final normalizedBrandName = (element.name).trim().toLowerCase();
-                            return normalizedBrandName == normalizedQuery;
-                          }).toList();
-
-                          final partialMatches = items.where((element) {
-                            final normalizedBrandName = (element.name).trim().toLowerCase();
-                            return normalizedBrandName.contains(normalizedQuery) &&
-                                normalizedBrandName != normalizedQuery;
-                          }).toList();
-
-                          // Combine exact matches at the top, followed by partial matches
-                          return [...exactMatches, ...partialMatches];
-                        },
-                        displayText: (item) => item.name,
-                        textEditingController: _specializationController,
-                        textCapitalization: TextCapitalization.words,
-                        items: state.specializations,
-                        onItemSelected: (item) {
-                          // setState(() {
-                          state.selectSpecialization(item, isProfileEditing: true);
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            _specializationController.clear();
-                          });
-                          // });
-                        },
-                        onAddSelected: (searchText) {
-                          final Specialization specialization = Specialization(
-                            id: Uuid().v4(),
-                            name: searchText,
-                          );
-
-                          state.addSpecialization(specialization);
-                          state.selectSpecialization(specialization, isProfileEditing: true);
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            _specializationController.clear();
-                          });
-                          // setState(() {});
-                        },
-                      ),
+                      _buildSpecializationField(state),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Wrap(
-                          spacing: 10,
-                          children: List.generate(
-                            state.selectedSpecializations.length,
-                            (index) => Chip(
-                              backgroundColor: AppTheme.specializationChipColor,
-                              label: Text(
-                                state.selectedSpecializations[index].name,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onDeleted: () => state.deletedSelecteddSpecialization(
-                                state.selectedSpecializations[index],
-                                isEditingProfile: true,
-                              ),
-                            ),
-                          ),
-                        ),
+                        child: _buildSpecializationChips(state),
                       ),
                     ],
                   );
@@ -250,16 +97,196 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
             SizedBox(height: 20),
-            // LogoAndSignature(),
-            // SizedBox(height: 100),
             Consumer<UserProvider>(
               builder: (context, state, child) => ElevatedButton(
-                // style: ElevatedButton.styleFrom(minimumSize: Size(300, 40)),
                 onPressed: state.isLoading ? null : _onSave,
                 child: state.isLoading ? CircularProgressIndicator() : const Text('Save'),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: const InputDecoration(
+        labelText: 'Name',
+        prefixIcon: Icon(
+          FontAwesomeIcons.stethoscope,
+          size: 20,
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your Name';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDegreeField() {
+    return TextFormField(
+      controller: _degreeController,
+      decoration: const InputDecoration(
+        labelText: 'Degree',
+        prefixIcon: Icon(
+          FontAwesomeIcons.graduationCap,
+          size: 20,
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your degree. It will appear on Prescriptions';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildLicenseNumberField() {
+    return TextFormField(
+      controller: _licenseNumberController,
+      decoration: const InputDecoration(
+        label: Text('License Number'),
+        prefixIcon: Icon(
+          FontAwesomeIcons.idCard,
+          size: 20,
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your license number. It will appear on Prescriptions';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildClinicNameField() {
+    return TextFormField(
+      controller: _clinicNameController,
+      decoration: const InputDecoration(
+        label: Text('Clinic Name'),
+        prefixIcon: Icon(
+          Icons.local_hospital,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClinicAddressField() {
+    return TextFormField(
+      controller: _clinicAddressController,
+      keyboardType: TextInputType.streetAddress,
+      decoration: const InputDecoration(
+        label: Text('Clinic Address'),
+        prefixIcon: Icon(
+          FontAwesomeIcons.houseChimneyMedical,
+          size: 20,
+        ),
+      ),
+      maxLines: 2,
+    );
+  }
+
+  Widget _buildClinicTimeField() {
+    return TextFormField(
+      controller: _clinincTimingController,
+      decoration: const InputDecoration(
+        label: Text('Clinic Timings'),
+        prefixIcon: Icon(
+          FontAwesomeIcons.solidClock,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneNumberField() {
+    return TextFormField(
+      controller: _phoneNumberController,
+      keyboardType: TextInputType.phone,
+      decoration: const InputDecoration(
+        label: Text('Phone Number'),
+        prefixIcon: Icon(
+          Icons.phone,
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your phone number';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildSpecializationField(UserProvider state) {
+    return CustomSearchableDropdown<Specialization>(
+      prefixIcon: Icon(
+        FontAwesomeIcons.userDoctor,
+        size: 20,
+      ),
+      hintText: "Search Specialization",
+      searchLogic: (searchQuery, items) {
+        final normalizedQuery = searchQuery.trim().toLowerCase();
+
+        final exactMatches = items.where((element) {
+          final normalizedBrandName = (element.name).trim().toLowerCase();
+          return normalizedBrandName == normalizedQuery;
+        }).toList();
+
+        final partialMatches = items.where((element) {
+          final normalizedBrandName = (element.name).trim().toLowerCase();
+          return normalizedBrandName.contains(normalizedQuery) && normalizedBrandName != normalizedQuery;
+        }).toList();
+
+        return [...exactMatches, ...partialMatches];
+      },
+      displayText: (item) => item.name,
+      textEditingController: _specializationController,
+      textCapitalization: TextCapitalization.words,
+      items: state.specializations,
+      onItemSelected: (item) {
+        state.selectSpecialization(item, isProfileEditing: true);
+        Future.delayed(Duration(milliseconds: 100), () {
+          _specializationController.clear();
+        });
+      },
+      onAddSelected: (searchText) {
+        final Specialization specialization = Specialization(
+          id: Uuid().v4(),
+          name: searchText,
+        );
+
+        state.addSpecialization(specialization);
+        state.selectSpecialization(specialization, isProfileEditing: true);
+        Future.delayed(Duration(milliseconds: 100), () {
+          _specializationController.clear();
+        });
+      },
+    );
+  }
+
+  Widget _buildSpecializationChips(UserProvider state) {
+    return Wrap(
+      spacing: 10,
+      children: List.generate(
+        state.selectedSpecializations.length,
+        (index) => Chip(
+          backgroundColor: AppTheme.specializationChipColor,
+          label: Text(
+            state.selectedSpecializations[index].name,
+            style: TextStyle(color: Colors.white),
+          ),
+          onDeleted: () => state.deletedSelecteddSpecialization(
+            state.selectedSpecializations[index],
+            isEditingProfile: true,
+          ),
         ),
       ),
     );
