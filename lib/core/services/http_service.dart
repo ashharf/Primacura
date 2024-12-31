@@ -33,6 +33,15 @@ class HttpService {
     return _returnResponse(response);
   }
 
+  static Future<dynamic> patch(String url, {Map<String, String>? headers, dynamic body}) async {
+    log(url, name: 'url');
+    log(headers.toString(), name: 'headers');
+    log(body.toString(), name: 'body');
+    log("-----------------------------------");
+    final response = await http.patch(Uri.parse(url), headers: headers, body: body).timeout(_timeOutDuration);
+    return _returnResponse(response);
+  }
+
   static dynamic _returnResponse(http.Response response) {
     log(response.statusCode.toString(), name: 'statusCode');
     log(response.body.toString(), name: 'response');
