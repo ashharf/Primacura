@@ -20,3 +20,13 @@ class AppConstants {
   static const cannotCheckAuthState = 'Cannot check auth state';
   static const pleaseTryLoggingInAgain = 'Please try logging in again';
 }
+
+class Endpoints {
+  static const String baseUrl = 'http://192.168.0.105:3000';
+  static const String registerUser = "$baseUrl/primacura/add_doctor";
+  static const String getUserByUniqueId = "$baseUrl/primacura/doctorByUniqueId";
+}
+
+class ErrorMessage {
+  static const doctorNotFound = "DOCTOR_NOT_FOUND";
+}

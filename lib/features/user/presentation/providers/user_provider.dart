@@ -28,7 +28,7 @@ class UserProvider extends LoadingProvider {
       final user = await _userRepository.signInWithGoogle();
       _user = user;
     } catch (e) {
-      throw UnknownErrorException();
+      throw UnknownErrorException(e.toString());
     } finally {
       setLoading(false);
     }
@@ -170,7 +170,7 @@ class UserProvider extends LoadingProvider {
   Future<void> addMedicineToRemoteDatabase(Medicine medicine) async {
     try {
       setLoading(true);
-      await _userRepository.addMedicineToRemoteDatabase(medicine);
+      await _userRepository.addMedicine(medicine);
     } catch (e) {
       throw UnknownErrorException();
     } finally {

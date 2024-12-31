@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -7,21 +8,34 @@ import 'exception.dart';
 class HttpService {
   static const Duration _timeOutDuration = Duration(hours: 1);
   static Future<dynamic> get(String url, {Map<String, String>? headers}) async {
+    log(url, name: 'url');
+    log(headers.toString(), name: 'headers');
+    log("-----------------------------------");
     final response = await http.get(Uri.parse(url), headers: headers).timeout(_timeOutDuration);
     return _returnResponse(response);
   }
 
   static Future<dynamic> post(String url, {Map<String, String>? headers, dynamic body}) async {
+    log(url, name: 'url');
+    log(headers.toString(), name: 'headers');
+    log(body.toString(), name: 'body');
+    log("-----------------------------------");
     final response = await http.post(Uri.parse(url), headers: headers, body: body);
     return _returnResponse(response);
   }
 
   static Future<dynamic> put(String url, {Map<String, String>? headers, dynamic body}) async {
+    log(url, name: 'url');
+    log(headers.toString(), name: 'headers');
+    log(body.toString(), name: 'body');
+    log("-----------------------------------");
     final response = await http.put(Uri.parse(url), headers: headers, body: body).timeout(_timeOutDuration);
     return _returnResponse(response);
   }
 
   static dynamic _returnResponse(http.Response response) {
+    log(response.statusCode.toString(), name: 'statusCode');
+    log(response.body.toString(), name: 'response');
     switch (response.statusCode) {
       case 200:
         final responseJson = jsonDecode(response.body);

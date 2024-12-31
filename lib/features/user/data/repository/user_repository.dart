@@ -21,9 +21,8 @@ abstract class UserRepository {
   Future<void> deleteClinicalFinding(String userId, ClinicalFinding clinicalFinding);
   Future<void> addInvestigation(String userId, Investigation investigation);
   Future<void> deleteInvestigation(String userId, Investigation investigation);
-  Future<List<Medicine>> getMedicinesFromLocalDatabase();
-  Future<List<Medicine>> getMedicinesFromRemoteDatabase();
-  Future<void> addMedicineToRemoteDatabase(Medicine medicine);
+  Future<List<Medicine>> getMedicines();
+  Future<void> addMedicine(Medicine medicine);
   Future<void> deleteMedicineFromRemoteDatabase(String medicineId);
   Future<void> createFileInGoogleDrive();
 }
@@ -36,12 +35,13 @@ class UserRepositoryImpl implements UserRepository {
     required this.userRemoteDataSource,
     required this.userLocalDataSource,
   });
+
   @override
   Future<User> signInWithGoogle() async {
     try {
       final User user = await userRemoteDataSource.signInWithGoogle();
-      if (user.accessToken != null) {
-        userLocalDataSource.saveAccessToken(user.accessToken!);
+      if (user.token != null) {
+        userLocalDataSource.saveToken(user.token!);
       }
       return user;
     } catch (e) {
@@ -113,7 +113,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<Medicine>> getMedicinesFromRemoteDatabase() async {
+  Future<List<Medicine>> getMedicines() async {
     try {
       return await userRemoteDataSource.getMedicines();
     } catch (e) {
@@ -122,16 +122,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<Medicine>> getMedicinesFromLocalDatabase() async {
-    try {
-      return await userLocalDataSource.getMedicines();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> addMedicineToRemoteDatabase(Medicine medicine) async {
+  Future<void> addMedicine(Medicine medicine) async {
     try {
       return userRemoteDataSource.addMedicine(medicine);
     } catch (e) {
@@ -196,7 +187,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> createFileInGoogleDrive() async {
     try {
-      final accessToken = await userLocalDataSource.getAccessToken();
+      final accessToken = await userLocalDataSource.getToken();
       return userRemoteDataSource.createFileInGoogleDrive(accessToken);
     } catch (e) {
       rethrow;

@@ -28,7 +28,7 @@ class UserLocalDataSource {
         .toList();
   }
 
-  Future<void> saveAccessToken(String accessToken) async {
+  Future<void> saveToken(String accessToken) async {
     try {
       await hiveAccessTokenBox.put('accessToken', accessToken);
     } catch (e) {
@@ -36,7 +36,7 @@ class UserLocalDataSource {
     }
   }
 
-  Future<String> getAccessToken() async {
+  Future<String> getToken() async {
     try {
       return hiveAccessTokenBox.get('accessToken') ?? '';
     } catch (e) {

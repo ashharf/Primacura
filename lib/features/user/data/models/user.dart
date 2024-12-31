@@ -10,6 +10,7 @@ class User {
   final String id;
   final String email;
   final String? name;
+  final String? uniqueId;
   final List<Specialization> specializations;
   final String? degree;
   final String? licenseNumber;
@@ -23,11 +24,12 @@ class User {
   final List<Medicine> medicines;
   final String? logoUrl;
   final String? signatureUrl;
-  final String? accessToken;
+  String? token;
 
   User({
     required this.id,
     required this.email,
+    this.uniqueId,
     this.name,
     this.specializations = const [],
     this.degree,
@@ -42,13 +44,14 @@ class User {
     this.medicines = const [],
     this.logoUrl,
     this.signatureUrl,
-    this.accessToken,
+    this.token,
   });
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'email': email,
+      'uniqueId': uniqueId,
       'username': name,
       'speciality': specializations.map((e) => e.toJson()).toList(),
       'degree': degree,
@@ -70,6 +73,7 @@ class User {
     return <String, dynamic>{
       'id': id,
       'email': email,
+      'uniqueId': uniqueId,
       'username': name,
       'speciality': specializations.map((e) => e.toJson()).toList(),
       'degree': degree,
@@ -83,8 +87,9 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as String,
+      id: map['id'].toString(),
       email: map['email'] as String,
+      uniqueId: map['uniqueId'],
       name: map['username'] != null ? map['username'] as String : null,
       specializations: map['speciality'] == null
           ? []
@@ -131,6 +136,7 @@ class User {
   User copyWith({
     String? id,
     String? email,
+    String? uniqueId,
     String? name,
     List<Specialization>? specializations,
     String? degree,
@@ -148,6 +154,7 @@ class User {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
+      uniqueId: uniqueId ?? this.uniqueId,
       name: name ?? this.name,
       specializations: specializations ?? this.specializations,
       degree: degree ?? this.degree,

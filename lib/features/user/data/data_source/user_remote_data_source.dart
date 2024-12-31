@@ -51,21 +51,18 @@ class UserRemoteDataSource {
       final existingUser = await checkIfUserExists(userCreds.user!.uid);
       if (existingUser != null) return existingUser;
 
-      app.User user = app.User(
-        id: userCreds.user!.uid,
-        email: userCreds.user!.email!,
-        name: userCreds.user!.displayName,
-        accessToken: googleAuth.accessToken,
+      await HttpService.post(
+        Endpoints.registerUser,
+        body: {
+          "email": userCreds.user!.email,
+          "name": userCreds.user!.displayName,
+          "uniqueId": userCreds.user!.uid,
+        },
       );
 
-      await firebaseFirestore
-          .collection(AppConstants.userCollection)
-          .doc(
-            userCreds.user!.uid,
-          )
-          .set(
-            user.toJson(),
-          );
+      final user = await checkIfUserExists(userCreds.user!.uid);
+
+      if (user == null) throw Exception('Failed to sign in with Google');
 
       return user;
     } on FirebaseAuthException catch (e) {
@@ -91,12 +88,13 @@ class UserRemoteDataSource {
     }
   }
 
-  Future<app.User?> checkIfUserExists(String uid) async {
+  Future<app.User?> checkIfUserExists(String uniqueId) async {
     try {
-      final existingUser = await firebaseFirestore.collection(AppConstants.userCollection).doc(uid).get();
-      if (existingUser.data() == null) return null;
-      return app.User.fromJson(existingUser.data()!);
+      final response = await HttpService.get("${Endpoints.getUserByUniqueId}/$uniqueId");
+      if (response['message'] == ErrorMessage.doctorNotFound) return null;
+      return app.User.fromJson(response['doctor']);
     } catch (e) {
+      await signOut();
       rethrow;
     }
   }
