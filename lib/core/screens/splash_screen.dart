@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../features/prescriptions/presentation/screens/home_screen.dart';
 import '../../features/user/presentation/providers/user_provider.dart';
