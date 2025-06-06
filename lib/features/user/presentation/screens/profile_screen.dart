@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is UserAuthenticated) {
           final user = (context.read<UserCubit>().state as UserAuthenticated).user;
           return ListView(
-            padding: AppConstants.defaultPading,
+            padding: AppConstants.defaultPadding,
             children: [
               // const SizedBox(height: 20),
               ListTile(

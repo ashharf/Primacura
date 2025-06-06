@@ -36,7 +36,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         title: Text("Patient Form"),
       ),
       body: Padding(
-        padding: AppConstants.defaultPading,
+        padding: AppConstants.defaultPadding,
         child: Form(
           key: formKey,
           child: SingleChildScrollView(

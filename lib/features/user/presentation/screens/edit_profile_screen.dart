@@ -60,7 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           title: const Text('Edit Profile'),
         ),
         body: ListView(
-          padding: AppConstants.defaultPading,
+          padding: AppConstants.defaultPadding,
           children: [
             Form(
               key: formKey,

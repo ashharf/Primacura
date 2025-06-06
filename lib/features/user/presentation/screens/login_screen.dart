@@ -40,10 +40,10 @@ class LoginScreen extends StatelessWidget {
           }
         },
         child: Padding(
-          padding: AppConstants.defaultPading,
+          padding: AppConstants.defaultPadding,
           child: Center(
             child: Column(
-              // padding: AppConstatns.defaultPading,
+              // padding: AppConstants.defaultPadding,
               children: [
                 const Spacer(flex: 2),
                 ClipRRect(

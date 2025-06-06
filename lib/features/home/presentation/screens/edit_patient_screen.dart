@@ -76,7 +76,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
       ),
       body: SafeArea(
         child: ListView(
-          padding: AppConstants.defaultPading,
+          padding: AppConstants.defaultPadding,
           children: [
             TextFormField(
               controller: nameController,

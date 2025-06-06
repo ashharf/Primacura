@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Container(
-              padding: AppConstants.defaultPading,
+              padding: AppConstants.defaultPadding,
               height: 300,
               child: SfDateRangePicker(
                 headerStyle: DateRangePickerHeaderStyle(
@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text("Your Appointments", style: Theme.of(context).textTheme.titleMedium),
             SizedBox(height: 5.h),
             Padding(
-              padding: AppConstants.defaultPading,
+              padding: AppConstants.defaultPadding,
               child: BlocConsumer<PrescriptionCubit, PrescriptionState>(
                 listener: (context, state) {
                   if (state.message != null) {
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: AppConstants.defaultPading.copyWith(bottom: 20, top: 10),
+          padding: AppConstants.defaultPadding.copyWith(bottom: 20, top: 10),
           child: ElevatedButton(
             onPressed: () {
               context.goNamed(SelectPatientScreen.routeName);

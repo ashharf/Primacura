@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppConstants {
-  static final defaultPading = EdgeInsets.symmetric(horizontal: 30.w);
+  static final defaultPadding = EdgeInsets.symmetric(horizontal: 30.w);
   static const double defaultBorderRadius = 12;
 
   static const String userCollection = 'users';

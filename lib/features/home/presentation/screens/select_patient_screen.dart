@@ -59,7 +59,7 @@ class _SelectPatientScreenState extends State<SelectPatientScreen> {
           title: Text("Select Patient"),
         ),
         body: Padding(
-          padding: AppConstants.defaultPading,
+          padding: AppConstants.defaultPadding,
           child: Form(
             key: _formKey,
             child: BlocBuilder<PrescriptionCubit, PrescriptionState>(

@@ -96,7 +96,7 @@ class _AddMedicinesScreenState extends State<AddMedicinesScreen> {
                   ),
                   Expanded(
                     child: ListView(
-                      padding: AppConstants.defaultPading,
+                      padding: AppConstants.defaultPadding,
                       children: [
                         SizedBox(height: 10.h),
                         const SizedBox(height: 10),
