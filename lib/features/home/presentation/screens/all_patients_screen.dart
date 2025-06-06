@@ -51,7 +51,7 @@ class _AllPatientsScreenState extends State<AllPatientsScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: AppConstants.defaultPading,
+          padding: AppConstants.defaultPadding,
           child: BlocConsumer<PatientCubit, PatientState>(
             listener: (context, state) {
               if (state is PatientError) {

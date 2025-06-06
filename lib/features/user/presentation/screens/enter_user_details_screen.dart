@@ -86,7 +86,7 @@ class _EnterUserDetailsScreenState extends State<EnterUserDetailsScreen> {
             final userCubit = context.read<UserCubit>();
 
             return ListView(
-              padding: AppConstants.defaultPading,
+              padding: AppConstants.defaultPadding,
               children: [
                 const SizedBox(height: 20),
                 TextFormField(

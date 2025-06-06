@@ -38,7 +38,7 @@ class PrescriptionReviewScreen extends StatelessWidget {
               ),
               Expanded(
                 child: ListView(
-                  padding: AppConstants.defaultPading,
+                  padding: AppConstants.defaultPadding,
                   children: [
                     SizedBox(height: 10.h),
                     Row(

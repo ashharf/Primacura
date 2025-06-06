@@ -92,7 +92,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                 ),
                 SizedBox(height: 10.h),
                 Container(
-                  margin: AppConstants.defaultPading,
+                  margin: AppConstants.defaultPadding,
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor,
@@ -131,7 +131,7 @@ class _EnterVitalsScreenState extends State<EnterVitalsScreen> {
                 ),
                 Expanded(
                   child: ListView(
-                    padding: AppConstants.defaultPading,
+                    padding: AppConstants.defaultPadding,
                     children: [
                       SizedBox(height: 30.h),
                       Text("Add Chief Complaints", style: Theme.of(context).textTheme.titleMedium),
